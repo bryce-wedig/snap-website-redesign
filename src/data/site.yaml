@@ -1,0 +1,32 @@
+title: Scientist Network for Advancing Policy
+nick: SNAP
+email: snapscipolorg@gmail.com
+description: SNAP Coalition Website
+url: https://snapcoalition.org
+google_analytics_4: G-KXSXHFN9B7
+
+tagline: "Early-career researchers bridging science and community."
+
+interest_form_url: "https://docs.google.com/forms/d/e/1FAIpQLSclm6qDeLHbwRk4QPuZR34x77xx5dlKz3tHuHitBdWAiWe5vg/viewform?usp=header"
+
+social:
+  bluesky: https://bsky.app/profile/snapcoalition.bsky.social
+  instagram: https://www.instagram.com/snapcoalition
+  linkedin: https://www.linkedin.com/company/snapcoalition/
+  medium: https://medium.com/@snapscipolorg
+
+nav:
+  - name: About
+    href: /about/
+  - name: Initiatives
+    href: /initiatives/
+  - name: Press
+    href: /press/
+  - name: Courses
+    href: /courses/
+  - name: Team
+    href: /team/
+  - name: Newsletters
+    href: /newsletters/
+  - name: Blog
+    href: /blog/

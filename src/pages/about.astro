@@ -1,0 +1,109 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
+
+const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml'), 'utf-8')) as Array<{
+  name: string;
+  photo: string;
+  email: string;
+  bluesky: string;
+  instagram: string;
+  linkedin: string;
+  website: string;
+}>;
+---
+
+<PageLayout title="About">
+  <h2>Member Organizations</h2>
+  <hr />
+
+  <div class="org-grid">
+    {orgs.map(org => (
+      <div class="org-card card">
+        <div class="org-logo-wrapper">
+          <img
+            src={`${import.meta.env.BASE_URL}images/about/${org.photo}`}
+            alt={`${org.name} logo`}
+            class="org-logo"
+            loading="lazy"
+          />
+        </div>
+        <div class="org-info">
+          <h4>{org.name}</h4>
+          <div class="social-links">
+            {org.website && (
+              <a href={org.website} target="_blank" rel="noopener" aria-label="Website">
+                <i class="fa-solid fa-link"></i>
+              </a>
+            )}
+            {org.email && (
+              <a href={`mailto:${org.email}`} aria-label="Email">
+                <i class="fa-solid fa-envelope"></i>
+              </a>
+            )}
+            {org.bluesky && (
+              <a href={`https://bsky.app/profile/${org.bluesky}`} target="_blank" rel="noopener" aria-label="Bluesky">
+                <i class="fa-brands fa-bluesky"></i>
+              </a>
+            )}
+            {org.instagram && (
+              <a href={`https://www.instagram.com/${org.instagram}`} target="_blank" rel="noopener" aria-label="Instagram">
+                <i class="fa-brands fa-instagram"></i>
+              </a>
+            )}
+            {org.linkedin && (
+              <a href={`https://www.linkedin.com/company/${org.linkedin}/`} target="_blank" rel="noopener" aria-label="LinkedIn">
+                <i class="fa-brands fa-linkedin"></i>
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</PageLayout>
+
+<style>
+  .org-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .org-card {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  .org-logo-wrapper {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .org-logo {
+    max-width: 72px;
+    max-height: 72px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+  }
+
+  .org-info h4 {
+    font-size: var(--text-sm);
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+  }
+
+  .org-info .social-links a {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.75rem;
+  }
+</style>

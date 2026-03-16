@@ -1,0 +1,90 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
+
+const press = parse(readFileSync(join(process.cwd(), 'src/data/press.yaml'), 'utf-8')) as Array<{
+  headline: string;
+  source: string;
+  date: string;
+  website: string;
+  category: string | string[];
+}>;
+
+// Filter out entries without headlines
+const validPress = press.filter(a => a.headline && a.source);
+
+function formatDate(d: string): string {
+  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+---
+
+<PageLayout title="Press Mentions">
+  <h2>Press Mentions</h2>
+  <hr />
+
+  <div class="press-list">
+    {validPress.map(article => (
+      <div class="press-item">
+        <span class="press-date">{formatDate(article.date)}</span>
+        <div class="press-content">
+          <a href={article.website} target="_blank" rel="noopener" class="press-headline">
+            {article.headline}
+          </a>
+          <span class="press-source">in <em>{article.source}</em></span>
+        </div>
+      </div>
+    ))}
+  </div>
+</PageLayout>
+
+<style>
+  .press-list {
+    margin-top: 1.5rem;
+  }
+
+  .press-item {
+    display: flex;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--snap-gray-200);
+    align-items: baseline;
+  }
+
+  .press-item:last-child {
+    border-bottom: none;
+  }
+
+  .press-date {
+    flex-shrink: 0;
+    font-size: var(--text-xs);
+    color: var(--snap-gray-500);
+    min-width: 100px;
+    font-weight: 600;
+  }
+
+  .press-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .press-headline {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    line-height: 1.4;
+  }
+
+  .press-source {
+    font-size: var(--text-xs);
+    color: var(--snap-gray-500);
+  }
+
+  @media (max-width: 600px) {
+    .press-item {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+  }
+</style>

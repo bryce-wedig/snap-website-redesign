@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Map from '../components/Map.astro';
+---
+
+<BaseLayout title="Home">
+  <Header slot="header" />
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-container">
+      <div class="hero-content animate-fade-in-up">
+        <h1>Welcome to <span class="hero-accent">SNAP</span></h1>
+        <p class="hero-subtitle subtitle">
+          The Scientist Network for Advancing Policy is a coalition of early-career
+          scientists dedicated to mobilizing for large-scale initiatives and bridging
+          gaps between scientists, their communities, and the general public.
+        </p>
+        <p class="hero-body">
+          We uphold science as a unifying force&mdash;non-partisan and committed to advancing
+          the good of humanity. Our mission is to inspire and engage fellow scientists by
+          establishing a peer network, developing and sharing resources, and instigating
+          meaningful change.
+        </p>
+        <div class="hero-actions">
+          <a href={`${import.meta.env.BASE_URL}join/`} class="btn btn-primary">Get Involved</a>
+          <a href={`${import.meta.env.BASE_URL}about/`} class="btn btn-outline">Learn More</a>
+        </div>
+      </div>
+      <div class="hero-logo animate-fade-in-up stagger-2">
+        <img src={`${import.meta.env.BASE_URL}images/home/logo.png`} alt="SNAP Coalition Logo" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Map + Sidebar -->
+  <section class="section">
+    <div class="container" style="max-width: var(--container-max);">
+      <div class="home-grid">
+        <div class="home-main">
+          <Map />
+        </div>
+        <div class="home-sidebar">
+          <Sidebar />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .hero {
+    background: linear-gradient(135deg, var(--snap-navy) 0%, #1a2d50 100%);
+    color: var(--snap-white);
+    padding: 4rem 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(232, 145, 66, 0.15), transparent 70%);
+    border-radius: 50%;
+  }
+
+  .hero-container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .hero h1 {
+    color: var(--snap-white);
+    font-size: 2.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero-accent {
+    color: var(--snap-orange);
+  }
+
+  .hero-subtitle {
+    font-size: var(--text-lg);
+    color: var(--snap-gray-300);
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
+  .hero-body {
+    color: var(--snap-gray-300);
+    margin-bottom: 1.5rem;
+    line-height: 1.7;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .hero-actions .btn-outline {
+    color: var(--snap-white);
+    border-color: var(--snap-white);
+  }
+
+  .hero-actions .btn-outline:hover {
+    background: var(--snap-white);
+    color: var(--snap-navy);
+  }
+
+  .hero-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-logo img {
+    max-width: 100%;
+    max-height: 300px;
+    filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
+  }
+
+  .home-grid {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 2rem;
+    align-items: start;
+  }
+
+  @media (max-width: 900px) {
+    .hero-container {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    .hero-actions {
+      justify-content: center;
+    }
+
+    .hero-logo img {
+      max-height: 200px;
+    }
+
+    .home-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 3rem 0;
+    }
+
+    .hero h1 {
+      font-size: 2rem;
+    }
+  }
+</style>

@@ -1,0 +1,181 @@
+---
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
+
+// Load site config
+const siteData = parse(readFileSync(join(process.cwd(), 'src/data/site.yaml'), 'utf-8'));
+const currentPath = Astro.url.pathname;
+const base = import.meta.env.BASE_URL;
+// Strip base from currentPath so nav active detection works regardless of deployment base
+const pathFromBase = currentPath.startsWith(base)
+  ? '/' + currentPath.slice(base.length)
+  : currentPath;
+---
+
+<nav class="site-nav">
+  <div class="nav-container">
+    <a class="nav-brand" href={base}>
+      <img src={`${base}favicon.ico`} width="28" height="28" alt="SNAP logo" />
+      <span>{siteData.nick}</span>
+    </a>
+
+    <button class="nav-toggle" aria-label="Toggle navigation" id="nav-toggle">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <div class="nav-menu" id="nav-menu">
+      <div class="nav-links">
+        {siteData.nav.map((item: { name: string; href: string }) => (
+          <a
+            href={`${base}${item.href.slice(1)}`}
+            class:list={['nav-link', { active: pathFromBase.startsWith(item.href) }]}
+          >
+            {item.name}
+          </a>
+        ))}
+      </div>
+      <a href={`${base}join/`} class="btn btn-primary nav-cta">Get Involved!</a>
+    </div>
+  </div>
+</nav>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const menu = document.getElementById('nav-menu');
+
+  toggle?.addEventListener('click', () => {
+    menu?.classList.toggle('open');
+    const icon = toggle.querySelector('i');
+    if (icon) {
+      icon.classList.toggle('fa-bars');
+      icon.classList.toggle('fa-xmark');
+    }
+  });
+
+  // Close menu when clicking a link (mobile)
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', () => {
+      menu?.classList.remove('open');
+    });
+  });
+</script>
+
+<style>
+  .site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--snap-white);
+    border-bottom: 3px solid var(--snap-navy);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .nav-container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4rem;
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: var(--text-xl);
+    color: var(--snap-navy);
+    text-decoration: none;
+  }
+
+  .nav-brand:hover {
+    color: var(--snap-orange);
+  }
+
+  .nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--snap-navy);
+    cursor: pointer;
+    padding: 0.5rem;
+  }
+
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .nav-link {
+    padding: 0.5rem 0.75rem;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--snap-gray-600);
+    text-decoration: none;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--snap-navy);
+    background: var(--snap-gray-100);
+  }
+
+  .nav-cta {
+    font-size: var(--text-sm);
+    padding: 0.5rem 1.25rem;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 900px) {
+    .nav-toggle {
+      display: block;
+    }
+
+    .nav-menu {
+      display: none;
+      position: absolute;
+      top: 4rem;
+      left: 0;
+      right: 0;
+      background: var(--snap-white);
+      flex-direction: column;
+      padding: 1rem 1.5rem 1.5rem;
+      border-bottom: 3px solid var(--snap-navy);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .nav-menu.open {
+      display: flex;
+    }
+
+    .nav-links {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .nav-link {
+      width: 100%;
+      padding: 0.75rem 1rem;
+    }
+
+    .nav-cta {
+      width: 100%;
+      text-align: center;
+      justify-content: center;
+    }
+  }
+</style>

@@ -1,0 +1,129 @@
+---
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
+
+const siteData = parse(readFileSync(join(process.cwd(), 'src/data/site.yaml'), 'utf-8'));
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-container">
+    <div class="footer-grid">
+      <!-- About -->
+      <div class="footer-section">
+        <h4>About</h4>
+        <p class="footer-tagline"><em>{siteData.tagline}</em></p>
+      </div>
+
+      <!-- Contact -->
+      <div class="footer-section">
+        <h4>Contact</h4>
+        <div class="footer-links">
+          <a href={`mailto:${siteData.email}`}>
+            <i class="fa-solid fa-envelope"></i> Send SNAP an Email
+          </a>
+          <a href={siteData.interest_form_url} target="_blank" rel="noopener">
+            <i class="fa-solid fa-link"></i> Complete the Interest Form
+          </a>
+        </div>
+      </div>
+
+      <!-- Social -->
+      <div class="footer-section">
+        <h4>Follow Us</h4>
+        <div class="social-links">
+          <a href={siteData.social.bluesky} target="_blank" rel="noopener" aria-label="Bluesky">
+            <i class="fa-brands fa-bluesky"></i>
+          </a>
+          <a href={siteData.social.instagram} target="_blank" rel="noopener" aria-label="Instagram">
+            <i class="fa-brands fa-instagram"></i>
+          </a>
+          <a href={siteData.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn">
+            <i class="fa-brands fa-linkedin"></i>
+          </a>
+          <a href={siteData.social.medium} target="_blank" rel="noopener" aria-label="Medium">
+            <i class="fa-brands fa-medium"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {year} {siteData.title}</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--snap-navy);
+    color: var(--snap-gray-300);
+    padding: 3rem 0 1.5rem;
+    margin-top: auto;
+  }
+
+  .footer-container {
+    max-width: var(--container-max);
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .footer-section h4 {
+    color: var(--snap-white);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  .footer-tagline {
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+
+  .footer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .footer-links a {
+    color: var(--snap-gray-300);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color var(--transition-fast);
+  }
+
+  .footer-links a:hover {
+    color: var(--snap-orange);
+  }
+
+  .site-footer .social-links a {
+    background: rgba(255,255,255,0.1);
+    color: var(--snap-gray-300);
+  }
+
+  .site-footer .social-links a:hover {
+    background: var(--snap-orange);
+    color: var(--snap-white);
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 1.5rem;
+    text-align: center;
+    font-size: var(--text-xs);
+    color: var(--snap-gray-400);
+  }
+</style>

@@ -1,0 +1,175 @@
+---
+// Interactive Leaflet map showing SNAP member cities and organizations
+---
+
+<div class="map-section">
+  <p class="map-intro">
+    SNAP boasts over <span class="highlight-orange">120 active members</span> and over
+    <span class="highlight-navy">20 member organizations</span>. Check some out using the interactive map below!
+  </p>
+
+  <div id="snap-map" class="map-container"></div>
+
+  <p class="map-cta">
+    Go to <a href="/about/">our About page</a> for more information on our member organizations.
+  </p>
+</div>
+
+<!-- Leaflet CSS & JS loaded only when this component is used -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script is:inline>
+document.addEventListener('DOMContentLoaded', function() {
+  const map = L.map('snap-map').setView([39.50, -98.35], 3);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 20,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  const memberColor = '#E89142';
+  const memberIcon = L.divIcon({
+    html: '<svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41">' +
+      '<path d="M12.5 0C5.6 0 0 5.6 0 12.5C0 21.9 12.5 41 12.5 41S25 21.9 25 12.5C25 5.6 19.4 0 12.5 0Z" fill="' + memberColor + '" stroke="#C47830" stroke-width="1"/>' +
+      '<circle cx="12.5" cy="12.5" r="4" fill="white"/></svg>',
+    className: '',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [0, -41],
+  });
+
+  const orgColor = '#213863';
+  const orgIcon = L.divIcon({
+    html: '<svg xmlns="http://www.w3.org/2000/svg" width="25" height="41" viewBox="0 0 25 41">' +
+      '<path d="M12.5 0C5.6 0 0 5.6 0 12.5C0 21.9 12.5 41 12.5 41S25 21.9 25 12.5C25 5.6 19.4 0 12.5 0Z" fill="' + orgColor + '" stroke="#182847" stroke-width="1"/>' +
+      '<circle cx="12.5" cy="12.5" r="4" fill="white"/></svg>',
+    className: '',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [0, -41],
+  });
+
+  const memberCities = [
+    [[38.876933, -77.089309], 'Arlington, VA'],
+    [[41.661256, -91.529911], 'Iowa City, IA'],
+    [[33.520682, -86.802433], 'Birmingham, AL'],
+    [[35.913154, -79.055780], 'Chapel Hill, NC'],
+    [[39.290882, -76.610759], 'Baltimore, MD'],
+    [[34.053691, -118.242766], 'Los Angeles, CA'],
+    [[33.959768, -83.376398], 'Athens, GA'],
+    [[42.365635, -71.104002], 'Cambridge, MA'],
+    [[42.437418, -76.548372], 'Ithaca, NY'],
+    [[41.308214, -72.925052], 'New Haven, CT'],
+    [[37.870839, -122.272863], 'Berkeley, CA'],
+    [[39.952724, -75.163526], 'Philadelphia, PA'],
+    [[29.651968, -82.324985], 'Gainesville, FL'],
+    [[39.739236, -104.984862], 'Denver, CO'],
+    [[47.603832, -122.330062], 'Seattle, WA'],
+    [[43.074690, -89.384166], 'Madison, WI'],
+    [[40.014986, -105.270545], 'Boulder, CO'],
+    [[37.787936, -122.407520], 'San Francisco, CA'],
+    [[38.625406, -90.190009], 'St. Louis, MO'],
+    [[38.980666, -76.936919], 'College Park, MD'],
+    [[25.774157, -80.193597], 'Miami, FL'],
+    [[42.331551, -83.046640], 'Detroit, MI'],
+    [[37.444329, -122.159847], 'Palo Alto, CA'],
+    [[41.875562, -87.624421], 'Chicago, IL'],
+    [[42.373195, -72.519876], 'Amherst, MA'],
+    [[38.029306, -78.476678], 'Charlottesville, VA'],
+    [[39.682836, -75.751568], 'Newark, DE'],
+    [[35.996653, -78.901805], 'Durham, NC'],
+    [[42.358834, -71.057830], 'Boston, MA'],
+    [[38.419250, -82.445154], 'Huntington, WV'],
+    [[41.683381, -86.250007], 'South Bend, IN'],
+    [[30.271129, -97.743700], 'Austin, TX'],
+    [[41.151311, -81.357805], 'Kent, OH'],
+    [[33.754466, -84.389815], 'Atlanta, GA'],
+    [[42.376238, -71.235564], 'Waltham, MA'],
+    [[40.712728, -74.006015], 'New York, NY'],
+    [[42.291707, -85.587229], 'Kalamazoo, MI'],
+    [[39.768333, -86.158350], 'Indianapolis, IN'],
+  ];
+  memberCities.forEach(function([coords, name]) {
+    L.marker(coords, { autoPan: false, icon: memberIcon }).addTo(map).bindPopup(name);
+  });
+
+  const orgs = [
+    [[40.44, -79.95], 'Allegheny Science Policy and Governance', 'University of Pittsburgh'],
+    [[42.45, -76.48], 'Cornell Advancing Science and Policy Club (ASAP)', 'Cornell University'],
+    [[38.90, -77.07], 'Georgetown Science Policy Network', 'Georgetown University'],
+    [[42.37, -71.12], 'Harvard Griffin GSAS Science Policy Group', 'Harvard University'],
+    [[38.95, -95.26], 'Jayhawks for Science Policy (JSP)', 'University of Kansas'],
+    [[42.36, -71.09], "MIT Graduate Student Council's External Affairs Board", 'Massachusetts Institute of Technology'],
+    [[35.79, -78.67], 'SciPol Group', 'North Carolina State University'],
+    [[39.95, -75.19], 'Penn Science Policy and Diplomacy Group (PSPDG)', 'University of Pennsylvania'],
+    [[29.65, -82.35], 'Policy Advocacy in Science and Engineering', 'University of Florida'],
+    [[38.65, -90.31], 'Promoting Science Policy, Education, and Research (ProSPER)', 'Washington University in St. Louis'],
+    [[33.502041, -86.805159], 'Science Policy Advocacy Network (SPAN)', 'University of Alabama at Birmingham'],
+    [[39.33, -76.62], 'Science Policy and Diplomacy Group', 'Johns Hopkins University'],
+    [[34.07, -118.44], 'Science Policy Group at UCLA', 'University of California, Los Angeles (UCLA)'],
+    [[38.99, -76.94], 'Science Policy Group at UMD', 'University of Maryland'],
+    [[41.70, -86.24], 'Science Policy Initiative @ Notre Dame (SPI@ND)', 'University of Notre Dame'],
+    [[40.72, -73.99], 'SciPol at NYU', 'New York University'],
+    [[37.43, -122.17], 'Stanford Science Policy Group (SSPG)', 'Stanford University'],
+    [[33.97, -117.33], 'UCR Science to Policy (S2P) student cabinet', 'University of California, Riverside'],
+    [[35.90, -79.05], 'UNC Science Policy and Advocacy Group (SPAG)', 'University of North Carolina'],
+    [[35.90, -79.05], 'UNC Graduate Professional Student Government (GPSG)', 'University of North Carolina'],
+    [[41.31, -72.92], 'Yale Graduate Student Government', 'Yale University'],
+    [[33.96, -83.38], 'Coalition of Athens Scientists', 'Athens, GA'],
+  ];
+  orgs.forEach(function([coords, name, location]) {
+    L.marker(coords, { autoPan: false, icon: orgIcon }).addTo(map)
+      .bindPopup('<b>' + name + '</b><br />' + location);
+  });
+});
+</script>
+
+<style>
+  .map-section {
+    margin: 2rem 0;
+  }
+
+  .map-intro {
+    text-align: center;
+    font-size: var(--text-lg);
+    margin-bottom: 1.5rem;
+  }
+
+  .highlight-orange {
+    font-weight: 700;
+    color: var(--snap-orange);
+  }
+
+  .highlight-navy {
+    font-weight: 700;
+    color: var(--snap-navy);
+  }
+
+  .map-container {
+    width: 100%;
+    height: 400px;
+    border-radius: var(--radius-lg);
+    border: 2px solid var(--snap-gray-200);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .map-cta {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: var(--text-lg);
+  }
+
+  .map-cta a {
+    color: var(--snap-navy);
+    font-weight: 600;
+    text-decoration: underline;
+    text-decoration-color: var(--snap-orange);
+    text-underline-offset: 2px;
+  }
+
+  .map-cta a:hover {
+    color: var(--snap-orange);
+  }
+</style>

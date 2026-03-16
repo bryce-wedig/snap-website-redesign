@@ -1,0 +1,152 @@
+---
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
+import { getCollection } from 'astro:content';
+
+const siteData = parse(readFileSync(join(process.cwd(), 'src/data/site.yaml'), 'utf-8'));
+const pressData = parse(readFileSync(join(process.cwd(), 'src/data/press.yaml'), 'utf-8')) as Array<{ date: string; headline: string; source: string; website: string }>;
+
+// Get initiatives and blog posts from content collections
+let currentInitiatives: Array<{ data: { title: string; category: string }; slug: string }> = [];
+let recentPosts: Array<{ data: { title: string; date: Date }; slug: string }> = [];
+
+try {
+  const allInitiatives = await getCollection('initiatives');
+  currentInitiatives = allInitiatives.filter(i => i.data.category === 'current');
+} catch { /* collection may not exist yet */ }
+
+try {
+  const allPosts = await getCollection('blog');
+  recentPosts = allPosts.sort((a, b) => b.data.date.getTime() - a.data.date.getTime()).slice(0, 3);
+} catch { /* collection may not exist yet */ }
+
+const recentPress = pressData.filter(a => a.headline && a.source).slice(0, 3);
+
+function formatDate(d: string | Date): string {
+  const date = typeof d === 'string' ? new Date(d) : d;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+---
+
+<aside class="sidebar">
+  <!-- Connect -->
+  <div class="sidebar-card">
+    <h4>Connect with SNAP</h4>
+    <div class="social-links" style="justify-content: center;">
+      <a href={`mailto:${siteData.email}`} aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+      <a href={siteData.social.bluesky} target="_blank" rel="noopener" aria-label="Bluesky"><i class="fa-brands fa-bluesky"></i></a>
+      <a href={siteData.social.instagram} target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+      <a href={siteData.social.linkedin} target="_blank" rel="noopener" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+      <a href={siteData.social.medium} target="_blank" rel="noopener" aria-label="Medium"><i class="fa-brands fa-medium"></i></a>
+    </div>
+  </div>
+
+  <!-- Current Initiatives -->
+  <div class="sidebar-card">
+    <h4>Current Initiatives</h4>
+    {currentInitiatives.length > 0 ? (
+      <ul>
+        {currentInitiatives.map(i => (
+          <li><a href={`${import.meta.env.BASE_URL}initiatives/${i.slug}/`}>{i.data.title}</a></li>
+        ))}
+      </ul>
+    ) : (
+      <p style="font-size: var(--text-sm); color: var(--snap-gray-500);">Check back soon for updates.</p>
+    )}
+    <a href={`${import.meta.env.BASE_URL}initiatives/`} class="sidebar-more">Learn more about our initiatives &rarr;</a>
+  </div>
+
+  <!-- Latest Blog Posts -->
+  {recentPosts.length > 0 && (
+    <div class="sidebar-card">
+      <h4>Latest Blog Posts</h4>
+      <ul>
+        {recentPosts.map(post => (
+          <li>
+            <span class="date">{formatDate(post.data.date)}</span>
+            <a href={`${import.meta.env.BASE_URL}blog/${post.slug}/`}>{post.data.title}</a>
+          </li>
+        ))}
+      </ul>
+      <a href={`${import.meta.env.BASE_URL}blog/`} class="sidebar-more">Read more Science Policy in a SNAP &rarr;</a>
+    </div>
+  )}
+
+  <!-- Press Mentions -->
+  {recentPress.length > 0 && (
+    <div class="sidebar-card">
+      <h4>Press Mentions</h4>
+      <ul>
+        {recentPress.map(article => (
+          <li>
+            <span class="date">{formatDate(article.date)}</span>
+            <a href={article.website} target="_blank" rel="noopener">{article.headline}</a>
+            <span class="source">in <em>{article.source}</em></span>
+          </li>
+        ))}
+      </ul>
+      <a href={`${import.meta.env.BASE_URL}press/`} class="sidebar-more">See more SNAP in the Press &rarr;</a>
+    </div>
+  )}
+</aside>
+
+<style>
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .sidebar-card {
+    background: var(--snap-gray-100);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    border: 1px solid var(--snap-gray-200);
+  }
+
+  .sidebar-card h4 {
+    font-size: var(--text-base);
+    margin-bottom: 0.75rem;
+    color: var(--snap-navy);
+  }
+
+  .sidebar-card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .sidebar-card li {
+    margin-bottom: 0.75rem;
+    font-size: var(--text-sm);
+    line-height: 1.5;
+  }
+
+  .sidebar-card li a {
+    font-weight: 600;
+    display: block;
+  }
+
+  .sidebar-card .date {
+    font-size: var(--text-xs);
+    color: var(--snap-gray-500);
+    display: block;
+  }
+
+  .sidebar-card .source {
+    font-size: var(--text-xs);
+    color: var(--snap-gray-500);
+  }
+
+  .sidebar-more {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--snap-orange);
+  }
+
+  .sidebar-more:hover {
+    color: var(--snap-navy);
+  }
+</style>
