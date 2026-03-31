@@ -47,7 +47,6 @@ astro-site/
 │   │   ├── member_orgs.yaml     # Member organization details
 │   │   ├── press.yaml           # Press mentions
 │   │   ├── mcclintock_letters.yaml  # Published McClintock Letters by state
-│   │   └── snap.yaml            # SNAP organization info
 │   │
 │   ├── layouts/                 # Page layout templates
 │   │   ├── BaseLayout.astro     # Root HTML template (head, meta, analytics)
