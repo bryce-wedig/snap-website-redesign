@@ -33,7 +33,7 @@ function formatDate(d: string | Date): string {
   <!-- Connect -->
   <div class="sidebar-card">
     <h4>Connect with SNAP</h4>
-    <div class="social-links" style="justify-content: center;">
+    <div class="social-links">
       <a href={`mailto:${siteData.email}`} aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
       <a href={siteData.social.bluesky} target="_blank" rel="noopener" aria-label="Bluesky"><i class="fa-brands fa-bluesky"></i></a>
       <a href={siteData.social.instagram} target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
@@ -148,5 +148,19 @@ function formatDate(d: string | Date): string {
 
   .sidebar-more:hover {
     color: var(--snap-navy);
+  }
+
+  /* Larger social icons in sidebar to fill the card width */
+  .sidebar-card .social-links {
+    gap: 0;
+    flex-wrap: nowrap;
+  }
+
+  .sidebar-card .social-links a {
+    flex: 1;
+    aspect-ratio: 1;
+    width: auto;
+    height: auto;
+    font-size: 2.1rem;
   }
 </style>
