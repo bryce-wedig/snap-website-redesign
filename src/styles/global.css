@@ -34,8 +34,8 @@
   --snap-gray-900: #111827;
 
   /* Typography scale */
-  --text-xs: 0.75rem;
-  --text-sm: 0.875rem;
+  --text-xs: 0.875rem;
+  --text-sm: 1rem;
   --text-base: 1rem;
   --text-lg: 1.125rem;
   --text-xl: 1.25rem;
