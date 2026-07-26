@@ -156,6 +156,10 @@ function initials(name: string | undefined): string {
     color: var(--orange); text-decoration: underline; text-underline-offset: 3px;
   }
   .article-body :global(a:hover) { color: var(--navy); }
+  /* Button-styled links (e.g. "Apply Now!") keep their button colors. */
+  .article-body :global(a.btn) { text-decoration: none; }
+  .article-body :global(a.btn-primary),
+  .article-body :global(a.btn-primary:hover) { color: white; }
   .article-body :global(strong) { color: var(--navy); font-weight: 700; }
   .article-body :global(em) { font-style: italic; }
   .article-body :global(img) {

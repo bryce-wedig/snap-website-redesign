@@ -464,6 +464,7 @@ hr { border: none; height: 1px; background: var(--hairline); margin: 2rem 0; }
 .c-hackathon { --card-color: var(--olive-deep); }
 .c-stance { --card-color: var(--plum); }
 .c-courses { --card-color: #4f7894; }
+.c-snapstart { --card-color: var(--pro); }
 
 /* =====================================================
    FOOTER
@@ -651,6 +652,10 @@ footer.site {
   text-underline-offset: 3px;
 }
 .prose a:hover { color: var(--orange); }
+/* Button-styled links inside prose keep their button colors. */
+.prose a.btn { text-decoration: none; }
+.prose a.btn-primary { color: white; }
+.prose a.btn-primary:hover { color: white; }
 .prose hr { margin: 2rem 0; height: 1px; background: var(--hairline); border: 0; }
 
 /* =====================================================

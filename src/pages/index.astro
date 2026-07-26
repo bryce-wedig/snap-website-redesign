@@ -34,6 +34,12 @@ function formatDate(d: string): string {
 <BaseLayout title="Home">
   <Header slot="header" />
 
+  <!-- ============ ANNOUNCEMENT ============ -->
+  <a class="announce-bar" href={`${base}initiatives/snapstart/`}>
+    <i class="fa-solid fa-bullhorn" aria-hidden="true"></i>
+    Check out the new <strong>&nbsp;SNAPStart&nbsp;</strong> Mini-Grant Program!
+  </a>
+
   <!-- ============ HERO ============ -->
   <HomeHero />
 
@@ -245,6 +251,18 @@ function formatDate(d: string): string {
 </BaseLayout>
 
 <style>
+  /* ANNOUNCEMENT BAR */
+  .announce-bar {
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px 20px;
+    background: var(--orange); color: white;
+    font-family: var(--accent); font-weight: 600; font-size: 14px;
+    text-decoration: none; text-align: center;
+    transition: background .2s ease;
+  }
+  .announce-bar:hover { background: var(--navy); }
+  .announce-bar strong { font-weight: 700; }
+
   /* INITIATIVES INTRO */
   .intro-strip {
     max-width: var(--container); margin: 64px auto 0;
