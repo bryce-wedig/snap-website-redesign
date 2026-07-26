@@ -66,6 +66,7 @@
       dateDisplay: card.getAttribute("data-date-display") || "",
       answered: parseInt(card.getAttribute("data-answered"), 10) || answers.length,
       qtotal: parseInt(card.getAttribute("data-qtotal"), 10) || answers.length,
+      primary: card.getAttribute("data-primary-candidate") === "true",
       location: card.getAttribute("data-location") || "Statewide",
       sub: card.querySelector(".cand-card__sub"),
       answers: answers
@@ -86,6 +87,8 @@
     bar.querySelectorAll("select[data-filter]").forEach(function (s) { selects[s.dataset.filter] = s; });
     var sortSel = bar.querySelector("[data-sort]");
     var resetBtn = bar.querySelector("[data-filter-reset]");
+    var primaryToggle = bar.querySelector("[data-filter-primary]");
+    function showPrimary() { return !!(primaryToggle && primaryToggle.checked); }
 
     var query = "";
     var currentId = null;
@@ -103,6 +106,7 @@
       return f;
     }
     function candMatch(c, f, except) {
+      if (!showPrimary() && c.primary) return false;
       if (except !== "tag" && f.tag && !c.answers.some(function (a) { return a.tags.indexOf(f.tag) !== -1; })) return false;
       if (except !== "race" && f.race && c.race !== f.race) return false;
       if (except !== "district" && f.district && String(c.district) !== String(f.district)) return false;
@@ -177,10 +181,6 @@
       currentId = null;
 
       var matched = records.filter(function (c) { return matchCand(c, f); });
-      var totalR = 0;
-      matched.forEach(function (c) {
-        totalR += f.tag ? c.answers.filter(function (a) { return a.tags.indexOf(f.tag) !== -1; }).length : c.answers.length;
-      });
 
       // hide everything first, then re-append matched in order
       records.forEach(function (c) { c.el.hidden = true; });
@@ -210,7 +210,6 @@
 
       var anyFilter = f.tag || f.race || f.district || f.party || f.county_race || query;
       var label = "Showing " + matched.length + " of " + totalCandidates + (matched.length === 1 ? " candidate" : " candidates");
-      if (f.tag) label += " · " + totalR + (totalR === 1 ? " response" : " responses") + " on " + f.tag;
       if (countLine) {
         countLine.textContent = label;
         countLine.classList.toggle("is-filtered", !!anyFilter);
@@ -338,6 +337,7 @@
     /* ---- wire ---- */
     for (var k in selects) selects[k].addEventListener("change", rebuild);
     if (sortSel) sortSel.addEventListener("change", rebuild);
+    if (primaryToggle) primaryToggle.addEventListener("change", function () { rebuild(); });
     if (search) search.addEventListener("input", function () { query = search.value.toLowerCase().trim(); rebuild(); });
     if (resetBtn) resetBtn.addEventListener("click", function () {
       // Reset filters, search, and sort (back to the default) while
@@ -345,9 +345,31 @@
       var focusId = currentId;
       for (var key in selects) selects[key].value = "";
       if (sortSel) sortSel.value = "random";
+      if (primaryToggle) primaryToggle.checked = false;
       if (search) search.value = "";
       query = "";
       rebuild(focusId);
+    });
+
+    // Clicking a badge applies its value to the matching filter (clicking the
+    // active one clears it). Delegated on feedList since cards are moved but
+    // never re-created. Keeps the clicked card in view via rebuild(focusId).
+    function badgeFromEvent(e) {
+      var badge = e.target.closest && e.target.closest(".badge[data-filter]");
+      if (!badge || !feedList.contains(badge)) return;
+      var sel = selects[badge.getAttribute("data-filter")];
+      if (!sel) return;
+      var val = badge.getAttribute("data-value");
+      if (val == null) val = badge.getAttribute("data-tag");
+      if (val == null || val === "") return;
+      e.preventDefault();
+      sel.value = sel.value === val ? "" : val;
+      var card = badge.closest(".cand-card");
+      rebuild(card ? card.id : null);
+    }
+    feedList.addEventListener("click", badgeFromEvent);
+    feedList.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar") badgeFromEvent(e);
     });
 
     rebuild();

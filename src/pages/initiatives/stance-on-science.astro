@@ -1,9 +1,28 @@
 ---
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import '../../styles/stance.css';
+import { loadStates } from '../../lib/stance';
 
 const base = import.meta.env.BASE_URL;
+
+const states = loadStates();
+const activeCodes = states.map((s) => s.code);
+
+interface PressItem { headline: string; source: string; date: string; website: string; category?: string | string[] }
+const pressData = parse(readFileSync(join(process.cwd(), 'src/data/press.yaml'), 'utf-8')) as PressItem[];
+const pressMentions = pressData.filter((a) => {
+  const cats = Array.isArray(a.category) ? a.category : [a.category ?? ''];
+  return cats.some((c) => (c ?? '').toLowerCase().startsWith('stance on science'));
+});
+function pressDate(d: string): string {
+  const dt = new Date(`${d}T00:00:00`);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
 ---
 
 <BaseLayout title="Stance on Science">
@@ -75,19 +94,39 @@ const base = import.meta.env.BASE_URL;
         <p class="lede" style="max-width: 560px;">State teams publish candidate responses on their own pages. Pick your state to read, filter, and compare what candidates said. More states are joining throughout the 2026 cycle.</p>
       </div>
 
+      <div class="map-wrap" id="stance-map-anchor">
+        <p>Click an <strong style="color: var(--orange);">orange</strong> state to view candidate responses from that state, or <a href={`${base}initiatives/stance-on-science/search/`}>search all responses</a>. This map will be updated as more states publish candidate responses.</p>
+        <div class="stance-map" id="stance-map" role="img" aria-label="Map of the United States showing states with Stance on Science candidate responses highlighted in orange.">
+          <noscript>
+            <p><em>This map requires JavaScript to display. Browse responses using the state cards below.</em></p>
+          </noscript>
+        </div>
+        <p class="stance-map-legend">
+          <span class="stance-map-legend__swatch stance-map-legend__swatch--active"></span> States with published responses
+          <span class="stance-map-legend__swatch stance-map-legend__swatch--inactive" style="margin-left: 16px;"></span> No responses yet
+        </p>
+      </div>
+
       <div class="states-grid">
-        <a class="state-card" href={`${base}initiatives/stance-on-science/states/ca/`}>
-          <div class="state-card__tag"><span class="dot"></span>Live</div>
-          <h4>California</h4>
-          <p>June 2026 primary — US House, Governor &amp; LA Mayor races.</p>
-          <span class="state-card__cta">View candidate responses →</span>
-        </a>
+        {states.map((s) => (
+          <a class="state-card" href={`${base}initiatives/stance-on-science/states/${s.code}/`}>
+            <div class="state-card__tag"><span class="dot"></span>Live</div>
+            <h4>{s.name}</h4>
+            {s.hub_blurb && <p>{s.hub_blurb}</p>}
+            <span class="state-card__cta">View candidate responses →</span>
+          </a>
+        ))}
         <div class="state-card state-card--soon">
           <div class="state-card__tag state-card__tag--soon">Coming soon</div>
           <h4>More states</h4>
           <p>Additional state teams are preparing candidate pages for the 2026 cycle.</p>
           <span class="state-card__cta state-card__cta--muted">Want to lead yours? Get involved ↓</span>
         </div>
+      </div>
+
+      <div class="states-links">
+        <a class="btn btn-primary" href={`${base}initiatives/stance-on-science/search/`}><i class="fa-solid fa-magnifying-glass"></i>&nbsp; Search all candidate responses</a>
+        <a class="btn btn-ghost-dark" href={`${base}initiatives/stance-on-science/faq/`}>Read the FAQ (incl. town halls)</a>
       </div>
     </div>
   </section>
@@ -187,6 +226,27 @@ const base = import.meta.env.BASE_URL;
     </div>
   </section>
 
+  <!-- PRESS MENTIONS -->
+  <section class="press-mentions">
+    <div class="container">
+      <div class="eyebrow">In the news</div>
+      <h2 class="display">Press mentions.</h2>
+      {pressMentions.length === 0 ? (
+        <p style="margin-top: 18px;"><strong>None yet! Check back soon for updates!</strong></p>
+      ) : (
+        <ul class="stance-press__list" style="margin-top: 24px;">
+          {pressMentions.map((a) => (
+            <li>
+              <span class="stance-press__date">{pressDate(a.date)}</span>
+              <a href={a.website} target="_blank" rel="noopener">{a.headline}</a>
+              <span class="stance-press__source">in <i>{a.source}</i></span>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  </section>
+
   <!-- CTA -->
   <section class="cta">
     <div class="container cta-inner">
@@ -206,6 +266,14 @@ const base = import.meta.env.BASE_URL;
 
   <Footer slot="footer" />
 </BaseLayout>
+
+<script is:inline define:vars={{ activeCodes, statesUrl: `${base}initiatives/stance-on-science/states/` }}>
+  window.STANCE_ACTIVE_STATES = activeCodes;
+  window.STANCE_STATES_URL = statesUrl;
+</script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+<script is:inline src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
+<script is:inline src={`${base}scripts/stance/stance-map.js`}></script>
 
 <style>
   .live-tag {
@@ -287,6 +355,20 @@ const base = import.meta.env.BASE_URL;
   }
   .state-card__cta--muted { color: var(--muted); text-transform: none; letter-spacing: 0.01em; font-weight: 600; }
   .state-card--soon { background: transparent; border-style: dashed; }
+
+  /* MAP */
+  .map-wrap {
+    background: white; border: 1px solid var(--hairline); border-radius: var(--r-lg);
+    padding: 28px; margin-bottom: 40px;
+  }
+  .map-wrap > p:first-child { font-size: 15px; line-height: 1.6; color: var(--body); margin-bottom: 8px; }
+
+  .states-links {
+    display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap;
+  }
+
+  /* PRESS MENTIONS */
+  .press-mentions { background: white; padding: 100px 0; border-top: 1px solid var(--hairline); }
 
   /* HOW */
   .howit { padding: 100px 0; background: var(--page); border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); }

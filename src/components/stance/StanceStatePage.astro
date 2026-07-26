@@ -1,0 +1,654 @@
+---
+/**
+ * Full Stance on Science state page: header, intro (goals + "how to use" +
+ * question list + disclaimer + ballot lookup), the three-view response
+ * explorer (group by candidate / group by topic / compare), press mentions,
+ * and — when the state has a stance_team data file — the "Meet the Team"
+ * strip. This is the one place to change the shared viewer; each state's own
+ * .astro file only supplies its config code and the state-specific "How to
+ * use this resource" body via the default slot.
+ *
+ * Slots:
+ *   default          — the inner body of the "How to use this resource"
+ *                      collapsible (paragraphs + race lists).
+ *   questions-note   — optional note shown above the question list (e.g. WA's
+ *                      east/west question split).
+ */
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../Header.astro';
+import Footer from '../Footer.astro';
+import '../../styles/stance.css';
+import {
+  loadStates, loadFilters, loadQuestions, loadResponses, loadTeam,
+  md, mdInline, tagList, raceLabel, partySlug, fullName,
+  formatDate, joinWithAnd, groupBy, sortDistricts,
+  type Response,
+} from '../../lib/stance';
+
+interface Props {
+  state: string;
+  /** Optional extra note (HTML) shown under the "check back soon" line. */
+  additionalNoteHtml?: string;
+}
+
+const { state, additionalNoteHtml } = Astro.props;
+const base = import.meta.env.BASE_URL;
+
+const cfg = loadStates().find((s) => s.code === state);
+if (!cfg) throw new Error(`stance_states.yaml has no entry for "${state}"`);
+
+const stateName = cfg.name;
+const teamName = `${stateName} Stance on Science`;
+const filters = loadFilters();
+const questions = loadQuestions(state);
+const responses = loadResponses(state);
+const team = loadTeam(state);
+
+/* ── Press mentions for this state ─────────────────────────────────────── */
+interface PressItem { headline: string; source: string; date: string; website: string; category?: string | string[] }
+const pressData = parse(readFileSync(join(process.cwd(), 'src/data/press.yaml'), 'utf-8')) as PressItem[];
+const pressTarget = `stance on science ${state}`.toLowerCase();
+const pressMentions = pressData.filter((a) => {
+  const cats = Array.isArray(a.category) ? a.category : [a.category ?? ''];
+  return cats.some((c) => (c ?? '').toLowerCase() === pressTarget);
+});
+function pressDate(d: string): string {
+  const dt = new Date(`${d}T00:00:00`);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+/* ── Socials sentence ──────────────────────────────────────────────────── */
+const socials: string[] = [];
+if (cfg.instagram_url) socials.push(`<a href="${cfg.instagram_url}" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> Instagram</a>`);
+if (cfg.facebook_url) socials.push(`<a href="${cfg.facebook_url}" target="_blank" rel="noopener"><i class="fa-brands fa-facebook"></i> Facebook</a>`);
+if (cfg.tiktok_url) socials.push(`<a href="${cfg.tiktok_url}" target="_blank" rel="noopener"><i class="fa-brands fa-tiktok"></i> TikTok</a>`);
+if (cfg.x_url) socials.push(`<a href="${cfg.x_url}" target="_blank" rel="noopener"><i class="fa-brands fa-x-twitter"></i> X</a>`);
+if (cfg.bluesky_url) socials.push(`<a href="${cfg.bluesky_url}" target="_blank" rel="noopener"><i class="fa-brands fa-bluesky"></i> Bluesky</a>`);
+if (cfg.reddit_url) socials.push(`<a href="${cfg.reddit_url}" target="_blank" rel="noopener"><i class="fa-brands fa-reddit"></i> Reddit</a>`);
+const socialsHtml = socials.length ? ` Follow us on ${joinWithAnd(socials)}.` : '';
+
+/* ── Derived vocabulary ────────────────────────────────────────────────── */
+const questionTags = [...new Set(questions.flatMap(tagList))];
+const hasResponses = responses.length > 0;
+
+const linkedQuestion = (r: Response) => questions.find((q) => q.id === r.question);
+
+const presentTags = [...new Set(responses.flatMap((r) => tagList(linkedQuestion(r))))];
+const presentRaces = [...new Set(responses.map((r) => r.race))];
+const presentDistricts = sortDistricts(responses.map((r) => r.district));
+const presentParties = [...new Set(responses.map((r) => r.party))];
+const presentCountyRaces = [...new Set(responses.map((r) => r.county_race).filter(Boolean) as string[])].sort();
+const hasPrimaryCandidates = responses.some((r) => r.primary_candidate);
+
+// Ballot order for race grouping (mirrors RACE_ORDER in the explorer script).
+// Races present in the data but missing from this list are appended so no
+// candidate is ever dropped.
+const raceOrder = [
+  'US Senate', 'US House of Representatives', 'Governor', 'Secretary of State',
+  'Attorney General', 'State Board of Education', 'University Board of Regents',
+  'State Senate', 'State House of Representatives', 'Mayor', 'Local County Races [All]',
+];
+const orderedRaces = [
+  ...raceOrder.filter((race) => presentRaces.includes(race)),
+  ...presentRaces.filter((race) => !raceOrder.includes(race)).sort(),
+];
+
+/* ── View A · Group by candidate ───────────────────────────────────────── */
+const candKey = (r: Response): string =>
+  [r.candidate_last_name, r.candidate_first_name, r.district, r.party, r.county_race].join('|||');
+
+let cardIndex = 0;
+const candidateCards = orderedRaces.flatMap((race) => {
+  const inRace = responses.filter((r) => r.race === race);
+  const groups = groupBy(inRace, candKey);
+  return [...groups.keys()].sort().map((key) => {
+    cardIndex += 1;
+    const items = groups.get(key)!;
+    const cand = items[0];
+    const district = cand.district != null && cand.district !== '' ? String(cand.district) : '';
+    const location = district ? `Dist. ${district}` : cand.county_race ? 'County' : 'Statewide';
+    const dateDisplay = formatDate(cand.date);
+    const qaBlocks = questions
+      .map((q, i) => {
+        const resp = items.find((it) => it.question === q.id);
+        if (!resp) return null;
+        const tags = tagList(q);
+        return { n: i + 1, tags, tagAttr: tags.join('|'), questionHtml: mdInline(q.question), answerHtml: md(resp.response) };
+      })
+      .filter((b): b is NonNullable<typeof b> => b !== null);
+    return {
+      id: cardIndex,
+      cand,
+      district,
+      location,
+      dateDisplay,
+      answered: items.length,
+      qtotal: questions.length,
+      subDefault: dateDisplay ? `Submitted ${dateDisplay}` : '',
+      qaBlocks,
+    };
+  });
+});
+
+/* ── View B · Group by topic ───────────────────────────────────────────── */
+const topicTiles = filters.tags
+  .map((tag) => {
+    const matching = responses.filter((r) => tagList(linkedQuestion(r)).includes(tag));
+    if (!matching.length) return null;
+    const racesPresent = [...new Set(matching.map((r) => r.race))];
+    const cards = [...matching]
+      .sort((a, b) => (a.candidate_last_name || '').localeCompare(b.candidate_last_name || ''))
+      .map((r) => {
+        const lq = linkedQuestion(r);
+        return {
+          r,
+          tags: tagList(lq),
+          qNum: lq ? questions.indexOf(lq) + 1 : 0,
+          questionHtml: lq ? mdInline(lq.question) : '',
+          responseHtml: md(r.response),
+        };
+      });
+    return { tag, count: matching.length, racesPresent, cards };
+  })
+  .filter((t): t is NonNullable<typeof t> => t !== null);
+
+/* ── View C · Compare ──────────────────────────────────────────────────── */
+const candKeyCompare = (r: Response): string =>
+  [r.candidate_last_name, r.candidate_first_name, r.district, r.county_race].join('|||');
+
+const comparableRaces = filters.races.filter((race) => {
+  if (!presentRaces.includes(race)) return false;
+  const inRace = responses.filter((r) => r.race === race);
+  return groupBy(inRace, candKeyCompare).size >= 2;
+});
+
+const compareTables = comparableRaces.map((race) => {
+  const inRace = responses.filter((r) => r.race === race);
+  const groups = groupBy(inRace, candKeyCompare);
+  const cands = [...groups.keys()].sort().map((k) => groups.get(k)!);
+  const qBlocks = questions.map((q, i) => ({
+    n: i + 1,
+    tags: tagList(q),
+    questionHtml: mdInline(q.question),
+    cards: cands.map((items) => {
+      const cand = items[0];
+      const resp = items.find((it) => it.question === q.id);
+      return { cand, answerHtml: resp ? md(resp.response) : null };
+    }),
+  }));
+  return { race, qBlocks };
+});
+
+/* ── Meet the Team ─────────────────────────────────────────────────────── */
+// Normalize any Instagram URL form (share URL, /reel/, /tv/, trailing query)
+// to the canonical /{type}/{shortcode}/ permalink embed.js requires.
+function igPermalink(url: string): string {
+  const segs = url.split('?')[0].split('/');
+  let type = 'p';
+  let code = '';
+  let take = false;
+  for (const seg of segs) {
+    if (take && code === '') { code = seg; take = false; }
+    if (seg === 'p' || seg === 'reel' || seg === 'tv') { type = seg; take = true; }
+  }
+  return code ? `https://www.instagram.com/${type}/${code}/` : url;
+}
+const hasIgEmbeds = team.some((m) => m.instagram);
+---
+
+<BaseLayout title={`${stateName} Stance on Science`}>
+  <Header slot="header" />
+
+  <!-- HEADER -->
+  <header class="page-header plum">
+    <div class="container">
+      <div class="crumbs">
+        <a href={base}>SNAP</a><span class="sep">/</span>
+        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
+        <a href={`${base}initiatives/stance-on-science/`}>Stance on Science</a><span class="sep">/</span>
+        <span>{stateName}</span>
+      </div>
+      <h1 class="display">{stateName}<br /><span class="italic-accent" style="color: var(--orange-soft);">Candidate Page.</span></h1>
+      <p class="lede lg" style="color: rgba(255,255,255,0.86); margin-top: 20px;">
+        Created by the {teamName} team. Please contact <a href={`mailto:${cfg.team_email}`} style="color: var(--orange-soft);">{cfg.team_email}</a> with any questions.<span set:html={socialsHtml} />
+      </p>
+      {cfg.last_updated && (
+        <p style="margin-top: 14px; font-family: var(--mono); font-size: 13px; color: rgba(255,255,255,0.7);">Last updated: {formatDate(cfg.last_updated)}</p>
+      )}
+    </div>
+  </header>
+
+  <section style="background: var(--page); padding: 56px 0 80px;">
+    <div class="container stance-page">
+      <a href={`${base}initiatives/stance-on-science/#stance-map`} class="stance-back-link"><i class="fa-solid fa-arrow-left"></i> Back to map</a>
+
+      <div class="stance-intro">
+        <p class="jump-cta-wrap">
+          <a href="#responses" class="jump-cta"><i class="fa-solid fa-arrow-down-long"></i> Jump to candidate responses</a>
+        </p>
+
+        <p class="lede">{stateName} will face many challenges in the coming years, and it is increasingly critical that our policymakers understand the importance of evidence-based decision-making. The goals of this resource are to:</p>
+
+        <ol class="goals">
+          <li>Provide voters with clear, accessible information so they can see how candidates value science in decision-making.</li>
+          <li>Hold candidates accountable by sharing their responses publicly on our website and via local media.</li>
+          <li>Encourage thoughtful engagement between communities and policymakers on science policy-related topics in our state.</li>
+        </ol>
+
+        <p>Through Stance on Science, we hope to help {cfg.demonym_plural} understand how their elected representatives will utilize science to improve the state that they love. Learn more about this initiative on the <a href={`${base}initiatives/stance-on-science/`}>home page</a>.</p>
+
+        <details class="info">
+          <summary><span class="ic"><i class="fa-solid fa-circle-info"></i></span> How to use this resource <i class="fa-solid fa-chevron-right chev"></i></summary>
+          <div class="info__body">
+            <slot />
+          </div>
+        </details>
+
+        <details class="info">
+          <summary><span class="ic"><i class="fa-solid fa-list-check"></i></span> The questions posed <i class="fa-solid fa-chevron-right chev"></i></summary>
+          <div class="info__body">
+            <slot name="questions-note" />
+            <ol class="qlist">
+              {questions.map((q) => (
+                <li>
+                  <div>
+                    <Fragment set:html={mdInline(q.question)} />
+                    <div class="qtags">
+                      {tagList(q).map((t) => <span class="badge badge--tag">{t}</span>)}
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </details>
+
+        <div class="disclaimer">
+          <h3>Disclaimer</h3>
+          <p>The responses of candidates shared on this webpage do not reflect the views of the {teamName} team or the Scientist Network for Advancing Policy (SNAP) Coalition. SNAP is a non-partisan organization (please see more about SNAP <a href={`${base}about/`}>here</a>). <u>SNAP and the {teamName} team do not endorse any candidates.</u> The goals of this initiative can be found <a href={`${base}initiatives/stance-on-science/`}>here</a>. Please contact <a href={`mailto:${cfg.team_email}`}>{cfg.team_email}</a> with any questions.</p>
+        </div>
+
+        {cfg.ballot_lookup_url && (
+          <div class="ballot-lookup-callout">
+            <p>To find your districts for state and federal races and see who is on your ballot, please visit the <a href={cfg.ballot_lookup_url} target="_blank" rel="noopener">{cfg.ballot_lookup_label}</a>.</p>
+          </div>
+        )}
+      </div><!-- /.stance-intro -->
+
+      <hr class="stance-rule" />
+
+      <section id="responses" class="stance-responses">
+        <h2 class="stance-responses__title">{cfg.heading}</h2>
+
+        {!hasResponses ? (
+          <Fragment>
+            <p><em>No candidate responses have been published yet. Please check back soon.</em></p>
+            {additionalNoteHtml && <p><i set:html={additionalNoteHtml} /></p>}
+          </Fragment>
+        ) : (
+          <Fragment>
+            <p><i>If you cannot find a candidate, it means they have not yet submitted their response to Stance on Science. Please check back soon.</i></p>
+            {additionalNoteHtml && <p><i set:html={additionalNoteHtml} /></p>}
+
+            <div class="stance-view-toggle" role="tablist" aria-label="How to view candidate responses">
+              <button type="button" class="stance-view-toggle__btn is-active" data-view-btn="candidate" role="tab" aria-selected="true">Group by candidate</button>
+              <button type="button" class="stance-view-toggle__btn" data-view-btn="topic" role="tab" aria-selected="false">Group by topic</button>
+              <button type="button" class="stance-view-toggle__btn" data-view-btn="compare" role="tab" aria-selected="false">Compare</button>
+            </div>
+
+            {/* ── View A · Group by candidate ───────────────────────────────── */}
+            <div class="stance-view-panel" data-view-panel="candidate">
+              <p class="stance-responses__note">The order of responses is randomized by default. Use the filters below to find the candidate and race you are interested in.</p>
+
+              <div class="sbar" id="state-filters">
+                <div class="sbar__head"><i class="fa-solid fa-sliders"></i> Filter &amp; sort responses</div>
+                <div class="sbar__row">
+                  <label class="sfield"><span>Question Tag</span>
+                    <select data-filter="tag" aria-label="Filter by question tag">
+                      <option value="">All question tags</option>
+                      {filters.tags.filter((t) => presentTags.includes(t)).map((t) => <option value={t}>{t}</option>)}
+                    </select></label>
+                  <label class="sfield"><span>Race</span>
+                    <select data-filter="race" aria-label="Filter by race">
+                      <option value="">All races</option>
+                      {filters.races.filter((race) => presentRaces.includes(race)).map((race) => <option value={race}>{raceLabel(race)}</option>)}
+                    </select></label>
+                  <label class="sfield"><span>District</span>
+                    <select data-filter="district" aria-label="Filter by district">
+                      <option value="">All districts</option>
+                      {presentDistricts.map((d) => <option value={d}>District {d}</option>)}
+                    </select></label>
+                  <label class="sfield"><span>Party</span>
+                    <select data-filter="party" aria-label="Filter by party">
+                      <option value="">All parties</option>
+                      {filters.parties.filter((party) => presentParties.includes(party)).map((party) => <option value={party}>{party}</option>)}
+                    </select></label>
+                  {presentCountyRaces.length > 0 && (
+                    <label class="sfield"><span>County Race</span>
+                      <select data-filter="county_race" aria-label="Filter by county race">
+                        <option value="">All county races</option>
+                        {presentCountyRaces.map((cr) => <option value={cr}>{cr}</option>)}
+                      </select></label>
+                  )}
+                  {hasPrimaryCandidates && (
+                    <label class="stance-filter stance-filter--check">
+                      <input type="checkbox" data-filter-primary aria-label="Show candidates who did not advance past the primary" /> Show primary candidates</label>
+                  )}
+                  <span class="sbar__spacer"></span>
+                  <label class="sfield sfield--sort"><span>Sort By</span>
+                    <select data-sort aria-label="Sort candidates">
+                      <option value="random">Random</option>
+                      <option value="race">Race</option>
+                      <option value="newest">Newest</option>
+                      <option value="oldest">Oldest</option>
+                      <option value="alpha">Last Name A–Z</option>
+                      <option value="alpha-rev">Last Name Z–A</option>
+                    </select></label>
+                  <button type="button" class="sbar__reset" data-filter-reset><i class="fa-solid fa-rotate-left"></i> Reset</button>
+                </div>
+              </div>
+
+              <p class="results-count" id="results-count" data-results-count></p>
+
+              <div class="responses__grid">
+                <aside class="rail" id="rail">
+                  <div class="rail__box">
+                    <div class="rail-head">
+                      <div class="rail-head__title">Candidate directory</div>
+                      <div class="rail-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input id="rail-search" type="search" placeholder="Jump to a candidate…" aria-label="Search candidates" />
+                      </div>
+                    </div>
+                    <div class="rail-list" id="rail-list"></div>
+                  </div>
+                </aside>
+
+                <div class="feed-scroll" id="feed-scroll">
+                  <div class="feed" id="feed-list">
+                    {candidateCards.map((c) => (
+                      <article
+                        class="cand-card"
+                        id={`card-${c.id}`}
+                        data-name={fullName(c.cand).toLowerCase()}
+                        data-last={c.cand.candidate_last_name}
+                        data-race={c.cand.race}
+                        data-district={c.district}
+                        data-party={c.cand.party}
+                        data-county-race={c.cand.county_race ?? ''}
+                        data-date={c.cand.date ?? ''}
+                        data-date-display={c.dateDisplay}
+                        data-answered={c.answered}
+                        data-qtotal={c.qtotal}
+                        data-primary-candidate={c.cand.primary_candidate ? 'true' : 'false'}
+                        data-location={c.location}
+                      >
+                        <div class="cand-card__head">
+                          <h3 class="cand-card__name">{fullName(c.cand)}</h3>
+                          {c.cand.party && (
+                            <span
+                              class={`badge badge--party badge--party-${partySlug(c.cand.party)}`}
+                              data-filter="party" data-value={c.cand.party}
+                              role="button" tabindex="0" aria-label={`Filter by ${c.cand.party}`}
+                            >{c.cand.party}</span>
+                          )}
+                        </div>
+                        <div class="cand-card__meta">
+                          <span
+                            class="badge badge--race"
+                            data-filter="race" data-value={c.cand.race}
+                            role="button" tabindex="0" aria-label={`Filter by ${raceLabel(c.cand.race)}`}
+                          >{raceLabel(c.cand.race)}</span>
+                          {c.district && (
+                            <span
+                              class="badge badge--dist"
+                              data-filter="district" data-value={c.district}
+                              role="button" tabindex="0" aria-label={`Filter by District ${c.district}`}
+                            >District {c.district}</span>
+                          )}
+                          {c.cand.county_race && (
+                            <span
+                              class="badge badge--county"
+                              data-filter="county_race" data-value={c.cand.county_race}
+                              role="button" tabindex="0" aria-label={`Filter by ${c.cand.county_race}`}
+                            >{c.cand.county_race}</span>
+                          )}
+                        </div>
+                        <div class="cand-card__sub" data-sub-default={c.subDefault}>{c.subDefault}</div>
+
+                        {c.qaBlocks.map((qa) => (
+                          <div class="qa" data-tags={qa.tagAttr}>
+                            <p class="qa__q"><span class="qa__n">Q{qa.n}</span> <Fragment set:html={qa.questionHtml} /></p>
+                            <div class="qa__tags">
+                              {qa.tags.map((t) => (
+                                <span class="badge badge--tag" data-tag={t} data-filter="tag" role="button" tabindex="0" aria-label={`Filter by ${t}`}>{t}</span>
+                              ))}
+                            </div>
+                            <div class="qa__a" set:html={qa.answerHtml} />
+                          </div>
+                        ))}
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div><!-- /[data-view-panel="candidate"] -->
+
+            {/* ── View B · Group by topic ───────────────────────────────────── */}
+            <div class="stance-view-panel" data-view-panel="topic" hidden>
+              <p class="stance-responses__note">Pick a topic to see how every candidate answered the related question(s), then optionally narrow by race.</p>
+
+              <section data-topic-hub>
+                <div class="stance-topic-grid">
+                  {topicTiles.map((t) => (
+                    <button type="button" class="stance-topic-tile" data-topic={t.tag}>
+                      <span class="stance-topic-tile__name">{t.tag}</span>
+                      <span class="stance-topic-tile__meta">
+                        <span>candidate answers</span>
+                        <span class="stance-topic-tile__count">{t.count}</span>
+                      </span>
+                    </button>
+                  ))}
+                </div>
+
+                <p class="stance-topic-placeholder" data-topic-placeholder>
+                  <em>Select a topic above to see the candidate responses.</em>
+                </p>
+
+                {topicTiles.map((t) => (
+                  <div class="stance-topic-panel" data-topic-panel={t.tag} hidden>
+                    <div class="stance-topic-panel__head">
+                      <h3>{t.tag}</h3>
+                      <span class="stance-topic-panel__count"><span data-panel-count>{t.count}</span> response{t.count !== 1 ? 's' : ''}</span>
+                    </div>
+
+                    {t.racesPresent.length > 1 && (
+                      <div class="stance-chip-row">
+                        <span class="stance-chip-row__label">Race:</span>
+                        <button type="button" class="stance-chip is-active" data-race-filter="">All</button>
+                        {filters.races.filter((race) => t.racesPresent.includes(race)).map((race) => (
+                          <button type="button" class="stance-chip" data-race-filter={race}>{race}</button>
+                        ))}
+                      </div>
+                    )}
+                    {hasPrimaryCandidates && (
+                      <label class="stance-chk"><input type="checkbox" data-topic-primary /> Show primary candidates</label>
+                    )}
+
+                    <div class="stance-response-list">
+                      {t.cards.map((c) => (
+                        <article
+                          class="stance-response-card"
+                          data-candidate={c.r.candidate_last_name.toLowerCase()}
+                          data-date={c.r.date ?? ''}
+                          data-state={c.r.state.toLowerCase()}
+                          data-tag={c.tags.join('|')}
+                          data-race={c.r.race}
+                          data-district={c.r.district ?? ''}
+                          data-party={c.r.party}
+                          data-county-race={c.r.county_race ?? ''}
+                          data-primary-candidate={c.r.primary_candidate ? 'true' : 'false'}
+                        >
+                          <header class="stance-response-card__header">
+                            <h4 class="stance-response-card__candidate">{c.r.candidate_first_name} {c.r.candidate_last_name}</h4>
+                            <div class="stance-response-card__meta">
+                              <span class="stance-badge stance-badge--race">{c.r.race}{c.r.district ? ` — District ${c.r.district}` : ''}</span>
+                              {c.r.county_race && <span class="stance-badge stance-badge--county-race">{c.r.county_race}</span>}
+                              {c.r.party && <span class={`stance-badge stance-badge--party stance-badge--party-${partySlug(c.r.party)}`}>{c.r.party}</span>}
+                              {c.tags.map((t2) => <span class="stance-badge stance-badge--tag">{t2}</span>)}
+                            </div>
+                          </header>
+                          <div class="stance-response-card__body">
+                            {c.questionHtml && <p class="stance-response-card__question"><span class="stance-response-card__qn">Q{c.qNum}</span> <Fragment set:html={c.questionHtml} /></p>}
+                            <Fragment set:html={c.responseHtml} />
+                          </div>
+                          {c.r.date && (
+                            <footer class="stance-response-card__footer"><small>Submitted {formatDate(c.r.date)}</small></footer>
+                          )}
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </section>
+            </div><!-- /[data-view-panel="topic"] -->
+
+            {/* ── View C · Compare ──────────────────────────────────────────── */}
+            <div class="stance-view-panel" data-view-panel="compare" hidden>
+              <p class="stance-responses__note">Pick a race to view candidate responses side by side. Only races with two or more responding candidates are shown.</p>
+
+              {comparableRaces.length === 0 ? (
+                <p><em>No race has two or more responding candidates yet. Please check back soon.</em></p>
+              ) : (
+                <section data-compare>
+                  <div class="stance-filter-bar">
+                    <div class="stance-filter-bar__row">
+                      <label class="stance-filter">
+                        <span class="stance-filter__label">Race to compare</span>
+                        <select data-compare-race>
+                          {comparableRaces.map((race) => <option value={race}>{race}</option>)}
+                        </select>
+                      </label>
+                      {hasPrimaryCandidates && (
+                        <label class="stance-filter stance-filter--check">
+                          <input type="checkbox" data-compare-primary /> Show primary candidates</label>
+                      )}
+                    </div>
+                  </div>
+
+                  {compareTables.map((table, ti) => (
+                    <div class="stance-compare" data-compare-table={table.race} hidden={ti !== 0}>
+                      {table.qBlocks.map((q) => (
+                        <section class="stance-compare-q">
+                          <h3 class="stance-compare-q__title"><span class="stance-compare-q__n">Q{q.n}</span> <Fragment set:html={q.questionHtml} /></h3>
+                          <div class="stance-compare-q__tags">
+                            {q.tags.map((t) => <span class="stance-badge stance-badge--tag">{t}</span>)}
+                          </div>
+                          <div class="stance-compare-grid">
+                            {q.cards.map((cc) => (
+                              <article class="stance-compare-card" data-primary-candidate={cc.cand.primary_candidate ? 'true' : 'false'}>
+                                <header class="stance-compare-card__head">
+                                  <div class="stance-compare-card__cand">{cc.cand.candidate_first_name} {cc.cand.candidate_last_name}</div>
+                                  <div class="stance-compare-card__meta">
+                                    {cc.cand.party && <span class={`stance-badge stance-badge--party stance-badge--party-${partySlug(cc.cand.party)}`}>{cc.cand.party}</span>}
+                                    {cc.cand.district && <span class="stance-compare-card__hint">District {cc.cand.district}</span>}
+                                    {cc.cand.county_race && <span class="stance-compare-card__hint">{cc.cand.county_race}</span>}
+                                  </div>
+                                </header>
+                                {cc.answerHtml ? (
+                                  <div class="stance-answer-text" set:html={cc.answerHtml} />
+                                ) : (
+                                  <span class="stance-compare-card__empty">No response</span>
+                                )}
+                              </article>
+                            ))}
+                          </div>
+                        </section>
+                      ))}
+                    </div>
+                  ))}
+                </section>
+              )}
+            </div><!-- /[data-view-panel="compare"] -->
+          </Fragment>
+        )}
+      </section>
+
+      <!-- PRESS MENTIONS -->
+      <section class="stance-press">
+        <h2 class="stance-press__title">Press Mentions</h2>
+        {pressMentions.length === 0 ? (
+          <p><strong>None yet! Check back soon for updates!</strong></p>
+        ) : (
+          <ul class="stance-press__list">
+            {pressMentions.map((a) => (
+              <li>
+                <span class="stance-press__date">{pressDate(a.date)}</span>
+                <a href={a.website} target="_blank" rel="noopener">{a.headline}</a>
+                <span class="stance-press__source">in <i>{a.source}</i></span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <!-- MEET THE TEAM -->
+      {team.length > 0 && (
+        <section class="stance-team" aria-label="Meet the team">
+          <h2 class="stance-team__title">Meet the Team</h2>
+          <div class="stance-team__scroll">
+            <ul class="stance-team__track">
+              {team.map((item) => (
+                <li class:list={['stance-team__card', { 'stance-team__card--ig': item.instagram }]}>
+                  {item.image ? (
+                    <img
+                      class="stance-team__img"
+                      loading="lazy"
+                      src={`${base}images/stance_teams/${state}/${item.image}`}
+                      alt={item.alt ?? 'Meet the team'}
+                    />
+                  ) : item.instagram ? (
+                    <blockquote
+                      class="instagram-media"
+                      data-instgrm-permalink={igPermalink(item.instagram)}
+                      data-instgrm-version="14"
+                    ></blockquote>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="stance-team__lightbox" role="dialog" aria-modal="true" aria-label="Team card viewer" hidden>
+            <button type="button" class="stance-team__lb-btn stance-team__lb-close" aria-label="Close">&times;</button>
+            <button type="button" class="stance-team__lb-btn stance-team__lb-prev" aria-label="Previous card">&#8249;</button>
+            <img class="stance-team__lb-img" alt="" />
+            <button type="button" class="stance-team__lb-btn stance-team__lb-next" aria-label="Next card">&#8250;</button>
+          </div>
+        </section>
+      )}
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<script src={`${base}scripts/stance/stance-state-explorer.js`} is:inline></script>
+<script src={`${base}scripts/stance/stance-topic-hub.js`} is:inline></script>
+<script src={`${base}scripts/stance/stance-compare.js`} is:inline></script>
+<script src={`${base}scripts/stance/stance-view-toggle.js`} is:inline></script>
+{team.length > 0 && (
+  <Fragment>
+    <script src={`${base}scripts/stance/stance-team-lightbox.js`} is:inline></script>
+    <script src={`${base}scripts/stance/stance-team-equalize.js`} is:inline></script>
+  </Fragment>
+)}
+{hasIgEmbeds && (
+  <Fragment>
+    <script async src="https://www.instagram.com/embed.js" onload="window.instgrm && window.instgrm.Embeds.process();" is:inline></script>
+    <script is:inline>window.instgrm && window.instgrm.Embeds.process();</script>
+  </Fragment>
+)}

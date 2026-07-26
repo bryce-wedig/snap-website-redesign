@@ -1,0 +1,104 @@
+---
+/**
+ * Georgia Stance on Science page. Unlike the other states, Georgia's
+ * interactive response explorer is not yet active — the team's 2026 candidate
+ * survey results are hosted externally (Athens Politics Nerd), so this page
+ * is a simple landing page with the partner credits, disclaimer, and press
+ * mentions. When Georgia's questions/responses data is ready, switch this
+ * page over to the shared <StanceStatePage> component like the other states.
+ */
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import Header from '../../../../components/Header.astro';
+import Footer from '../../../../components/Footer.astro';
+import '../../../../styles/stance.css';
+
+const base = import.meta.env.BASE_URL;
+const stateName = 'Georgia';
+const teamName = 'Georgia Stance on Science';
+const teamEmail = 'coalitionofathensscientists@gmail.com';
+
+interface PressItem { headline: string; source: string; date: string; website: string; category?: string | string[] }
+const pressData = parse(readFileSync(join(process.cwd(), 'src/data/press.yaml'), 'utf-8')) as PressItem[];
+const pressMentions = pressData.filter((a) => {
+  const cats = Array.isArray(a.category) ? a.category : [a.category ?? ''];
+  return cats.some((c) => (c ?? '').toLowerCase() === 'stance on science ga');
+});
+function pressDate(d: string): string {
+  const dt = new Date(`${d}T00:00:00`);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+---
+
+<BaseLayout title={`${stateName} Stance on Science`}>
+  <Header slot="header" />
+
+  <!-- HEADER -->
+  <header class="page-header plum">
+    <div class="container">
+      <div class="crumbs">
+        <a href={base}>SNAP</a><span class="sep">/</span>
+        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
+        <a href={`${base}initiatives/stance-on-science/`}>Stance on Science</a><span class="sep">/</span>
+        <span>{stateName}</span>
+      </div>
+      <h1 class="display">{stateName}<br /><span class="italic-accent" style="color: var(--orange-soft);">Candidate Page.</span></h1>
+      <p class="lede lg" style="color: rgba(255,255,255,0.86); margin-top: 20px;">
+        Created by the {teamName} team,
+        <a href="https://www.instagram.com/coalitionofathensscientists/" target="_blank" rel="noopener">Coalition of Athens Scientists</a>,
+        <a href="https://scienceforgeorgia.org/" target="_blank" rel="noopener">Science for Georgia</a>,
+        <a href="https://esal.us/" target="_blank" rel="noopener">Engineers and Scientists Acting Locally</a>,
+        <a href="https://athenspoliticsnerd.com/" target="_blank" rel="noopener">Athens Politics Nerd</a>,
+        <a href="https://www.facebook.com/iotapsiomega/" target="_blank" rel="noopener">Alpha Kappa Alpha Iota Psi Omega Chapter</a>,
+        <a href="https://southernsustainabilityinstitute.org/" target="_blank" rel="noopener">Southern Sustainability Institute</a>,
+        <a href="https://www.100percentathens.org/" target="_blank" rel="noopener">100% Athens</a>,
+        <a href="https://athenslandtrust.org/" target="_blank" rel="noopener">Athens Land Trust</a>,
+        <a href="https://c-changeconversations.org/" target="_blank" rel="noopener">C-Change</a>, and
+        <a href="https://citizensclimatelobby.org/about-ccl/chapters/" target="_blank" rel="noopener">Citizen's Climate Lobby Athens</a>.<br />
+        Please contact <a href={`mailto:${teamEmail}`} style="color: var(--orange-soft);">{teamEmail}</a> with any questions.
+      </p>
+    </div>
+  </header>
+
+  <section style="background: var(--page); padding: 56px 0 80px;">
+    <div class="container stance-page">
+      <a href={`${base}initiatives/stance-on-science/#stance-map`} class="stance-back-link"><i class="fa-solid fa-arrow-left"></i> Back to map</a>
+
+      <div class="stance-intro">
+        <div class="disclaimer">
+          <h3>Disclaimer</h3>
+          <p>The responses of candidates shared on this webpage do not reflect the views of the {teamName} team or the Scientist Network for Advancing Policy (SNAP) Coalition. SNAP is a non-partisan organization (please see more about SNAP <a href={`${base}about/`}>here</a>). <u>SNAP and the {teamName} team do not endorse any candidates.</u> The goals of this initiative can be found <a href={`${base}initiatives/stance-on-science/`}>here</a>. Please contact <a href={`mailto:${teamEmail}`}>{teamEmail}</a> with any questions.</p>
+        </div>
+      </div>
+
+      <hr class="stance-rule" />
+
+      <section id="responses" class="stance-responses">
+        <h2 class="stance-responses__title">Athens, Georgia 2026 Candidate Survey on Energy and the Environment</h2>
+        <p>The candidate responses to the Athens, Georgia 2026 Candidate Survey on Energy and the Environment are hosted on the <a href="https://athenspoliticsnerd.com/local-candidate-positions-on-energy-and-the-environment/" target="_blank" rel="noopener">Athens Politics Nerd website</a>.</p>
+      </section>
+
+      <!-- PRESS MENTIONS -->
+      <section class="stance-press">
+        <h2 class="stance-press__title">Press Mentions</h2>
+        {pressMentions.length === 0 ? (
+          <p><strong>None yet! Check back soon for updates!</strong></p>
+        ) : (
+          <ul class="stance-press__list">
+            {pressMentions.map((a) => (
+              <li>
+                <span class="stance-press__date">{pressDate(a.date)}</span>
+                <a href={a.website} target="_blank" rel="noopener">{a.headline}</a>
+                <span class="stance-press__source">in <i>{a.source}</i></span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

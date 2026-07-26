@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import '../../../styles/stance.css';
+import { loadStates, loadFilters } from '../../../lib/stance';
+
+const base = import.meta.env.BASE_URL;
+const states = loadStates();
+const filters = loadFilters();
+---
+
+<BaseLayout title="Stance on Science — Search">
+  <Header slot="header" />
+
+  <header class="page-header plum">
+    <div class="container">
+      <div class="crumbs">
+        <a href={base}>SNAP</a><span class="sep">/</span>
+        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
+        <a href={`${base}initiatives/stance-on-science/`}>Stance on Science</a><span class="sep">/</span>
+        <span>Search</span>
+      </div>
+      <h1 class="display">Search all<br /><span class="italic-accent" style="color: var(--orange-soft);">candidate responses.</span></h1>
+      <p class="lede lg" style="color: rgba(255,255,255,0.86); margin-top: 20px;">
+        Filter responses across every state. To browse one state at a time, click the state on the <a href={`${base}initiatives/stance-on-science/#stance-map`} style="color: var(--orange-soft);">map</a> to see that state's page.
+      </p>
+    </div>
+  </header>
+
+  <section style="background: var(--page); padding: 56px 0 80px;">
+    <div class="container stance-page">
+      <a href={`${base}initiatives/stance-on-science/#stance-map`} class="stance-back-link"><i class="fa-solid fa-arrow-left"></i> Back to map</a>
+
+      <div class="stance-search-grid" id="stance-search">
+        <div class="stance-search-grid__searchbar">
+          <form data-search-form onsubmit="return false;">
+            <label class="sr-only" for="stance-search-q">Search responses</label>
+            <input
+              id="stance-search-q"
+              type="search"
+              placeholder="Search candidates and responses…"
+              data-search-input
+              autocomplete="off"
+            />
+          </form>
+        </div>
+
+        <aside class="stance-search-grid__filters">
+          <h2>Filters</h2>
+
+          <div class="stance-filter-bar" id="search-filters">
+            <div class="stance-filter-bar__row">
+              <label class="stance-filter">
+                <span class="stance-filter__label">State</span>
+                <select data-filter="state">
+                  <option value="">All states</option>
+                  {states.map((s) => <option value={s.code}>{s.name}</option>)}
+                </select>
+              </label>
+              <label class="stance-filter">
+                <span class="stance-filter__label">Question Tag</span>
+                <select data-filter="tag">
+                  <option value="">All question tags</option>
+                  {filters.tags.map((t) => <option value={t}>{t}</option>)}
+                </select>
+              </label>
+              <label class="stance-filter">
+                <span class="stance-filter__label">Race</span>
+                <select data-filter="race">
+                  <option value="">All races</option>
+                  {filters.races.map((r) => <option value={r}>{r}</option>)}
+                </select>
+              </label>
+              <label class="stance-filter">
+                <span class="stance-filter__label">District</span>
+                <select data-filter="district">
+                  <option value="">All districts</option>
+                </select>
+              </label>
+              <label class="stance-filter">
+                <span class="stance-filter__label">Party</span>
+                <select data-filter="party">
+                  <option value="">All parties</option>
+                  {filters.parties.map((p) => <option value={p}>{p}</option>)}
+                </select>
+              </label>
+              <label class="stance-filter">
+                <span class="stance-filter__label">County Race</span>
+                <select data-filter="county_race">
+                  <option value="">All county races</option>
+                </select>
+              </label>
+              <label class="stance-filter stance-filter--check">
+                <input type="checkbox" data-filter-primary aria-label="Show candidates who did not advance past the primary" /> Show primary candidates</label>
+            </div>
+          </div>
+
+          <h2>Sort</h2>
+          <div class="stance-filter-bar" id="search-sort">
+            <div class="stance-filter-bar__row">
+              <label class="stance-filter">
+                <span class="stance-filter__label">Sort By</span>
+                <select data-sort>
+                  <option value="random">Random</option>
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                  <option value="alpha">Last Name A–Z</option>
+                  <option value="alpha-rev">Last Name Z–A</option>
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <button type="button" class="stance-filter__reset" data-filter-reset><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </aside>
+
+        <main class="stance-search-grid__results">
+          <p class="stance-results-count">
+            Showing <span data-results-count>0</span> of
+            <span data-results-total>0</span> responses.
+          </p>
+          <div class="stance-response-list" data-results-list>
+            <p><em>Loading responses…</em></p>
+          </div>
+          <p class="stance-empty-state" data-empty-state hidden>
+            <em>No responses match your search.</em>
+          </p>
+        </main>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<script is:inline define:vars={{ responsesUrl: `${base}initiatives/stance-on-science/responses.json` }}>
+  window.STANCE_RESPONSES_URL = responsesUrl;
+</script>
+<script is:inline src={`${base}scripts/stance/stance-search.js`}></script>

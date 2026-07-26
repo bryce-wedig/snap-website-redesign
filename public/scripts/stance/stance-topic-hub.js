@@ -41,16 +41,23 @@
       });
     });
 
-    // Wire up the race-filter chips inside each panel.
+    // Wire up the race-filter chips and the "show primary candidates" toggle
+    // inside each panel. Primary candidates (who didn't advance past the
+    // primary) are hidden by default; the checkbox reveals them.
     panels.forEach(function (panel) {
       var chips = panel.querySelectorAll(".stance-chip[data-race-filter]");
       var cards = panel.querySelectorAll(".stance-response-card");
       var countEl = panel.querySelector("[data-panel-count]");
+      var primaryChk = panel.querySelector("[data-topic-primary]");
+      var race = "";
 
-      function applyRace(race) {
+      function apply() {
         var visible = 0;
         cards.forEach(function (card) {
-          var match = !race || card.getAttribute("data-race") === race;
+          var raceMatch = !race || card.getAttribute("data-race") === race;
+          var primaryHidden = !(primaryChk && primaryChk.checked) &&
+            card.getAttribute("data-primary-candidate") === "true";
+          var match = raceMatch && !primaryHidden;
           card.hidden = !match;
           if (match) visible += 1;
         });
@@ -62,9 +69,13 @@
 
       chips.forEach(function (chip) {
         chip.addEventListener("click", function () {
-          applyRace(chip.getAttribute("data-race-filter"));
+          race = chip.getAttribute("data-race-filter");
+          apply();
         });
       });
+      if (primaryChk) primaryChk.addEventListener("change", apply);
+
+      apply();
     });
   }
 

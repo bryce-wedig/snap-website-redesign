@@ -1,0 +1,111 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import '../../../styles/stance.css';
+
+const base = import.meta.env.BASE_URL;
+
+const faqs = [
+  {
+    q: 'What is SNAP?',
+    a: `<a href="https://snapcoalition.org/">SNAP (Scientist Network for Advancing Policy)</a> is a nationwide, non-partisan, grassroots coalition of early-career scientists and researchers in the US. SNAP's goal is to bridge the gap between scientists, their communities, and the general public.`,
+  },
+  {
+    q: 'What is Stance on Science?',
+    a: `<a href="${base}initiatives/stance-on-science/">Stance on Science (Stance)</a> is an initiative to provide voters with clear, accessible information about political candidates' positions on science and technology issues ahead of the 2026 midterm elections. Teams of volunteers in each state will be collecting 200-word responses to a short list of science policy-related questions from candidates for various political races, which will be published on our website. Teams will also be organizing town halls, either virtually or in-person, to give candidates a platform to share these views to the community in real-time.`,
+  },
+  {
+    q: "What is the objective of the initiative's town hall events?",
+    a: `The goal of town hall events is to provide an opportunity for candidates to engage directly with voters on science-related issues and to expand more on their views on these topics than can be done in a short questionnaire response. We will also invite audience members to ask their own questions so that they can get answers on the science policy topics that matter most to them.`,
+  },
+  {
+    q: 'Which candidates will be invited to the town halls?',
+    a: `All candidates running for the same office will be invited to participate.`,
+  },
+  {
+    q: 'Will town halls be in-person, virtual, or hybrid?',
+    a: `We will let each volunteer team decide with the candidates in their states what format works best for them. We expect that in most instances a virtual format will be most accessible for candidates and audience participants.`,
+  },
+  {
+    q: 'Who will be in attendance?',
+    a: `All members of the community are invited to attend. State volunteer teams will circulate an RSVP form with a link for virtual town halls and/or a location for hybrid or in-person events, but community members are also welcome to attend without filling out the RSVP form beforehand.`,
+  },
+  {
+    q: 'How long will town halls last?',
+    a: `We expect town halls to last ~90 minutes, though this will depend on the number of participating candidates and the number of audience questions asked.`,
+  },
+  {
+    q: 'How will questions be selected?',
+    a: `A SNAP moderator will ask the same set of questions that will be sent in the Stance on Science questionnaire survey (4-6 questions), giving candidates an opportunity to provide further details of their position on these issues. We will also solicit questions from members of the community via an RSVP form, which will be shared with candidates in advance. Time permitting, we will also allow community members to submit questions live in the last part of the town hall, and a moderator will select questions to ask.`,
+  },
+  {
+    q: 'Will questions be available before town halls occur?',
+    a: `Questions from our SNAP questionnaire or from the RSVP form will be shared with all participating candidates in advance. However, questions may also come live from audience members in the last part of the town hall.`,
+  },
+  {
+    q: 'Will there be a moderator?',
+    a: `Members of the state's volunteer team will be present at the event to introduce participating candidates, moderate questions and response times, and select audience questions.`,
+  },
+  {
+    q: 'How many people will be in attendance?',
+    a: `An estimated number of attendees will be provided to candidates after responses have been collected from the Town Hall RSVP form.`,
+  },
+  {
+    q: 'Will town halls be recorded?',
+    a: `The event will be recorded if hosted virtually or in hybrid format. A recording of the event will be hosted on our website.`,
+  },
+  {
+    q: 'Are other organizations sponsoring the event?',
+    a: `State Stance volunteers will be organizing this event; state volunteer teams may reach out to local community organizations for help on coordinating venues for in-person or hybrid events or just to spread the word about town halls. Stance on Science is a non-partisan initiative and will not ask an organization with a partisan interest to host or sponsor the town hall.`,
+  },
+  {
+    q: 'How will town halls be advertised?',
+    a: `We will reach out to local news media organizations and reporters, as well as various local community organizations, to advertise the town halls as widely as possible. We will spread the word via email networks, newsletter advertisements, and physical flyers. Information about the event will also be shared on social media. We will also ask candidates to help us advertise through their own networks!`,
+  },
+  {
+    q: 'Will there be press coverage?',
+    a: `We will invite local media to attend and cover the town halls.`,
+  },
+];
+---
+
+<BaseLayout title="Stance on Science — FAQ">
+  <Header slot="header" />
+
+  <header class="page-header plum">
+    <div class="container">
+      <div class="crumbs">
+        <a href={base}>SNAP</a><span class="sep">/</span>
+        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
+        <a href={`${base}initiatives/stance-on-science/`}>Stance on Science</a><span class="sep">/</span>
+        <span>FAQ</span>
+      </div>
+      <h1 class="display">Frequently asked<br /><span class="italic-accent" style="color: var(--orange-soft);">questions.</span></h1>
+      <p class="lede lg" style="color: rgba(255,255,255,0.86); margin-top: 20px;">About the Stance on Science initiative and its candidate town hall events.</p>
+    </div>
+  </header>
+
+  <section style="background: var(--page); padding: 56px 0 80px;">
+    <div class="container stance-page">
+      <a href={`${base}initiatives/stance-on-science/#stance-map`} class="stance-back-link"><i class="fa-solid fa-arrow-left"></i> Back to map</a>
+
+      <div class="faq-list">
+        {faqs.map((f) => (
+          <details class="info">
+            <summary><span class="ic"><i class="fa-solid fa-circle-question"></i></span> {f.q} <i class="fa-solid fa-chevron-right chev"></i></summary>
+            <div class="info__body">
+              <p set:html={f.a} />
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .faq-list { max-width: 860px; }
+</style>
