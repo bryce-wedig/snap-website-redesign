@@ -216,7 +216,7 @@ const hasIgEmbeds = team.some((m) => m.instagram);
         Created by the {teamName} team. Please contact <a href={`mailto:${cfg.team_email}`} style="color: var(--orange-soft);">{cfg.team_email}</a> with any questions.<span set:html={socialsHtml} />
       </p>
       {cfg.last_updated && (
-        <p style="margin-top: 14px; font-family: var(--mono); font-size: 13px; color: rgba(255,255,255,0.7);">Last updated: {formatDate(cfg.last_updated)}</p>
+        <p class="stance-last-updated">Last updated: {formatDate(cfg.last_updated)}</p>
       )}
     </div>
   </header>

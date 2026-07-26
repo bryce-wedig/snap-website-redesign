@@ -1,12 +1,46 @@
 /* ===== SNAP Coalition — Design System ===== */
 /* Direction "B1 · Initiative Card Grid" */
 
+/* ---------------------------------------------------------------------------
+   BRAND STYLE GUIDE — what we follow, and where we knowingly diverge.
+
+   The SNAP style guide sanctions seven colors and two typefaces:
+     Primary   navy #213863, orange #E89142
+     Secondary yellow #F2F493, olive #C2C354, slate #687DA2,
+               peach #F4D294, plum #310A45
+     Type      Open Sans SemiBold for titles (25-44pt)
+               Open Sans Normal for body (18-28pt)
+               Montserrat Medium/Bold for subtitles, quotes, short statements
+
+   Deliberate deviations — please do not "fix" these without a decision:
+
+   1. HEADING WEIGHT. Every heading here is 700 (Bold), not the guide's
+      SemiBold. The guide's weight spec was written for slides; the redesign
+      was drawn at Bold. Note that ~60 rules across src/ hardcode 700, so
+      reversing this is a refactor, not a one-token change.
+
+   2. TYPE SIZES. The guide's pt ranges are slide sizes and do not map to the
+      web. Body is 18px here; display type runs to 96px. Two things worth
+      revisiting as ACCESSIBILITY (not branding) issues: the 9.5-10px uppercase
+      Montserrat micro-labels below, and the Stance tracker's candidate answers
+      at 15px (stance.css) — the primary content of that page.
+
+   3. DERIVED TINTS AND SHADES. --navy-deep, --orange-soft, --peach-tint,
+      --page, --warm and friends are not literally in the guide but are all
+      derived from brand hues. Kept intentionally.
+
+   4. SEMANTIC COLORS. The Stance tracker's party colors (stance.css) sit
+      outside the palette on purpose — they carry meaning readers rely on.
+   --------------------------------------------------------------------------- */
+
 @import '@fontsource/open-sans/400.css';
 @import '@fontsource/open-sans/400-italic.css';
 @import '@fontsource/open-sans/500.css';
 @import '@fontsource/open-sans/600.css';
 @import '@fontsource/open-sans/700.css';
+@import '@fontsource/open-sans/700-italic.css';
 @import '@fontsource/montserrat/500.css';
+@import '@fontsource/montserrat/500-italic.css';
 @import '@fontsource/montserrat/600.css';
 @import '@fontsource/montserrat/700.css';
 
@@ -43,16 +77,6 @@
   --hairline: #e2e6ee;
   --hairline-strong: #cdd4e0;
 
-  /* Stance (tracker page) */
-  --pro: #2c6a4e;
-  --pro-tint: #e2f0e9;
-  --against: #b53636;
-  --against-tint: #f6dede;
-  --mixed: #d49b1e;
-  --mixed-tint: #faecc8;
-  --silent: #8a8a8a;
-  --silent-tint: #ededed;
-
   /* Layout */
   --container: 1280px;
   --container-narrow: 980px;
@@ -88,46 +112,11 @@
   --shadow-lg: 0 8px 24px rgba(20,33,58,0.06);
   --shadow-xl: 0 12px 28px rgba(20,33,58,0.08);
 
-  /* Type */
-  --display: 'Open Sans', system-ui, sans-serif;
-  --serif: 'Open Sans', system-ui, sans-serif;
-  --accent: 'Montserrat', system-ui, sans-serif;
-  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
-
-  /* Type scale (legacy) */
-  --text-xs: 0.875rem;
-  --text-sm: 1rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
-
-  /* Transitions (legacy) */
-  --transition-fast: 150ms ease;
-  --transition-base: 250ms ease;
-  --transition-slow: 400ms ease;
-
-  /* Legacy --snap-* aliases (keep existing pages working) */
-  --snap-navy: var(--navy);
-  --snap-orange: var(--orange);
-  --snap-yellow-light: var(--yellow);
-  --snap-olive: var(--olive);
-  --snap-slate: var(--slate);
-  --snap-peach: var(--peach);
-  --snap-plum: var(--plum);
-  --snap-white: #ffffff;
-  --snap-off-white: var(--page);
-  --snap-gray-100: #F3F4F6;
-  --snap-gray-200: #E5E7EB;
-  --snap-gray-300: #D1D5DB;
-  --snap-gray-400: #9CA3AF;
-  --snap-gray-500: #6B7280;
-  --snap-gray-600: #4B5563;
-  --snap-gray-700: #374151;
-  --snap-gray-800: #1F2937;
-  --snap-gray-900: #111827;
+  /* Type — the brand guide sanctions Open Sans and Montserrat only. */
+  --display: 'Open Sans', system-ui, sans-serif;   /* titles */
+  --body-font: 'Open Sans', system-ui, sans-serif; /* body copy */
+  --accent: 'Montserrat', system-ui, sans-serif;   /* subtitles, quotes, short statements */
+  --meta: 'Montserrat', system-ui, sans-serif;     /* dates, counters, data labels */
 }
 
 /* =====================================================
@@ -136,7 +125,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 body {
-  font-family: var(--serif);
+  font-family: var(--body-font);
   font-size: 18px; line-height: 1.65;
   color: var(--body); background: var(--page);
   min-height: 100vh;
@@ -198,7 +187,6 @@ h1.display em, h2.display em, .display-1 em, .display-2 em { color: var(--orange
 .lede.lg { font-size: 22px; line-height: 1.45; max-width: 720px; }
 .lede.on-dark { color: rgba(255,255,255,0.86); }
 .body-text { font-size: 17px; line-height: 1.7; color: var(--body); }
-.mono { font-family: var(--mono); }
 
 /* Subtitle / blockquote (legacy) */
 .subtitle { font-family: var(--accent); font-weight: 500; }
@@ -459,12 +447,13 @@ hr { border: none; height: 1px; background: var(--hairline); margin: 2rem 0; }
 .init-card:hover .arrow::after { transform: translateX(4px); }
 .init-card:hover .arrow { color: var(--card-color, var(--orange)); }
 
+/* Card accents are drawn from the brand palette only. */
 .c-mcclintock { --card-color: var(--orange); }
 .c-hillday { --card-color: var(--navy); }
-.c-hackathon { --card-color: var(--olive-deep); }
+.c-hackathon { --card-color: var(--navy-deep); }
 .c-stance { --card-color: var(--plum); }
-.c-courses { --card-color: #4f7894; }
-.c-snapstart { --card-color: var(--pro); }
+.c-courses { --card-color: var(--slate); }
+.c-snapstart { --card-color: var(--olive-deep); }
 
 /* =====================================================
    FOOTER
@@ -518,8 +507,8 @@ footer.site {
   background: var(--peach-tint); color: var(--orange);
 }
 .pill.navy { background: #e7ecf6; color: var(--navy); }
-.pill.olive { background: #efeed3; color: #6f7a2e; }
-.pill.plum { background: #f1e0eb; color: var(--plum); }
+.pill.olive { background: #efeed3; color: var(--olive-deep); }
+.pill.plum { background: #ece3f2; color: var(--plum); }
 .pill.muted { background: var(--hairline); color: var(--muted); }
 .pill.live::before {
   content: ''; display: inline-block;
@@ -532,15 +521,15 @@ footer.site {
 .badge {
   display: inline-block;
   padding: 0.25rem 0.75rem;
-  font-size: var(--text-xs);
+  font-size: 14px;
   font-family: var(--accent); font-weight: 700;
   border-radius: var(--r-pill);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-.badge-current { background: #dcfce7; color: #166534; }
+.badge-current { background: #efeed3; color: var(--olive-deep); }
 .badge-past { background: var(--hairline); color: var(--muted); }
-.badge-upcoming { background: #dbeafe; color: #1e40af; }
+.badge-upcoming { background: #e7ecf6; color: var(--navy); }
 
 /* =====================================================
    PRESS LIST

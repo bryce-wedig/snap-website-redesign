@@ -233,6 +233,19 @@ const clientConfig = {
   function init() {
     if (!window.L) { setTimeout(init, 50); return; }
     var cfg = JSON.parse(document.getElementById('home-hero-config').textContent);
+
+    // Brand colors are read from the design tokens so SVG/Leaflet styling can't
+    // drift from global.css. Fallbacks match the tokens' current values.
+    function token(name, fallback) {
+      var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      return v || fallback;
+    }
+    var C = {
+      navy: token('--navy', '#213863'),
+      orange: token('--orange', '#E89142'),
+      plum: token('--plum', '#310A45'),
+    };
+
     var stage = document.getElementById('home-hero-stage');
     var mapEl = document.getElementById('home-hero-map');
     var svg = document.getElementById('home-hero-connectors');
@@ -288,7 +301,7 @@ const clientConfig = {
         });
         stanceLayer = L.geoJSON({ type: 'FeatureCollection', features: feats }, {
           className: 'stance-state',
-          style: { color: '#310A45', weight: 1.5, fillColor: '#310A45', fillOpacity: 0.55, opacity: 0.9 },
+          style: { color: C.plum, weight: 1.5, fillColor: C.plum, fillOpacity: 0.55, opacity: 0.9 },
         });
         if (stage.getAttribute('data-slide') === 'stance') { stanceLayer.addTo(map); focusSlide('stance'); }
       }).catch(function () {});
@@ -382,10 +395,10 @@ const clientConfig = {
         // project to container pixels — geographically exact, unscaled layout space
         var pt = map.latLngToContainerPoint(L.latLng(p.lat, p.lng));
         var a = edgePoint(card.offsetLeft, card.offsetTop, card.offsetWidth, card.offsetHeight, pt);
-        svg.appendChild(el('line', { x1: a.x, y1: a.y, x2: pt.x, y2: pt.y, stroke: '#213863', 'stroke-width': '1.5', 'stroke-dasharray': '2 5', 'stroke-linecap': 'round', opacity: '0.55' }));
-        svg.appendChild(el('circle', { cx: a.x, cy: a.y, r: '2.6', fill: '#213863' }));
-        svg.appendChild(el('circle', { cx: pt.x, cy: pt.y, r: '11', fill: '#E89142', opacity: '0.16' }));
-        svg.appendChild(el('circle', { cx: pt.x, cy: pt.y, r: '5', fill: '#E89142', stroke: '#fff', 'stroke-width': '2.2' }));
+        svg.appendChild(el('line', { x1: a.x, y1: a.y, x2: pt.x, y2: pt.y, stroke: C.navy, 'stroke-width': '1.5', 'stroke-dasharray': '2 5', 'stroke-linecap': 'round', opacity: '0.55' }));
+        svg.appendChild(el('circle', { cx: a.x, cy: a.y, r: '2.6', fill: C.navy }));
+        svg.appendChild(el('circle', { cx: pt.x, cy: pt.y, r: '11', fill: C.orange, opacity: '0.16' }));
+        svg.appendChild(el('circle', { cx: pt.x, cy: pt.y, r: '5', fill: C.orange, stroke: '#fff', 'stroke-width': '2.2' }));
       });
     }
 
@@ -509,10 +522,10 @@ const clientConfig = {
   .home-hero-stage {
     position: relative;
     height: 612px;
-    background: #eef2f0; /* basemap fallback before tiles load */
+    background: var(--warm); /* basemap fallback before tiles load */
     overflow: hidden;
   }
-  .home-hero-map { position: absolute; inset: 0; width: 100%; height: 100%; background: #eef2f0; }
+  .home-hero-map { position: absolute; inset: 0; width: 100%; height: 100%; background: var(--warm); }
 
   /* keep Leaflet's panes/controls beneath the floating UI */
   .home-hero-stage :global(.leaflet-pane),

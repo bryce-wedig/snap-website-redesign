@@ -154,7 +154,7 @@
 .stance-intro .qlist li::before {
   content: "Q" counter(q);
   font-family: var(--accent);
-  font-weight: 800;
+  font-weight: 700;
   font-size: 13px;
   color: #fff;
   background: var(--st-blue);
@@ -459,7 +459,7 @@
 .stance-responses .qa__n {
   display: inline-block;
   font-family: var(--accent);
-  font-weight: 800;
+  font-weight: 700;
   font-size: 12px;
   color: #fff;
   background: var(--st-blue);
@@ -654,7 +654,7 @@
 .stance-compare-q__n {
   display: inline-block;
   font-family: var(--accent);
-  font-weight: 800;
+  font-weight: 700;
   font-size: 12px;
   color: #fff;
   background: var(--st-blue);
@@ -710,7 +710,7 @@
 .stance-race-group > summary:hover { background: var(--st-bg); }
 .stance-race-group > summary::after {
   content: "\f054";
-  font-family: "Font Awesome 6 Free";
+  font-family: "Font Awesome 7 Free";
   font-weight: 900;
   margin-left: auto;
   color: var(--st-light-blue);
@@ -759,7 +759,7 @@
 .stance-response-card__qn {
   display: inline-block;
   font-family: var(--accent);
-  font-weight: 800;
+  font-weight: 700;
   font-size: 11px;
   color: #fff;
   background: var(--st-blue);
@@ -905,9 +905,20 @@
 .stance-search-grid__filters .stance-filter--check { align-self: flex-start; padding-bottom: 0; }
 .stance-search-grid__results { grid-area: results; min-width: 0; }
 
-.stance-results-count {
-  font-family: var(--mono);
+.stance-last-updated {
+  margin-top: 14px;
+  font-family: var(--meta);
   font-size: 13px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.stance-results-count {
+  font-family: var(--meta);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
   color: var(--muted);
   margin: 0 0 14px;
 }
@@ -943,8 +954,10 @@
 }
 .stance-press__list li:first-child { border-top: 1px solid var(--hairline); }
 .stance-press__date {
-  font-family: var(--mono);
+  font-family: var(--meta);
   font-size: 12.5px;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
   color: var(--muted);
   margin-right: 10px;
   white-space: nowrap;
@@ -972,10 +985,10 @@
   scroll-snap-type: x proximity;
   padding-bottom: 12px;
   scrollbar-width: thin;
-  scrollbar-color: var(--st-light-blue, #687DA2) var(--st-cream, #f6f3ea);
+  scrollbar-color: var(--st-light-blue, #687DA2) var(--st-cream, #F4D294);
 }
 .stance-team__scroll::-webkit-scrollbar { height: 8px; }
-.stance-team__scroll::-webkit-scrollbar-track { background: var(--st-cream, #f6f3ea); border-radius: 8px; }
+.stance-team__scroll::-webkit-scrollbar-track { background: var(--st-cream, #F4D294); border-radius: 8px; }
 .stance-team__scroll::-webkit-scrollbar-thumb { background: var(--st-light-blue, #687DA2); border-radius: 8px; }
 .stance-team__track {
   display: flex;

@@ -141,7 +141,7 @@ const pinPositions = [
         <div class="placement-map">
           <svg class="usa" viewBox="0 0 800 500" preserveAspectRatio="none" aria-hidden="true">
             <path d="M 100 180 Q 140 130 220 130 L 360 110 L 540 100 L 700 130 L 740 170 L 750 270 L 700 360 L 580 400 L 460 410 L 320 400 L 200 380 L 130 320 Z"
-                  fill="#fefcf5" stroke="#c8c2ad" stroke-width="1.2" />
+                  fill="var(--page)" stroke="var(--hairline-strong)" stroke-width="1.2" />
           </svg>
           {pinPositions.map((p) => (
             <div class:list={['pin', { big: p.big }]} style={`left: ${p.left}; top: ${p.top};`}>
@@ -284,7 +284,7 @@ const pinPositions = [
     letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
     margin-bottom: 14px;
   }
-  .cycle-bar { height: 10px; background: #efece2; border-radius: var(--r-pill); overflow: hidden; }
+  .cycle-bar { height: 10px; background: var(--warm); border-radius: var(--r-pill); overflow: hidden; }
   .cycle-bar .fill { height: 100%; background: var(--orange); width: 78%; border-radius: var(--r-pill); }
   .cycle-meta { display: flex; justify-content: space-between; align-items: baseline; margin-top: 16px; gap: 12px; }
   .cycle-meta .pct {
