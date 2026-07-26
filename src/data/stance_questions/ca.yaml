@@ -1,0 +1,29 @@
+- id: ca-q1
+  question: >-
+    California is rich in natural resources (i.e. oil, with California being the 7th largest oil producing state in the nation) and, as of June 2025, conserves 26.1% of its lands and 21.9% of its coastal waters. Given California's resources, what policies would you pursue or continue, if any, in regard to land management and use?
+  tag: Environment
+
+- id: ca-q2
+  question: >-
+    California is one of the leading states with the most data centers which are important facilities for processing and storing data. However they also have several environmental and health impacts, such as significant water usage and noise pollution, which can lead to decrease in net economic gains. What policies, if any, do you support in managing existing data centers or establishing additional data centers?
+  tag: Energy
+
+- id: ca-q3
+  question: >-
+    Access to public transportation is associated with less air and noise pollution, fewer harmful chemicals, and overall healthier communities. However, many transit agencies, such as BART in the Bay Area, are facing financial deficits due to a decline in ridership. What policies, if any, do you support that would address California's public transit infrastructure?
+  tag: Transportation
+
+- id: ca-q4
+  question: >-
+    In 2025, approximately 33% of students in K-12 schools across California met or exceeded science standards, and teacher shortages have resulted in districts hiring teachers with substandard credentials in math and science. What evidence-based policies, if any, would you follow to increase science proficiency and access to quality education across the state and why?
+  tag: K-12 Science Education
+
+- id: ca-q5
+  question: >-
+    Healthcare is an important resource to Californians, with publicly supported programs such as Medi-Cal providing coverage covering roughly half of all Californians including 14.5 million low-income residents. According to the Center on Healthcare from West Health-Gallup, California has an overall healthcare grade of “C” over the categories of cost, quality, and access, with gaps in rural health coverage, environmental health threats, workforce shortages, and affordability challenges. What policies, if any, do you support to address the healthcare of Californians and why?
+  tag: Public Health
+
+- id: ca-q6
+  question: >-
+    Do you support initiatives that alter funding for science research, i.e. Senate Bill 895 (California Foundation)?
+  tag: Science Funding

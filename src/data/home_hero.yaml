@@ -1,0 +1,126 @@
+# ============================================================================
+# Home page hero — "The map is the hero"
+# A full-bleed interactive U.S. map with a floating intro panel and "field
+# photos" pinned to the place they were taken (a dashed connector ties each
+# photo to a marker at its exact city).
+#
+# Everything here is data-driven:
+#   • Edit the copy / stats / buttons under `panel`.
+#   • Change the starting view under `map`.
+#   • Add, remove, or re-locate photos under `photo_sets` (see notes there).
+#   • Member-city (orange) and org (navy) markers live in `map_markers.yaml`.
+# ============================================================================
+
+map:
+  center: [39.5, -96]   # [lat, lng] the map opens on
+  zoom: 4
+  min_zoom: 3
+  max_zoom: 10
+
+panel:
+  eyebrow: "Scientist Network for Advancing Policy"
+  heading: "Early-career researchers"
+  heading_em: "bridging science and community"          # italic, orange second line of the headline
+  lede: >-
+    We are a coalition of early-career scientists dedicated to mobilizing for large-scale initiatives and bridging gaps between scientists, their communities, and the general public.
+  stats:
+    - { num: "30", label: "Orgs" }
+    - { num: "24", label: "States" }
+    - { num: "150+", label: "Members" }
+  primary: { label: "Get involved", href: "/join/" }
+  ghost: { label: "Our mission →", href: "/about/" }
+
+# Cycling between photo sets. When more than one set is defined below the hero
+# cross-fades from one to the next every `interval_ms`. With a single set this
+# does nothing. Respects the visitor's "reduce motion" preference automatically.
+cycle:
+  enabled: true
+  interval_ms: 7000
+
+# ----------------------------------------------------------------------------
+# Map slideshow. The hero auto-advances through highlight "slides", each one
+# lighting up a different layer of the map while the others dim. A vertical
+# progress rail on the right labels what's currently shown and fills as each
+# slide plays. Visitors can click a rail item to jump; hovering the rail pauses.
+#
+#   slides[].id         which layer to highlight — must be one of:
+#                         members      → member-city + org pins
+#                         stance       → filled state shapes (see stance_states)
+#                         mcclintock   → published McClintock-letter dots
+#   slides[].eyebrow    bold label shown on the rail
+#   slides[].sub        small caption under the label
+#   slides[].duration_ms  how long this slide stays up (the "configurable time")
+# ----------------------------------------------------------------------------
+slideshow:
+  enabled: true
+  slides:
+    - id: members
+      eyebrow: "Members & Orgs"
+      sub: "38 cities · 21 organizations"
+      duration_ms: 6000
+    - id: stance
+      eyebrow: "Stance on Science"
+      sub: "2026 election teams"
+      duration_ms: 6000
+    - id: mcclintock
+      eyebrow: "McClintock Letters"
+      sub: "295 letters published"
+      duration_ms: 6000
+
+# States to fill on the `stance` slide. Names must match the US-states GeoJSON
+# in public/data/us-states.geojson (full state names). Add more as teams launch.
+stance_states:
+  - California
+
+# ----------------------------------------------------------------------------
+# Photo sets. Each set is an independent group of pinned photos. The hero shows
+# one set at a time and (when `cycle.enabled`) animates between them.
+#
+# To ADD A PHOTO: drop the image in `public/images/home/` and add an entry with
+#   id            unique short slug
+#   src           path under public/images/  (e.g. home/my-photo.jpg)
+#   place         caption shown under the photo
+#   lat, lng      where on the map the connector points
+#   object_position  CSS object-position to keep faces in frame (optional)
+#   card          which corner the polaroid sits in, in stage pixels — provide
+#                 any two of { left, right, top, bottom } as offsets.
+#
+# To ADD A SET: copy a `- name:` block. Cards reflow off-screen below ~900px,
+# so keep ~3–4 photos per set for the desktop layout.
+# ----------------------------------------------------------------------------
+photo_sets:
+  - name: "Moments from the field"
+    photos:
+      - id: phx
+        src: home/group-photo.jpg
+        place: "Phoenix, AZ"
+        lat: 33.448
+        lng: -112.074
+        object_position: "center 38%"
+        card: { left: 474, bottom: 34 }
+      - id: dc
+        src: home/photo-booth.jpg
+        place: "Washington, DC"
+        lat: 38.907
+        lng: -77.037
+        object_position: "center 30%"
+        card: { right: 40, top: 36 }
+      - id: atl
+        src: home/photo-social.jpg
+        place: "Atlanta, GA"
+        lat: 33.749
+        lng: -84.388
+        object_position: "center 42%"
+        card: { right: 40, bottom: 34 }
+
+  # Add another set to make the hero cycle. For example:
+  #
+  # - name: "McClintock Letters"
+  #   photos:
+  #     - id: ithaca
+  #       src: home/letters-ithaca.jpg
+  #       place: "Ithaca, NY"
+  #       lat: 42.4396
+  #       lng: -76.4968
+  #       card: { left: 474, bottom: 34 }
+  #     - ...

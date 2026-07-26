@@ -1,0 +1,103 @@
+---
+title: "April 2026 Newsletter"
+date: 2026-04-17
+---
+
+*TLDR: Learn more about the new Friends and Family for Scientists initiative at our 4/28 planning meeting. Check out upcoming SNAP events on our [community calendar](https://snapcoalition.org/calendar). Make sure to [follow our Medium blog](https://medium.com/science-policy-in-a-snap) for the latest articles by SNAPpers, and [join Stance on Science](https://snapcoalition.org/initiatives/stance-on-science)!*
+
+#### Upcoming SNAP Events
+Science Advocacy webinar hosted by the Society for Advancement of Chicanos and Native Americans in Science (SACNAS) and the Union of Concerned Scientists will feature speakers from SNAP on Thursday, April 23rd at 9am PT/12pm ET! Register here: [https://tinyurl.com/2s9cr7ev](https://tinyurl.com/2s9cr7ev).
+
+SNAP, Coalition of Athens Scientists, and nine other organizations are hosting the Athens Candidate Forum on Energy and the Environment on Monday, April 27th, 2026 at 6:30pm at the Athens-Clarke County Library Auditorium (2025 Baxter St, Athens, GA). We will be asking Athens Mayoral Candidates questions on climate resilience, environmental justice, clean energy, transportation, and data centers. Join this event in person or via live-stream. RSVP here: [tinyurl.com/athcanfor](https://tinyurl.com/athcanfor).
+
+#### Friends and Family for Scientists Initiative
+The Friends and Family for Scientists campaign is about inviting the people closest to us, our friends, relatives, and community members, into the fight to protect research funding. In response to the President's proposed fiscal year 2027 budget, which includes steep cuts to agencies like the National Institutes of Health and the National Science Foundation, this campaign aims to turn personal connections into powerful advocacy. We want to help our loved ones understand what we study, why it matters, and how it directly impacts their lives and communities. From there, we'll support them in turning that understanding into action—whether by writing a letter or making a call to their U.S. Senators and Representative or even an op-ed. If you're interested in getting involved, join us at our upcoming [planning meeting](https://miami.zoom.us/j/98547771932?pwd=rzopqF80fBBPPe3PGMOlagKfjtK8uS.1) on Tuesday, April 28th at 6pm ET and help us build a stronger, more connected voice for science.
+
+#### SNAP Blog - Science Policy in a SNAP
+You can access our blog, Science Policy in a SNAP, [on our website](https://snapcoalition.org) or give us a follow [on Medium](https://medium.com/science-policy-in-a-snap), where you'll hear from a variety of SNAP member voices on diverse science and science-policy topics.
+
+Earlier this month, we published a thoughtful piece from SNAP member Amanda Finn on her experiences with science policy outreach and advocacy in Alabama titled **"Scarlet Letters in Alabama's Academia"**, which you can read [here](https://medium.com/science-policy-in-a-snap/scarlet-letters-in-alabamas-academia-3fb72ce48537). Amanda will be speaking at the science advocacy webinar for the Society for the Advancement of Chicanos and Native Americans in Science (SACNAS) on April 23rd.
+
+This week is a piece from SNAPpers Youssef El Gharably and Andrew Mattson, discussing science diplomacy and international research collaboration from the perspective of the quantum technology field. Read their piece, **"Quantum Technology: A Double Edged Sword for Science Diplomacy"** [here](https://medium.com/science-policy-in-a-snap/quantum-technology-a-double-edged-sword-for-science-diplomacy-bd546cea0e6d)!
+
+Coming out April 21, Youssef El Gharably will give us an overview of the stakes to science in the FY2027 Budget Proposal, and on April 28th, SNAPper Edith-Marie Green will take us through the policies for an aging global population! To receive alerts when they're published, so you can read these blog posts hot off the press, be sure to [follow us on Medium](https://medium.com/science-policy-in-a-snap)!
+
+**Have an idea for a post? Contact us and let us know.**
+
+#### Stance on Science
+Stance on Science participants are asking science policy-related questions of candidates running in local, state, and national races during the 2026 elections. SNAP will then share their responses on our website so voters can better understand where candidates stand before they cast their ballots, and to increase discussion amongst voters about sci pol issues.
+
+**This initiative is now fully up and running after two very successful orientations, with over 200 registered volunteers!** State teams have started to develop their questionnaires, plan candidate outreach, and set up town halls in their communities. This is a great time to get involved and make sure science policy issues important to your community are included as teams get ready to contact campaigns!
+
+**There is still time to volunteer!** If you're interested in helping out as a state lead or a volunteer, fill out this [sign-up form](https://docs.google.com/forms/d/e/1FAIpQLSem6bVuZnK7eWls-CTMpxWxaxHpuElNj4oOXIvLkgDYRO6YNg/viewform). Please forward this email to others you know in these states who might be interested! Reach out to [snapscipolorg@gmail.com](mailto:snapscipolorg@gmail.com) with any questions. Don't see your state in the list below? That means you get to join an existing team! We want people from as many districts in as many states as possible, so please sign up! The following states still need at least one volunteer:
+
+- Arkansas
+- Idaho
+- Montana
+- North Dakota
+- Rhode Island
+- South Dakota
+- Tennessee
+- West Virginia
+
+#### SciPol Course
+SNAP is developing a modular science policy curriculum covering topics such as What is Science Policy?, How Government Works, Writing for Policymakers, Science Communication & Public Speaking, and Science Diplomacy. Final curriculum expected Fall 2026! Need a module sooner for your science policy group? Reach out to [snapscipolorg@gmail.com](mailto:snapscipolorg@gmail.com).
+
+#### SciPol Hackathon
+Be on the lookout, SNAP's SciPol Hackathon is coming to a university near you! This project will be piloted this spring and rolled out across the country this fall. This project-focused initiative will bring together early-career researchers to work in interdisciplinary teams over three days to create a science-policy technical product, a multimedia piece, or a written output.
+
+Sign up and submit project ideas [here](https://forms.gle/P3HbZvwScP3JbHFS9)!
+
+#### External Opportunities
+*State fellowships*
+
+**New Jersey**
+- Eagleton Institute of Politics: Priority deadline March 15th, final May 17th — [https://eip.smapply.us/prog/science_and_politics_fellowship_2026-2027/](https://eip.smapply.us/prog/science_and_politics_fellowship_2026-2027/)
+
+**Pennsylvania**
+- Governor's S&T Fellowship: due April 17th — [https://www.pa.gov/services/employment/apply-for-fellowships-with-the-commonwealth](https://www.pa.gov/services/employment/apply-for-fellowships-with-the-commonwealth)
+- Legislative Science & Technology Policy Fellowship: due May 2026 — [https://lpe.psu.edu/career-development/fellowships-traineeships/pennsylvania-legislative-science-technology-policy-fellowship/fellowship-apply](https://lpe.psu.edu/career-development/fellowships-traineeships/pennsylvania-legislative-science-technology-policy-fellowship/fellowship-apply)
+
+**West Virginia**
+- West Virginia Science and Technology Policy (WV SteP) Fellowship: due April 30th — [https://www.wvstep.org/application](https://www.wvstep.org/application)
+
+*Open positions (paid or volunteer)*
+- The Institute of Advanced Study [Civic Science Fellow](https://jobs.chronicle.com/job/37962820/civic-science-fellow-school-of-social-science-18-month-appointment/) (posted Mar 13)
+- [Policy Fellow at Policy@MIT](https://careers.peopleclick.com/careerscp/client_mit/external/jobDetails/jobDetail.html?jobPostId=33661&localeCode=en-us) (posted Feb 27)
+- Coalition of Athens Scientists is recruiting Athens, Georgia based science-policy enthusiasts for leadership roles. Please contact [oliviaallisonasher@gmail.com](mailto:oliviaallisonasher@gmail.com) if you are interested.
+
+*Events*
+- "Climate Mis/Disinformation 101" with Ms. Elyse Martin from the Environmental Defense Fund on Tuesday, April 21st at 8am PT/11am ET on Zoom! Register [here](https://us02web.zoom.us/meeting/register/rm8KS6cERGK2_KHmsef2Eg#/registration).
+- "How Science Policy Shapes Women's Science Careers" with Dr. Julia Omotade will be hosted by the Association for Women in Science on Thursday April 23 at 10am PT/1pm ET on Zoom. Register [here](https://awis.org/how-policy-decisions-shape-womens-science-careers-webinar/).
+- 2026 State Legislative Advocacy Academy will be hosted by Lawyers for Good Government every other Friday (March 27 through June 26) at 11am PT/2pm ET. Register [here](https://addcal.io/c/sjn351oujuzy?utm_campaign=SLAA-Welcome-Email-2026&utm_medium=email&utm_source=Lawyers%20for%20Good%20Government&utm_term=0_f40df78120-c48fb771a9-660810937).
+- The Association of Science Communicators is starting a monthly speaker series and monthly virtual networking! Check out those events [here](https://www.associationofsciencecommunicators.org/courses-training-opportunities/).
+- Science for Georgia is hosting the Environmental Justice and Climate Protection Conference at the Georgia Institute of Technology on June 11th and 12th, 2026. This conference is very affordable and a great way to connect with other environmental and science-informed policy activists in Georgia. Learn more [here](https://scienceforgeorgia.org/knowledge-base1/environmental-justice-and-climate-protection-2026/).
+
+*DID YOU KNOW?* SNAP hosts a [community calendar](https://snapcoalition.org/calendar) where you can find these events and more!
+
+*Want to see your events shared with the SNAP community? Shoot us an email at [snapscipolorg@gmail.com](mailto:snapscipolorg@gmail.com), and we will get it posted!*
+
+#### ✨SNAPper Highlights and Achievements ✨
+Check out these recent works by SNAP members and works mentioning SNAP members or initiatives!
+
+- Kass Fernandez is still recruiting STEM undergraduate students for their [dissertation study](https://kassstem.github.io/projects/mentorship-matters) on mentorship. [Sign-up here](https://go.ufl.edu/mentorshipmatters) or help increase their reach by sharing on [BlueSky](https://bsky.app/profile/kassstem.bsky.social/post/3m2z2ryt3lc25) and [LinkedIn](https://www.linkedin.com/posts/activity-7417672052611923969-1VwY/). Participants will be entered in a drawing for a $25 gift card!
+
+- Several members of SNAP attended [SCIENCE TALK '26](https://www.associationofsciencecommunicators.org/conferences/science-talk-26/) in Portland, Oregon in March! Huge shout out to SNAPpers Alex Lando, David Ramotowski, Sneha Rao, Emma Scales, and Emily Selland, who gave a panel discussion on science communication and policy, and to several SNAPpers who gave poster presentations: Isako Di Tomassi, Disha Patel, JP Flores, and Cael Dant. Read about more of the highlights [here](https://www.associationofsciencecommunicators.org/conferences/science-talk-26/).
+
+<img src="/images/newsletters/2026_04_1.jpg" alt="SNAPpers at SCIENCE TALK '26" style="max-width: 100%; height: auto;" />
+
+- Congrats to JP Flores, Sahana Kumar, Anna Rader Groves, Phaedra Norrell, and Alex Byrne for successfully defending their dissertations this month!
+
+- Stacy Godfreey-Igwe was announced as part of the 2026 Paul & Daisy Soros Fellowship Cohort! Read her profile [here](https://pdsoros.org/fellows/stacy-godfreey-igwe/).
+
+- SNAPper Amanda Finn co-organized a Cancer Research Symposium at the Alabama State House on March 31st. This was in collaboration with the American Cancer Network Cancer Action Day and professors/students from 4 Alabama universities. This was the first time, to our knowledge, that researchers came to present posters and lightning talks at the Capitol! The event was supported through a Research! America civic engagement microgrant.
+
+- A group of SNAPpers attended the [CASE workshop with AAAS](https://www.aaas.org/programs/catalyzing-advocacy-in-science-and-engineering) in DC! Great job Hannah Friedman, Haley Sussman, Lani Tran, Erin C, Taden Welsh, Laurie Agosto, Nushrat Rashid, Tyler Ball, Saul Flores, and Madison Haley, for advancing the importance of science in Congress.
+
+- SNAPper Olivia A. Asher was accepted to the New York State Science Policy Fellowship. She will be working in the New York State Assembly starting in late August.
+
+- Coalition of Athens Scientists hosted two April events
+  - A film screening of *Contaminated: The Carpet Industry's Toxic Legacy* and panel discussion on PFAS contamination in Georgia. Panelists Dr. Tawana Mattox and Anna Bushong educated us about the PFAS contamination that poisoned the Pittard Road Community in Athens and the impacts of PFAS on reptiles and amphibians. This event was co-hosted by Athens Science Cafe, EcoReach, and Destined Inc.
+  - A workshop on yaupon holly, a caffeine-containing beverage plant native to the Southeastern United States. University of Georgia PhD Candidate Ben Long taught 25 participants all about the history of yaupon and his research into this fascinating and delicious plant. Then, we all enjoyed a cup of tea and some refreshments. Though our class only had space for 25, we had nearly 70 RSVPs and will be hosting another workshop. This event was co-hosted by the Oconee Street United Methodist Church Green Team.
+
+Know someone who'd like to receive this newsletter? Have them join our **[Google Group Listserv](https://groups.google.com/u/3/g/snap-coalition)**. Email [snapscipolorg@gmail.com](mailto:snapscipolorg@gmail.com) with questions about SNAP or if you'd like to join our Slack.

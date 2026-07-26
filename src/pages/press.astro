@@ -12,18 +12,49 @@ const press = parse(readFileSync(join(process.cwd(), 'src/data/press.yaml'), 'ut
   category: string | string[];
 }>;
 
+const pubsReports = parse(readFileSync(join(process.cwd(), 'src/data/pubs_reports.yaml'), 'utf-8')) as Array<{
+  headline: string;
+  source: string;
+  date: string;
+  website: string;
+}>;
+
 // Filter out entries without headlines
 const validPress = press.filter(a => a.headline && a.source);
+const validPubs = pubsReports.filter(a => a.headline && a.source);
 
 function formatDate(d: string): string {
   return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 ---
 
-<PageLayout title="Press Mentions">
-  <h2>Press Mentions</h2>
-  <hr />
+<PageLayout
+  title="Press, Publication, & Report Mentions"
+  eyebrow="In the press"
+  lede="Publication and report mentions, and press coverage of SNAP and the coalition's work."
+>
+  {validPubs.length > 0 && (
+    <>
+      <h2>Publication &amp; Report Mentions</h2>
+      <hr />
+      <div class="press-list">
+        {validPubs.map(article => (
+          <div class="press-item">
+            <span class="press-date">{formatDate(article.date)}</span>
+            <div class="press-content">
+              <a href={article.website} target="_blank" rel="noopener" class="press-headline">
+                {article.headline}
+              </a>
+              <span class="press-source">in <em>{article.source}</em></span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  )}
 
+  <h2 style="margin-top: 3rem;">Press Mentions</h2>
+  <hr />
   <div class="press-list">
     {validPress.map(article => (
       <div class="press-item">

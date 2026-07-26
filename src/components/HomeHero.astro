@@ -1,0 +1,703 @@
+---
+// Home page hero — "The map is the hero" (design handoff: Direction B).
+// A full-bleed interactive Leaflet map with a floating intro panel and
+// "field photos" pinned to the place they were taken; a dashed connector ties
+// each photo to a marker at its exact city and tracks the map as it moves.
+//
+// Configuration lives entirely in data:
+//   src/data/home_hero.yaml    — panel copy, map view, cycle settings, photo sets
+//   src/data/map_markers.yaml  — member-city (orange) and org (navy) markers
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
+
+const base = import.meta.env.BASE_URL;
+const imageBase = `${base}images/`;
+
+const hero = parse(
+  readFileSync(join(process.cwd(), 'src/data/home_hero.yaml'), 'utf-8')
+) as {
+  map: { center: [number, number]; zoom: number; min_zoom: number; max_zoom: number };
+  panel: {
+    eyebrow: string; heading: string; heading_em: string; lede: string;
+    stats: { num: string; label: string }[];
+    primary: { label: string; href: string };
+    ghost: { label: string; href: string };
+  };
+  cycle: { enabled: boolean; interval_ms: number };
+  slideshow: {
+    enabled: boolean;
+    slides: { id: string; eyebrow: string; sub?: string; duration_ms: number }[];
+  };
+  stance_states: string[];
+  photo_sets: {
+    name: string;
+    photos: {
+      id: string; src: string; place: string; lat: number; lng: number;
+      object_position?: string;
+      card: { left?: number; right?: number; top?: number; bottom?: number };
+    }[];
+  }[];
+};
+
+const markers = parse(
+  readFileSync(join(process.cwd(), 'src/data/map_markers.yaml'), 'utf-8')
+) as {
+  cities: { lat: number; lng: number; name: string }[];
+  orgs: { lat: number; lng: number; name: string; location?: string }[];
+};
+
+// Published McClintock letters (one dot per place). The source CSV has many
+// rows per city; we keep the rows marked "Published" and de-duplicate by place.
+function parseCsv(text: string): string[][] {
+  const lines = text.split(/\r?\n/).filter((l) => l.trim().length);
+  const out: string[][] = [];
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    const cols: string[] = [];
+    let cur = '', q = false;
+    for (let j = 0; j < line.length; j++) {
+      const ch = line[j];
+      if (q) {
+        if (ch === '"') { if (line[j + 1] === '"') { cur += '"'; j++; } else q = false; }
+        else cur += ch;
+      } else if (ch === '"') q = true;
+      else if (ch === ',') { cols.push(cur); cur = ''; }
+      else cur += ch;
+    }
+    cols.push(cur);
+    out.push(cols);
+  }
+  return out;
+}
+
+const letterRows = parseCsv(
+  readFileSync(join(process.cwd(), 'src/data/mcclintock_geo.csv'), 'utf-8')
+).filter((r) => (r[3] || '').trim() === 'Published');
+
+const seenLetters = new Set<string>();
+const letters = letterRows
+  .map((r) => ({ name: r[0].trim(), lat: parseFloat(r[1]), lng: parseFloat(r[2]) }))
+  .filter((l) => l.name && Number.isFinite(l.lat) && Number.isFinite(l.lng))
+  .filter((l) => (seenLetters.has(l.name) ? false : (seenLetters.add(l.name), true)));
+
+const site = parse(readFileSync(join(process.cwd(), 'src/data/site.yaml'), 'utf-8'));
+
+const socials = [
+  { name: 'Bluesky', icon: 'fa-brands fa-bluesky', url: site.social?.bluesky },
+  { name: 'Instagram', icon: 'fa-brands fa-instagram', url: site.social?.instagram },
+  { name: 'LinkedIn', icon: 'fa-brands fa-linkedin-in', url: site.social?.linkedin },
+  { name: 'Medium', icon: 'fa-brands fa-medium', url: site.social?.medium },
+].filter((s) => s.url);
+
+const withBase = (href: string) => `${base}${href.replace(/^\//, '')}`;
+
+// Render the first set server-side for fast first paint and no-JS fallback;
+// the client script reuses these cards and rebuilds them when cycling sets.
+const firstSet = hero.photo_sets[0]?.photos ?? [];
+const cardStyle = (card: { left?: number; right?: number; top?: number; bottom?: number }) =>
+  (['left', 'right', 'top', 'bottom'] as const)
+    .filter((k) => card[k] != null)
+    .map((k) => `${k}:${card[k]}px`)
+    .join(';');
+
+// Config handed to the client script (drives markers, connectors, and cycling).
+const clientConfig = {
+  imageBase,
+  map: {
+    center: hero.map.center,
+    zoom: hero.map.zoom,
+    minZoom: hero.map.min_zoom,
+    maxZoom: hero.map.max_zoom,
+  },
+  cycle: { enabled: hero.cycle.enabled, intervalMs: hero.cycle.interval_ms },
+  cities: markers.cities,
+  orgs: markers.orgs,
+  letters,
+  slideshow: {
+    enabled: hero.slideshow?.enabled ?? false,
+    slides: (hero.slideshow?.slides ?? []).map((s) => ({
+      id: s.id, eyebrow: s.eyebrow, sub: s.sub ?? '', durationMs: s.duration_ms,
+    })),
+  },
+  stanceStates: hero.stance_states ?? [],
+  geojsonUrl: `${base}data/us-states.geojson`,
+  sets: hero.photo_sets.map((set) => ({
+    name: set.name,
+    photos: set.photos.map((p) => ({
+      id: p.id,
+      src: p.src,
+      place: p.place,
+      lat: p.lat,
+      lng: p.lng,
+      objectPosition: p.object_position ?? 'center',
+      card: p.card,
+    })),
+  })),
+};
+---
+
+<section class="home-hero" aria-label="SNAP coalition map">
+  <div class="home-hero-stage" id="home-hero-stage">
+    <div class="home-hero-map" id="home-hero-map"></div>
+
+    <!-- connector overlay: above the map tiles (z6), below the photo cards (z10) -->
+    <svg id="home-hero-connectors" aria-hidden="true"></svg>
+
+    <!-- floating intro panel -->
+    <div class="home-hero-panel">
+      <div class="sh-eyebrow">{hero.panel.eyebrow}</div>
+      <h1 class="home-hero-title">
+        {hero.panel.heading} <em>{hero.panel.heading_em}</em>
+      </h1>
+      <p class="home-hero-lede">{hero.panel.lede}</p>
+
+      <div class="home-hero-stats">
+        {hero.panel.stats.map((s) => (
+          <div>
+            <div class="sh-statnum">{s.num}</div>
+            <div class="sh-statlbl">{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <div class="home-hero-btns">
+        <a class="sh-btn primary" href={withBase(hero.panel.primary.href)}>{hero.panel.primary.label}</a>
+        <a class="sh-btn ghost" href={withBase(hero.panel.ghost.href)}>{hero.panel.ghost.label}</a>
+      </div>
+
+      <div class="home-hero-foot">
+        <div class="home-hero-legend">
+          <span class="dot orange"></span>Members
+          <span class="dot navy"></span>Orgs
+        </div>
+        <div class="sh-socials">
+          {socials.map((s) => (
+            <a href={s.url} target="_blank" rel="noopener" aria-label={s.name} title={s.name}>
+              <i class={s.icon}></i>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- pinned field photos (first set; client script swaps sets when cycling) -->
+    <div id="home-hero-photos">
+      {firstSet.map((p) => (
+        <figure class="hero-photo" data-id={p.id} style={cardStyle(p.card)}>
+          <img
+            src={`${imageBase}${p.src}`}
+            alt={`SNAP members in ${p.place}`}
+            style={`object-position:${p.object_position ?? 'center'}`}
+            loading="lazy"
+          />
+          <figcaption class="cap">
+            <i class="fa-solid fa-location-dot"></i>
+            <span>{p.place}</span>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+
+    <!-- slideshow progress rail (labels what the map is currently showing) -->
+    {hero.slideshow?.enabled && hero.slideshow.slides.length > 0 && (
+      <div class="hero-rail" id="hero-rail" role="tablist" aria-label="Map highlights">
+        {hero.slideshow.slides.map((s, i) => (
+          <button
+            type="button"
+            class={`rail-item rail-item--${s.id}${i === 0 ? ' active' : ''}`}
+            data-index={i}
+            role="tab"
+            aria-selected={i === 0 ? 'true' : 'false'}
+          >
+            <span class="rail-text">
+              <span class="rail-eyebrow">{s.eyebrow}</span>
+              {s.sub && <span class="rail-sub">{s.sub}</span>}
+            </span>
+            <span class="rail-track"><span class="rail-fill"></span></span>
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+
+  <script type="application/json" id="home-hero-config" set:html={JSON.stringify(clientConfig)} />
+</section>
+
+<!-- Leaflet (loaded only on pages that use this component) -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<script is:inline>
+(function () {
+  function init() {
+    if (!window.L) { setTimeout(init, 50); return; }
+    var cfg = JSON.parse(document.getElementById('home-hero-config').textContent);
+    var stage = document.getElementById('home-hero-stage');
+    var mapEl = document.getElementById('home-hero-map');
+    var svg = document.getElementById('home-hero-connectors');
+    var photosEl = document.getElementById('home-hero-photos');
+    if (!stage || !mapEl || !svg || !photosEl) return;
+
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ---- map ----
+    var map = L.map(mapEl, {
+      center: cfg.map.center,
+      zoom: cfg.map.zoom,
+      minZoom: cfg.map.minZoom,
+      maxZoom: cfg.map.maxZoom,
+      zoomControl: false,
+      attributionControl: true,
+      scrollWheelZoom: false, // let the page keep scrolling
+      dragging: true,
+      doubleClickZoom: true,
+      touchZoom: true,
+      boxZoom: false,
+      keyboard: false,
+    });
+    L.control.zoom({ position: 'bottomleft' }).addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      maxZoom: 19, attribution: '&copy; OpenStreetMap &copy; CARTO', crossOrigin: true,
+    }).addTo(map);
+
+    // Markers carry a wrapper className so slides can dim/brighten whole layers
+    // via CSS (.mk-member / .mk-letter on the stage's [data-slide]).
+    var pin = function (cls, wrap, size) {
+      var s = size || 14;
+      return L.divIcon({ html: '<div class="sh-pin ' + cls + '"></div>', className: 'mk ' + wrap, iconSize: [s, s], iconAnchor: [s / 2, s / 2] });
+    };
+    (cfg.cities || []).forEach(function (c) {
+      L.marker([c.lat, c.lng], { icon: pin('', 'mk-member'), autoPan: false }).addTo(map).bindPopup(c.name);
+    });
+    (cfg.orgs || []).forEach(function (o) {
+      var html = '<b>' + o.name + '</b>' + (o.location ? '<br>' + o.location : '');
+      L.marker([o.lat, o.lng], { icon: pin('org', 'mk-member'), autoPan: false }).addTo(map).bindPopup(html);
+    });
+    (cfg.letters || []).forEach(function (l) {
+      L.marker([l.lat, l.lng], { icon: pin('letter', 'mk-letter', 10), autoPan: false }).addTo(map).bindPopup(l.name);
+    });
+
+    // Stance-on-Science states: filled polygons, added/removed per slide.
+    var stanceLayer = null, stanceWanted = {};
+    (cfg.stanceStates || []).forEach(function (n) { stanceWanted[n] = true; });
+    if (cfg.geojsonUrl && (cfg.stanceStates || []).length) {
+      fetch(cfg.geojsonUrl).then(function (r) { return r.json(); }).then(function (gj) {
+        var feats = (gj.features || []).filter(function (f) {
+          return f.properties && stanceWanted[f.properties.name];
+        });
+        stanceLayer = L.geoJSON({ type: 'FeatureCollection', features: feats }, {
+          className: 'stance-state',
+          style: { color: '#310A45', weight: 1.5, fillColor: '#310A45', fillOpacity: 0.55, opacity: 0.9 },
+        });
+        if (stage.getAttribute('data-slide') === 'stance') { stanceLayer.addTo(map); focusSlide('stance'); }
+      }).catch(function () {});
+    }
+
+    // Pan/zoom so the active slide's subject is clear of the floating panel.
+    // Stance states would otherwise sit hidden behind it (e.g. California).
+    function focusSlide(id) {
+      if (!map) return;
+      var anim = !reduceMotion && !document.hidden;
+      if (id === 'stance' && stanceLayer) {
+        var padL = window.innerWidth > 900 ? 440 : 30;
+        try {
+          map.flyToBounds(stanceLayer.getBounds(), {
+            paddingTopLeft: [padL, 50], paddingBottomRight: [80, 90],
+            maxZoom: 6, animate: anim, duration: 0.8,
+          });
+        } catch (e) {}
+      } else {
+        map.flyTo(cfg.map.center, cfg.map.zoom, { animate: anim, duration: 0.8 });
+      }
+    }
+
+    // ---- photo cards + connectors ----
+    var sets = cfg.sets || [];
+    var active = 0;
+    var photoData = sets.length ? sets[0].photos : [];
+    var cards = {};
+
+    function indexCards() {
+      cards = {};
+      var nodes = photosEl.querySelectorAll('.hero-photo');
+      for (var i = 0; i < nodes.length; i++) cards[nodes[i].getAttribute('data-id')] = nodes[i];
+    }
+
+    function buildCards(photos) {
+      photosEl.innerHTML = '';
+      photos.forEach(function (p) {
+        var fig = document.createElement('figure');
+        fig.className = 'hero-photo';
+        fig.setAttribute('data-id', p.id);
+        if (p.card.left != null) fig.style.left = p.card.left + 'px';
+        if (p.card.right != null) fig.style.right = p.card.right + 'px';
+        if (p.card.top != null) fig.style.top = p.card.top + 'px';
+        if (p.card.bottom != null) fig.style.bottom = p.card.bottom + 'px';
+        var img = document.createElement('img');
+        img.src = cfg.imageBase + p.src;
+        img.alt = 'SNAP members in ' + p.place;
+        img.loading = 'lazy';
+        if (p.objectPosition) img.style.objectPosition = p.objectPosition;
+        var cap = document.createElement('figcaption');
+        cap.className = 'cap';
+        cap.innerHTML = '<i class="fa-solid fa-location-dot"></i><span></span>';
+        cap.querySelector('span').textContent = p.place;
+        fig.appendChild(img);
+        fig.appendChild(cap);
+        photosEl.appendChild(fig);
+      });
+      indexCards();
+    }
+
+    // point on a rect's border, from its center toward target t
+    function edgePoint(x, y, w, h, t) {
+      var cx = x + w / 2, cy = y + h / 2;
+      var dx = t.x - cx, dy = t.y - cy;
+      if (dx === 0 && dy === 0) return { x: cx, y: cy };
+      var sx = dx !== 0 ? (w / 2) / Math.abs(dx) : Infinity;
+      var sy = dy !== 0 ? (h / 2) / Math.abs(dy) : Infinity;
+      var s = Math.min(sx, sy);
+      var m = 6; // nudge the start just outside the frame
+      var len = Math.hypot(dx, dy);
+      return { x: cx + dx * s + (dx / len) * m, y: cy + dy * s + (dy / len) * m };
+    }
+
+    var NS = 'http://www.w3.org/2000/svg';
+    function el(name, attrs) {
+      var n = document.createElementNS(NS, name);
+      for (var k in attrs) n.setAttribute(k, attrs[k]);
+      return n;
+    }
+
+    function recompute() {
+      if (!map) return;
+      while (svg.firstChild) svg.removeChild(svg.firstChild);
+      // connectors belong to the photo cards, which only show on the members slide
+      var slide = stage.getAttribute('data-slide');
+      if (slide && slide !== 'members') return;
+      photoData.forEach(function (p) {
+        var card = cards[p.id];
+        if (!card || card.offsetParent === null) return; // skip hidden (reflowed) cards
+        // project to container pixels — geographically exact, unscaled layout space
+        var pt = map.latLngToContainerPoint(L.latLng(p.lat, p.lng));
+        var a = edgePoint(card.offsetLeft, card.offsetTop, card.offsetWidth, card.offsetHeight, pt);
+        svg.appendChild(el('line', { x1: a.x, y1: a.y, x2: pt.x, y2: pt.y, stroke: '#213863', 'stroke-width': '1.5', 'stroke-dasharray': '2 5', 'stroke-linecap': 'round', opacity: '0.55' }));
+        svg.appendChild(el('circle', { cx: a.x, cy: a.y, r: '2.6', fill: '#213863' }));
+        svg.appendChild(el('circle', { cx: pt.x, cy: pt.y, r: '11', fill: '#E89142', opacity: '0.16' }));
+        svg.appendChild(el('circle', { cx: pt.x, cy: pt.y, r: '5', fill: '#E89142', stroke: '#fff', 'stroke-width': '2.2' }));
+      });
+    }
+
+    function showSet(i) {
+      if (i === active && Object.keys(cards).length) return;
+      active = i;
+      photoData = sets[i].photos;
+      var swap = function () {
+        buildCards(photoData);
+        requestAnimationFrame(recompute);
+        setTimeout(recompute, 120); // after images/layout settle
+        if (!reduceMotion) stage.classList.remove('swapping');
+      };
+      if (reduceMotion) { swap(); return; }
+      stage.classList.add('swapping');
+      setTimeout(swap, 350); // fade out, then rebuild + fade in
+    }
+
+    // reuse the server-rendered first set
+    indexCards();
+
+    map.on('move zoom zoomend moveend resize viewreset', recompute);
+    map.whenReady(function () {
+      setTimeout(function () { map.invalidateSize(); recompute(); }, 60);
+      setTimeout(recompute, 200);
+    });
+    window.addEventListener('resize', recompute);
+
+    // cycle through sets when more than one is defined
+    if (cfg.cycle && cfg.cycle.enabled && sets.length > 1 && !reduceMotion) {
+      setInterval(function () { showSet((active + 1) % sets.length); }, cfg.cycle.intervalMs || 7000);
+    }
+
+    // ---- slideshow: auto-advance highlight slides + progress rail ----
+    var show = cfg.slideshow || {};
+    var slides = show.slides || [];
+    if (show.enabled && slides.length) {
+      var rail = document.getElementById('hero-rail');
+      var items = rail ? Array.prototype.slice.call(rail.querySelectorAll('.rail-item')) : [];
+      var fills = items.map(function (it) { return it.querySelector('.rail-fill'); });
+      var current = -1, timer = null, paused = false;
+
+      function setFill(el, pct, dur) {
+        if (!el) return;
+        el.style.transition = (dur && !reduceMotion) ? 'height ' + dur + 'ms linear' : 'none';
+        el.style.height = pct + '%';
+      }
+
+      function applyVisibility(slide) {
+        // stance polygons are a real Leaflet layer; add/remove by slide
+        if (stanceLayer) {
+          if (slide.id === 'stance') { if (!map.hasLayer(stanceLayer)) stanceLayer.addTo(map); }
+          else if (map.hasLayer(stanceLayer)) map.removeLayer(stanceLayer);
+        }
+      }
+
+      function go(i) {
+        if (!slides.length) return;
+        i = ((i % slides.length) + slides.length) % slides.length;
+        var wrapped = i <= current; // looped back to (or jumped above) start → reset fills
+        current = i;
+        var slide = slides[i];
+        stage.setAttribute('data-slide', slide.id);
+        applyVisibility(slide);
+        focusSlide(slide.id);
+
+        items.forEach(function (it, k) {
+          it.classList.toggle('active', k === i);
+          it.setAttribute('aria-selected', k === i ? 'true' : 'false');
+        });
+        // fill: completed slides full, upcoming empty, active animates over its duration
+        fills.forEach(function (f, k) {
+          if (k < i) setFill(f, 100, 0);
+          else if (k > i || wrapped && k !== i) setFill(f, 0, 0);
+        });
+        if (wrapped) fills.forEach(function (f, k) { if (k > i) setFill(f, 0, 0); });
+        // restart the active fill from 0 → 100. Force a reflow between the two
+        // writes so the transition replays (rAF is unreliable when the page is
+        // backgrounded, which would freeze the fill at 0).
+        setFill(fills[i], 0, 0);
+        if (fills[i]) void fills[i].offsetHeight;
+        setFill(fills[i], 100, slide.durationMs);
+
+        recompute();
+        schedule(slide.durationMs);
+      }
+
+      function schedule(ms) {
+        if (timer) clearTimeout(timer);
+        if (paused) return;
+        timer = setTimeout(function () { go(current + 1); }, ms || 6000);
+      }
+
+      // pause while the visitor hovers/focuses the rail so they can read it
+      if (rail) {
+        var pause = function () { paused = true; if (timer) { clearTimeout(timer); timer = null; } };
+        var resume = function () { if (paused) { paused = false; schedule(slides[current] ? slides[current].durationMs : 6000); } };
+        rail.addEventListener('mouseenter', pause);
+        rail.addEventListener('mouseleave', resume);
+        rail.addEventListener('focusin', pause);
+        rail.addEventListener('focusout', resume);
+        items.forEach(function (it, k) {
+          it.addEventListener('click', function () { paused = false; go(k); });
+        });
+      }
+
+      go(0);
+    } else {
+      stage.setAttribute('data-slide', 'members');
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+
+<style>
+  .home-hero { background: var(--page); }
+
+  .home-hero-stage {
+    position: relative;
+    height: 612px;
+    background: #eef2f0; /* basemap fallback before tiles load */
+    overflow: hidden;
+  }
+  .home-hero-map { position: absolute; inset: 0; width: 100%; height: 100%; background: #eef2f0; }
+
+  /* keep Leaflet's panes/controls beneath the floating UI */
+  .home-hero-stage :global(.leaflet-pane),
+  .home-hero-stage :global(.leaflet-top),
+  .home-hero-stage :global(.leaflet-bottom) { z-index: 1 !important; }
+  .home-hero-stage :global(.leaflet-control-attribution) { font-size: 9px; opacity: 0.65; }
+  .home-hero-stage :global(.sh-pin) {
+    background: var(--orange); width: 14px; height: 14px; border-radius: 50%;
+    border: 2.5px solid #fff; box-shadow: 0 1px 5px rgba(0,0,0,0.3);
+  }
+  .home-hero-stage :global(.sh-pin.org) { background: var(--navy); }
+  .home-hero-stage :global(.sh-pin.letter) {
+    background: var(--olive); width: 10px; height: 10px; border-width: 2px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.28);
+  }
+  /* whole marker layers fade in/out as slides change */
+  .home-hero-stage :global(.mk) { transition: opacity .6s ease; }
+  /* stance state fills animate in */
+  .home-hero-stage :global(.stance-state) { transition: fill-opacity .5s ease, opacity .5s ease; }
+
+  /* per-slide layer visibility: the active layer is bright, the rest dim away.
+     Rules only bind once JS sets [data-slide], so the no-JS SSR view is unaffected. */
+  .home-hero-stage[data-slide] :global(.mk-letter) { opacity: 0; pointer-events: none; }
+  .home-hero-stage[data-slide="mcclintock"] :global(.mk-letter) { opacity: 1; pointer-events: auto; }
+  .home-hero-stage[data-slide="stance"] :global(.mk-member),
+  .home-hero-stage[data-slide="mcclintock"] :global(.mk-member) { opacity: 0.16; pointer-events: none; }
+  /* photo cards + their connectors live on the members slide only */
+  .home-hero-stage[data-slide]:not([data-slide="members"]) .hero-photo,
+  .home-hero-stage[data-slide]:not([data-slide="members"]) #home-hero-connectors {
+    opacity: 0; pointer-events: none;
+  }
+
+  /* connector overlay */
+  #home-hero-connectors {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    z-index: 6; pointer-events: none; overflow: visible;
+    transition: opacity .35s ease;
+  }
+
+  /* slideshow progress rail (right edge, vertically centred between polaroids) */
+  .hero-rail {
+    position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
+    z-index: 20; display: flex; flex-direction: column; gap: 8px;
+  }
+  .rail-item {
+    --fill: var(--orange);
+    display: flex; align-items: stretch; gap: 12px;
+    background: none; border: 0; padding: 0; cursor: pointer;
+    font: inherit; color: inherit; text-align: right;
+    opacity: 0.55; transition: opacity .3s ease;
+  }
+  .rail-item--stance { --fill: var(--plum); }
+  .rail-item--mcclintock { --fill: var(--olive-deep); }
+  .rail-item.active { opacity: 1; }
+  .rail-item:hover { opacity: 1; }
+  .rail-text {
+    display: flex; flex-direction: column; justify-content: center;
+    min-width: 132px; padding: 7px 0;
+  }
+  .rail-eyebrow {
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.13em; text-transform: uppercase; color: var(--muted);
+    transition: color .3s ease;
+  }
+  .rail-item.active .rail-eyebrow { color: var(--navy); }
+  .rail-sub {
+    font-family: var(--accent); font-weight: 500; font-size: 10.5px;
+    letter-spacing: 0.01em; color: var(--muted-2); margin-top: 2px;
+  }
+  .rail-track {
+    width: 3px; min-height: 44px; border-radius: 3px;
+    background: var(--hairline-strong); position: relative; overflow: hidden;
+    flex: 0 0 auto;
+  }
+  .rail-fill {
+    position: absolute; top: 0; left: 0; width: 100%; height: 0;
+    background: var(--fill); border-radius: 3px;
+  }
+
+  /* floating intro panel */
+  .home-hero-panel {
+    position: absolute; left: 40px; top: 36px; z-index: 20;
+    width: min(384px, calc(100% - 56px));
+    background: rgba(251,250,246,0.94);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--hairline); border-radius: 12px;
+    box-shadow: 0 16px 44px rgba(20,33,58,0.16);
+    padding: 28px 30px 24px;
+  }
+  .home-hero-title {
+    font-family: var(--display); font-weight: 700; color: var(--navy);
+    font-size: 37px; line-height: 1.04; letter-spacing: -0.03em; margin-top: 13px;
+  }
+  .home-hero-title em { color: var(--orange); font-style: italic; }
+  .home-hero-lede {
+    font-family: var(--accent); font-weight: 500; font-size: 15px;
+    line-height: 1.55; color: var(--body); margin-top: 13px;
+  }
+  .home-hero-stats { display: flex; gap: 22px; margin-top: 18px; }
+  .home-hero-stats .sh-statnum { font-size: 23px; }
+  .home-hero-stats .sh-statlbl { font-size: 9px; margin-top: 3px; }
+  .home-hero-btns { display: flex; gap: 11px; margin-top: 20px; flex-wrap: wrap; }
+  .home-hero-foot {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--hairline);
+  }
+  .home-hero-legend {
+    display: flex; gap: 7px; align-items: center;
+    font-family: var(--accent); font-weight: 600; font-size: 11.5px; color: var(--muted);
+  }
+  .home-hero-legend .dot {
+    width: 11px; height: 11px; border-radius: 50%;
+    border: 2px solid #fff; box-shadow: 0 0 0 1px var(--hairline);
+  }
+  .home-hero-legend .dot.orange { background: var(--orange); }
+  .home-hero-legend .dot.navy { background: var(--navy); margin-left: 8px; }
+
+  /* shared eyebrow / button / stat / social bits (scoped copy of design tokens) */
+  .home-hero .sh-eyebrow {
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange);
+    display: inline-flex; align-items: center; gap: 10px;
+  }
+  .home-hero .sh-eyebrow::before { content: ''; width: 26px; height: 1.5px; background: var(--orange); }
+  .home-hero .sh-statnum { font-family: var(--display); font-weight: 700; letter-spacing: -0.025em; color: var(--navy); line-height: 1; }
+  .home-hero .sh-statlbl { font-family: var(--accent); font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+  .home-hero .sh-btn {
+    display: inline-flex; align-items: center; gap: 8px; padding: 12px 22px;
+    font-family: var(--accent); font-weight: 700; font-size: 12.5px;
+    letter-spacing: 0.08em; text-transform: uppercase; border-radius: 999px;
+    border: 1px solid transparent; cursor: pointer; white-space: nowrap;
+    transition: all .15s ease;
+  }
+  .home-hero .sh-btn.primary { background: var(--orange); color: #fff; }
+  .home-hero .sh-btn.primary:hover { background: var(--orange-soft); }
+  .home-hero .sh-btn.ghost { background: transparent; color: var(--navy); border-color: var(--navy); }
+  .home-hero .sh-btn.ghost:hover { background: var(--navy); color: #fff; }
+  .home-hero .sh-socials { display: flex; gap: 10px; align-items: center; }
+  .home-hero .sh-socials a {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 15px; color: var(--navy); background: var(--warm);
+    border: 1px solid var(--hairline); transition: all .15s ease;
+  }
+  .home-hero .sh-socials a:hover { background: var(--orange); color: #fff; border-color: var(--orange); }
+
+  /* pinned field photos */
+  .hero-photo {
+    position: absolute; z-index: 10; width: 210px; margin: 0;
+    background: #fff; border-radius: 9px; padding: 8px;
+    box-shadow: 0 14px 38px rgba(20,33,58,0.22);
+    transition: opacity .35s ease;
+  }
+  .hero-photo img {
+    width: 100%; height: 124px; object-fit: cover; object-position: center;
+    border-radius: 5px; display: block;
+  }
+  .hero-photo .cap { display: flex; align-items: center; gap: 6px; padding: 8px 4px 3px; }
+  .hero-photo .cap i { font-size: 11px; color: var(--orange); }
+  .hero-photo .cap span {
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.03em; color: var(--navy);
+  }
+
+  /* cross-fade while cycling between photo sets */
+  .home-hero-stage.swapping .hero-photo,
+  .home-hero-stage.swapping #home-hero-connectors { opacity: 0; }
+
+  /* the polaroids are decorative — drop them on narrow viewports so they never
+     cover the panel; the connectors skip any hidden card automatically */
+  @media (max-width: 900px) {
+    .hero-photo { display: none; }
+  }
+  @media (max-width: 560px) {
+    .home-hero-stage { height: 540px; }
+    .home-hero-panel { left: 16px; right: 16px; top: 16px; width: auto; padding: 22px 22px 20px; }
+    .home-hero-title { font-size: 30px; }
+    /* drop the rail toward the bottom so it clears the full-width panel */
+    .hero-rail { top: auto; bottom: 16px; transform: none; right: 14px; gap: 5px; }
+    .rail-text { min-width: 0; padding: 4px 0; }
+    .rail-sub { display: none; }
+    .rail-eyebrow { font-size: 10px; }
+    .rail-track { min-height: 26px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #home-hero-connectors, .hero-photo { transition: none; }
+  }
+</style>

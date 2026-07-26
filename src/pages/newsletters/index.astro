@@ -11,14 +11,11 @@ function formatDate(d: Date): string {
 }
 ---
 
-<PageLayout title="Newsletters">
-  <h2>Newsletters</h2>
-  <p>
-    Want to keep up with SNAP's latest updates? Sign up for our newsletter!
-    You can also read all our past newsletters below:
-  </p>
-  <hr />
-
+<PageLayout
+  title="Newsletters"
+  eyebrow="The Monthly"
+  lede="Want to keep up with SNAP's latest updates? Read past issues of our monthly newsletter below."
+>
   <div class="newsletter-list">
     {newsletters.map(nl => (
       <a href={`${import.meta.env.BASE_URL}newsletters/${nl.id}/`} class="newsletter-card card">

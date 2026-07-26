@@ -1,76 +1,332 @@
 ---
-import PageLayout from '../../layouts/PageLayout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
 import { getCollection } from 'astro:content';
+
+const base = import.meta.env.BASE_URL;
+
+type Post = {
+  id: string;
+  data: { title: string; date: Date; author?: string; excerpt?: string };
+};
 
 const posts = (await getCollection('blog')).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime()
-);
+) as Post[];
+
+const [featured, ...rest] = posts;
+
+const thumbVariants = ['', 'navy', 'olive', 'warm', 'plum'];
 
 function formatDate(d: Date): string {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
+
+function readTime(text: string | undefined): string {
+  if (!text) return '4 min read';
+  const words = text.split(/\s+/).length;
+  return `${Math.max(3, Math.round(words / 60))} min read`;
+}
+
+function initials(name: string | undefined): string {
+  if (!name) return 'SN';
+  return name
+    .split(/\s+/)
+    .map((w) => w[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+}
 ---
 
-<PageLayout title="Blog">
-  <h2>Blog</h2>
-  <p>
-    SNAP hosts our blog on Medium through our publication
-    <a href="https://medium.com/science-policy-in-a-snap" target="_blank" rel="noopener">Science Policy in a SNAP</a>.
-    Follow both the publication page and
-    <a href="https://medium.com/@snapscipolorg" target="_blank" rel="noopener">SNAP's page</a>
-    on Medium to get notified whenever we publish a new blog post!
-  </p>
-  <hr />
+<BaseLayout title="Blog">
+  <Header slot="header" />
 
-  <div class="blog-list">
-    {posts.map(post => (
-      <a href={`${import.meta.env.BASE_URL}blog/${post.id}/`} class="blog-card card">
-        <span class="blog-date">{formatDate(post.data.date)}</span>
-        <h3>{post.data.title}</h3>
-        {post.data.author && <span class="blog-author">By {post.data.author}</span>}
-        {post.data.excerpt && <p class="blog-excerpt">{post.data.excerpt}</p>}
-      </a>
-    ))}
-  </div>
-</PageLayout>
+  <header class="page-header">
+    <div class="container">
+      <div class="blog-header-inner">
+        <div>
+          <div class="eyebrow">The SNAP Blog</div>
+          <h1 class="display">Science Policy<br/><span class="italic-accent">in a SNAP.</span></h1>
+        </div>
+        <p class="lede lg" style="max-width: 460px;">Notes from coalition members on the work behind the initiatives &mdash; what placed, what worked, what the data is showing, what's coming next.</p>
+      </div>
+
+      <ul class="filter-chips">
+        <li><a href="#" class="on">All <span class="count">· {posts.length}</span></a></li>
+        <li><a href="https://medium.com/science-policy-in-a-snap" target="_blank" rel="noopener">Read on Medium →</a></li>
+      </ul>
+    </div>
+  </header>
+
+  {featured && (
+    <section class="featured">
+      <div class="container">
+        <a class="feat-card" href={`${base}blog/${featured.id}/`}>
+          <div class="feat-img">
+            <div class="stamp">Featured · {formatDate(featured.data.date)}</div>
+            <div class="placeholder">[ {featured.data.title.slice(0, 40)} ]</div>
+          </div>
+          <div class="feat-body">
+            <div class="meta">
+              <span class="pill">Blog</span>
+              <span>{readTime(featured.data.excerpt)}</span>
+              <span>·</span>
+              <span>{formatDate(featured.data.date)}</span>
+            </div>
+            <h2>{featured.data.title}</h2>
+            {featured.data.excerpt && <p>{featured.data.excerpt}</p>}
+            {featured.data.author && (
+              <div class="by">
+                <div class="avatar">{initials(featured.data.author)}</div>
+                <div>
+                  <div class="who-name">{featured.data.author}</div>
+                  <div class="who-role">SNAP coalition</div>
+                </div>
+              </div>
+            )}
+          </div>
+        </a>
+      </div>
+    </section>
+  )}
+
+  <section class="posts">
+    <div class="container">
+      <div class="posts-head">
+        <h3>All posts <span class="post-count">· {posts.length}</span></h3>
+      </div>
+
+      {rest.length > 0 ? (
+        <div class="post-grid">
+          {rest.map((post, idx) => {
+            const variant = thumbVariants[(idx + 1) % thumbVariants.length];
+            return (
+              <a class="post-card" href={`${base}blog/${post.id}/`}>
+                <div class:list={['post-thumb', variant]}>
+                  <div class="corner-tag">Blog</div>
+                  <div class="ph">[ {post.data.title.slice(0, 36)} ]</div>
+                </div>
+                <div class="post-meta">
+                  <span class="pill">Blog</span>
+                  <span>{readTime(post.data.excerpt)}</span>
+                  <span>·</span>
+                  <span>{formatDate(post.data.date)}</span>
+                </div>
+                <h4>{post.data.title}</h4>
+                {post.data.excerpt && <p>{post.data.excerpt}</p>}
+                {post.data.author && <div class="by-line">by <strong>{post.data.author}</strong></div>}
+              </a>
+            );
+          })}
+        </div>
+      ) : (
+        <p class="lede">No additional posts yet &mdash; check back soon.</p>
+      )}
+    </div>
+  </section>
+
+  <section class="subscribe" id="subscribe">
+    <div class="container">
+      <div class="sub-inner">
+        <div>
+          <div class="eyebrow">The Monthly</div>
+          <h2>One newsletter,<br/>once a month.</h2>
+          <p class="lede">Letters that ran, offices we visited, what's coming next. No noise.</p>
+        </div>
+        <div class="sub-form">
+          <h5>Past issues</h5>
+          <p style="margin-bottom: 16px; color: var(--body);">Browse the archive of monthly newsletters from the coalition.</p>
+          <a class="btn btn-primary" href={`${base}newsletters/`}>Read past issues →</a>
+          <p class="note">Sign-up form coming soon &mdash; for now you can follow us on social for monthly recaps.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
 
 <style>
-  .blog-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    margin-top: 1.5rem;
+  .blog-header-inner { display: grid; grid-template-columns: 1.5fr 1fr; gap: 56px; align-items: end; }
+
+  .filter-chips {
+    display: flex; gap: 8px; flex-wrap: wrap; margin: 36px 0 0;
+    padding: 0; list-style: none;
+  }
+  .filter-chips li a {
+    display: inline-block; padding: 9px 16px;
+    font-family: var(--accent); font-weight: 600; font-size: 11.5px;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    border-radius: var(--r-pill); border: 1px solid var(--hairline);
+    color: var(--body); background: white; text-decoration: none;
+    transition: all .15s ease;
+  }
+  .filter-chips li a:hover { border-color: var(--orange); color: var(--orange); }
+  .filter-chips li a.on { background: var(--navy); border-color: var(--navy); color: white; }
+  .filter-chips li a .count { color: var(--muted); margin-left: 6px; font-weight: 500; }
+  .filter-chips li a.on .count { color: rgba(255,255,255,0.6); }
+
+  .featured { padding: 56px 0 32px; }
+  .feat-card {
+    display: grid; grid-template-columns: 1.1fr 1fr;
+    background: white; border: 1px solid var(--hairline);
+    border-radius: var(--r-lg); overflow: hidden;
+    box-shadow: var(--shadow-lg); text-decoration: none; color: inherit;
+    transition: all .2s ease;
+  }
+  .feat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-xl); }
+
+  .feat-img {
+    position: relative;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--plum) 100%);
+    min-height: 360px; overflow: hidden;
+  }
+  .feat-img::after {
+    content: ''; position: absolute; inset: 0;
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0 12px, transparent 12px 26px),
+      radial-gradient(ellipse at 30% 30%, rgba(232,145,66,0.3), transparent 60%);
+  }
+  .feat-img .stamp {
+    position: absolute; left: 24px; top: 24px;
+    padding: 5px 12px; border-radius: var(--r-sm);
+    background: rgba(255,255,255,0.12); color: white;
+    font-family: var(--accent); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .feat-img .placeholder {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--mono); font-size: 11px;
+    color: rgba(255,255,255,0.5); letter-spacing: 0.08em;
+    padding: 0 32px; text-align: center;
+  }
+  .feat-body { padding: 44px 48px; display: flex; flex-direction: column; justify-content: center; }
+  .feat-body .meta {
+    display: flex; gap: 14px; align-items: center; margin-bottom: 16px;
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.06em; color: var(--muted); flex-wrap: wrap;
+  }
+  .feat-body h2 {
+    font-family: var(--display); font-weight: 700; font-size: 42px;
+    color: var(--navy); letter-spacing: -0.025em; line-height: 1.05;
+  }
+  .feat-body p {
+    font-size: 17px; line-height: 1.65; color: var(--body);
+    margin-top: 16px; max-width: 500px;
+  }
+  .feat-body .by {
+    margin-top: 24px; padding-top: 18px; border-top: 1px dashed var(--hairline);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .feat-body .by .avatar {
+    width: 38px; height: 38px; border-radius: 50%;
+    background: linear-gradient(155deg, var(--peach), var(--orange));
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-weight: 700; font-size: 13px;
+  }
+  .feat-body .by .who-name { font-family: var(--display); font-weight: 600; font-size: 14px; color: var(--navy); }
+  .feat-body .by .who-role { font-family: var(--accent); font-weight: 500; font-size: 11px; letter-spacing: 0.04em; color: var(--muted); }
+
+  /* POST GRID */
+  .posts { padding: 32px 0 100px; }
+  .posts-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 28px;
+    padding-bottom: 18px; border-bottom: 1px solid var(--hairline);
+  }
+  .posts-head h3 {
+    font-family: var(--display); font-weight: 700; font-size: 32px;
+    color: var(--navy); letter-spacing: -0.02em;
+  }
+  .posts-head .post-count {
+    font-family: var(--accent); font-weight: 500; font-size: 14px;
+    color: var(--muted); letter-spacing: 0.04em; margin-left: 4px;
+  }
+  .post-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 24px; }
+  .post-card {
+    display: flex; flex-direction: column; gap: 14px;
+    text-decoration: none; color: inherit;
+    transition: transform .2s ease;
+  }
+  .post-card:hover { transform: translateY(-3px); }
+  .post-thumb {
+    aspect-ratio: 16 / 10; border-radius: var(--r-md);
+    background: linear-gradient(135deg, var(--peach-tint), var(--peach));
+    position: relative; overflow: hidden;
+    border: 1px solid var(--hairline);
+  }
+  .post-thumb::after {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(135deg, rgba(255,255,255,0.1) 0 8px, transparent 8px 18px);
+  }
+  .post-thumb.navy { background: linear-gradient(135deg, var(--navy), var(--plum)); }
+  .post-thumb.olive { background: linear-gradient(135deg, #d9da8f, var(--olive)); }
+  .post-thumb.warm { background: linear-gradient(135deg, var(--warm), #e3dcc7); }
+  .post-thumb.plum { background: linear-gradient(135deg, #6e3b87, var(--plum)); }
+  .post-thumb .ph {
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--mono); font-size: 10.5px;
+    color: rgba(0,0,0,0.35); letter-spacing: 0.08em;
+    padding: 0 16px; text-align: center;
+  }
+  .post-thumb.navy .ph, .post-thumb.plum .ph { color: rgba(255,255,255,0.5); }
+  .post-thumb .corner-tag {
+    position: absolute; left: 14px; top: 14px;
+    padding: 4px 10px; border-radius: var(--r-sm);
+    background: rgba(255,255,255,0.92); color: var(--navy);
+    font-family: var(--accent); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+  }
+  .post-meta {
+    display: flex; gap: 10px; align-items: center;
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.06em; color: var(--muted); flex-wrap: wrap;
+  }
+  .post-card h4 {
+    font-family: var(--display); font-weight: 700; font-size: 22px;
+    color: var(--navy); letter-spacing: -0.012em; line-height: 1.25;
+  }
+  .post-card:hover h4 { color: var(--orange); }
+  .post-card p { font-size: 14.5px; line-height: 1.55; color: var(--body); }
+  .post-card .by-line { font-family: var(--accent); font-weight: 600; font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+  .post-card .by-line strong { color: var(--navy); font-weight: 700; }
+
+  /* SUBSCRIBE */
+  .subscribe { background: var(--peach-tint); padding: 80px 0; border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); }
+  .sub-inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; }
+  .sub-inner h2 {
+    font-family: var(--display); font-weight: 700; font-size: 48px;
+    color: var(--navy); letter-spacing: -0.03em; line-height: 0.98;
+  }
+  .sub-inner .lede { margin-top: 14px; max-width: 480px; }
+  .sub-form {
+    background: white; border: 1px solid var(--hairline);
+    border-radius: var(--r-lg); padding: 28px;
+    box-shadow: var(--shadow-md);
+  }
+  .sub-form h5 {
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange);
+    margin-bottom: 14px;
+  }
+  .sub-form .note {
+    margin-top: 12px;
+    font-family: var(--accent); font-weight: 500; font-size: 11.5px;
+    color: var(--muted);
   }
 
-  .blog-card {
-    text-decoration: none;
-    color: inherit;
+  @media (max-width: 1080px) {
+    .blog-header-inner, .feat-card, .sub-inner { grid-template-columns: 1fr; }
+    .feat-img { min-height: 260px; }
+    .feat-body { padding: 32px 28px; }
+    .post-grid { grid-template-columns: repeat(2, 1fr); }
   }
-
-  .blog-card:hover h3 {
-    color: var(--snap-orange);
-  }
-
-  .blog-date {
-    font-size: var(--text-xs);
-    color: var(--snap-gray-500);
-    font-weight: 600;
-  }
-
-  .blog-card h3 {
-    margin-bottom: 0.25rem;
-    transition: color var(--transition-fast);
-  }
-
-  .blog-author {
-    font-size: var(--text-sm);
-    color: var(--snap-gray-500);
-  }
-
-  .blog-excerpt {
-    font-size: var(--text-sm);
-    color: var(--snap-gray-600);
-    margin-top: 0.5rem;
-    line-height: 1.6;
+  @media (max-width: 720px) {
+    .post-grid { grid-template-columns: 1fr; }
+    .feat-body h2 { font-size: 30px; }
   }
 </style>

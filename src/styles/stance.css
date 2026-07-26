@@ -1,0 +1,744 @@
+/* ===========================================================================
+   Stance on Science — state-page explorer styles.
+
+   Ported from the legacy Jekyll site's _sass/_stance.scss and re-pointed at the
+   redesign's design tokens (var(--navy), --orange, --peach, --slate, …). The
+   markup and class names are kept identical so the shared vanilla-JS explorer
+   scripts (public/scripts/stance/*.js) keep working unchanged.
+
+   Everything is scoped under .stance-page; a handful of local custom properties
+   (--st-*) bridge the old $snap-* palette to the redesign tokens so the look
+   stays aligned with the rest of the site.
+   ========================================================================== */
+
+.stance-page {
+  --st-orange: var(--orange);
+  --st-orange-dark: #c47830;
+  --st-blue: var(--navy);
+  --st-navy-dark: var(--navy-deep);
+  --st-navy-tint: #eef1f6;
+  --st-light-blue: var(--slate);
+  --st-cream: var(--peach);
+  --st-border: var(--hairline-strong);
+  --st-bg: var(--warm);
+  --st-ink: var(--ink);
+  --st-muted: var(--muted);
+  --st-answer: var(--body);
+  --st-shadow: var(--shadow-md);
+  --st-focus-ring: 0 0 0 3px rgba(33, 56, 99, 0.14);
+
+  /* Party bubble colors (background / text), keyed by the slug emitted at each
+     render site: {{ party | downcase | replace ' ' '-' }}. */
+  --party-republican: #cd4f4b;
+  --party-democrat: #4272a1;
+  --party-unity: #78528c;
+  --party-libertarian: #dca237;
+  --party-no-party: #6a6f76;
+}
+
+/* ---------------------------------------------------------------------------
+   State page header
+   --------------------------------------------------------------------------- */
+.stance-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--accent);
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--st-blue);
+  text-decoration: none;
+  margin-bottom: 0.75rem;
+}
+.stance-back-link:hover { color: var(--orange); }
+
+.stance-state-header h1 { margin-top: 0.5rem; }
+
+.stance-rule {
+  border: none;
+  border-top: 1px solid var(--st-border);
+  margin: 30px 0;
+}
+
+.stance-race-flat {
+  border: 1px solid var(--st-border);
+  border-radius: 6px;
+  background: #fff;
+  margin-bottom: 0.85rem;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--st-blue);
+  cursor: default;
+}
+
+/* ---------------------------------------------------------------------------
+   Intro (jump CTA, goals, info accordions, disclaimer, ballot callout)
+   --------------------------------------------------------------------------- */
+.stance-intro .lede { font-size: 17px; }
+
+.stance-intro .jump-cta-wrap { margin-top: -12px; margin-bottom: 12px; }
+
+.stance-intro .jump-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 18px 0 6px;
+  font-family: var(--accent);
+  font-weight: 700;
+  font-size: 15px;
+  color: #fff;
+  background: var(--st-blue);
+  border-radius: 7px;
+  padding: 11px 20px;
+  text-decoration: none;
+  box-shadow: var(--st-shadow);
+}
+.stance-intro .jump-cta:hover,
+.stance-intro .jump-cta:focus { background: var(--st-navy-dark); color: #fff; text-decoration: none; }
+
+.stance-intro .goals { margin: 18px 0 8px; padding-left: 22px; }
+.stance-intro .goals li { margin: 0 0 7px; }
+
+.stance-intro .info {
+  border: 1px solid var(--st-border);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: var(--st-shadow);
+  margin: 18px 0;
+  overflow: hidden;
+}
+.stance-intro .info > summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--st-blue);
+}
+.stance-intro .info > summary::-webkit-details-marker { display: none; }
+.stance-intro .info > summary .chev { margin-left: auto; transition: transform 0.18s; color: var(--st-light-blue); }
+.stance-intro .info > summary .ic {
+  width: 30px;
+  height: 30px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  background: var(--st-navy-tint);
+  color: var(--st-blue);
+  font-size: 14px;
+}
+.stance-intro .info[open] > summary .chev { transform: rotate(90deg); }
+.stance-intro .info__body { padding: 2px 20px 18px; }
+.stance-intro .info__body p { margin: 0 0 11px; }
+.stance-intro .info__body p:last-child { margin-bottom: 0; }
+
+.stance-intro .qlist {
+  counter-reset: q;
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.stance-intro .qlist li {
+  counter-increment: q;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 14px;
+  align-items: start;
+}
+.stance-intro .qlist li::before {
+  content: "Q" counter(q);
+  font-family: var(--accent);
+  font-weight: 800;
+  font-size: 13px;
+  color: #fff;
+  background: var(--st-blue);
+  border-radius: 7px;
+  padding: 6px 9px;
+  line-height: 1;
+  margin-top: 2px;
+}
+.stance-intro .qtags { margin-top: 5px; display: flex; gap: 6px; flex-wrap: wrap; }
+
+.stance-intro .disclaimer {
+  background: var(--st-bg);
+  border: 1px solid var(--st-border);
+  border-left: 5px solid var(--st-blue);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+.stance-intro .disclaimer h3 { margin: 0 0 8px; font-size: 17px; color: var(--st-blue); }
+.stance-intro .disclaimer p { margin: 0; font-size: 14.5px; color: var(--body); }
+
+.stance-intro .ballot-lookup-callout {
+  background: var(--st-cream);
+  border: 1px solid var(--st-orange-dark);
+  border-left: 5px solid var(--st-orange);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+.stance-intro .ballot-lookup-callout p { margin: 0; font-size: 15.5px; font-weight: 600; color: var(--st-blue); }
+.stance-intro .ballot-lookup-callout a { color: var(--st-orange-dark); }
+
+.stance-intro .badge {
+  display: inline-block;
+  font-family: var(--accent);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 3px 11px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--st-light-blue);
+  white-space: nowrap;
+}
+.stance-intro .badge--tag { background: var(--st-cream); color: var(--st-blue); }
+
+/* ---------------------------------------------------------------------------
+   Responses section — view toggle
+   --------------------------------------------------------------------------- */
+.stance-responses { scroll-margin-top: 84px; }
+.stance-responses__title {
+  font-family: var(--display);
+  font-size: 26px;
+  margin: 6px 0 6px;
+  color: var(--st-blue);
+}
+.stance-responses__note { margin: 0 0 4px; }
+
+.stance-view-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.5rem 0 1.25rem;
+}
+.stance-view-toggle__btn {
+  font-family: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.4rem 0.95rem;
+  border: 1px solid var(--st-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--st-blue);
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease, color 0.12s ease;
+}
+.stance-view-toggle__btn:hover { background: var(--st-bg); }
+.stance-view-toggle__btn:focus-visible { outline: 2px solid var(--st-orange); outline-offset: 2px; }
+.stance-view-toggle__btn.is-active { background: var(--st-blue); border-color: var(--st-blue); color: #fff; }
+
+.stance-view-panel[hidden] { display: none; }
+
+/* ---------------------------------------------------------------------------
+   Filter & sort bar (candidate explorer)
+   --------------------------------------------------------------------------- */
+.stance-responses .sbar {
+  background: var(--st-bg);
+  border: 1px solid var(--st-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 16px 0 12px;
+}
+.stance-responses .sbar__head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--accent);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--st-blue);
+  margin-bottom: 11px;
+}
+.stance-responses .sbar__head .fa-sliders { color: var(--st-orange-dark); }
+.stance-responses .sbar__row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 11px 13px; }
+.stance-responses .sbar__spacer { flex: 1 1 auto; min-width: 0; }
+.stance-responses .sbar__reset {
+  align-self: flex-end;
+  font-family: var(--accent);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--st-blue);
+  background: #fff;
+  border: 1px solid var(--st-border);
+  border-radius: 7px;
+  padding: 0 16px;
+  height: 37px;
+  margin-bottom: 0;
+  line-height: normal;
+  cursor: pointer;
+}
+.stance-responses .sbar__reset:hover { background: var(--st-navy-tint); border-color: var(--st-light-blue); }
+
+.stance-responses .sfield { display: flex; flex-direction: column; gap: 5px; min-width: 0; margin-bottom: 0; }
+.stance-responses .sfield > span {
+  font-family: var(--accent);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--st-muted);
+}
+.stance-responses .sfield select {
+  font-family: var(--accent);
+  font-size: 14px;
+  color: var(--st-ink);
+  padding: 0 30px 0 11px;
+  height: 37px;
+  border: 1px solid var(--st-border);
+  border-radius: 7px;
+  background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%23687DA2' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 10px center;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  max-width: 230px;
+}
+.stance-responses .sfield select:hover { border-color: var(--st-light-blue); }
+.stance-responses .sfield select:focus { outline: none; border-color: var(--st-blue); box-shadow: var(--st-focus-ring); }
+.stance-responses .sfield--sort select { background-color: var(--st-navy-tint); font-weight: 600; }
+
+.stance-responses .results-count {
+  font-family: var(--accent);
+  font-size: 14px;
+  color: var(--st-muted);
+  margin: 0 0 16px;
+}
+.stance-responses .results-count.is-filtered { color: var(--st-blue); font-weight: 600; }
+
+/* ---------------------------------------------------------------------------
+   Two-pane grid: candidate directory rail + scrolling feed
+   --------------------------------------------------------------------------- */
+.stance-responses .responses__grid {
+  display: grid;
+  grid-template-columns: 286px 1fr;
+  gap: 28px;
+  align-items: stretch;
+  height: calc(100vh - 92px);
+  max-height: 880px;
+  min-height: 540px;
+}
+
+.stance-responses .rail { min-height: 0; height: 100%; }
+.stance-responses .rail__box {
+  border: 1px solid var(--st-border);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--st-shadow);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.stance-responses .rail-head {
+  padding: 15px 15px 13px;
+  border-bottom: 1px solid var(--st-border);
+  background: linear-gradient(180deg, #fff, #fbfcfd);
+}
+.stance-responses .rail-head__title {
+  font-family: var(--accent);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--st-muted);
+  margin-bottom: 9px;
+}
+.stance-responses .rail-search { position: relative; }
+.stance-responses .rail-search input {
+  width: 100%;
+  font-family: var(--accent);
+  font-size: 14px;
+  padding: 9px 11px 9px 32px;
+  border: 1px solid var(--st-border);
+  border-radius: 8px;
+  background: #fff;
+}
+.stance-responses .rail-search input:focus { outline: none; border-color: var(--st-blue); box-shadow: var(--st-focus-ring); }
+.stance-responses .rail-search .fa-magnifying-glass {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--st-light-blue);
+  font-size: 13px;
+}
+.stance-responses .rail-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; padding: 7px; }
+.stance-responses .rail-group {
+  font-family: var(--accent);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--st-light-blue);
+  padding: 12px 9px 5px;
+}
+.stance-responses .rail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 9px;
+  padding: 8px 9px;
+  cursor: pointer;
+  color: var(--st-ink);
+  border-left: 3px solid transparent;
+}
+.stance-responses .rail-item:hover { background: var(--st-bg); }
+.stance-responses .rail-item.is-active { background: var(--st-navy-tint); border-left-color: var(--st-blue); }
+.stance-responses .rail-item.is-active .rail-item__name { color: var(--st-navy-dark); }
+.stance-responses .rail-item__body { min-width: 0; display: flex; flex-direction: column; }
+.stance-responses .rail-item__name {
+  font-family: var(--accent);
+  font-weight: 600;
+  font-size: 14.5px;
+  color: var(--st-blue);
+  line-height: 1.2;
+}
+.stance-responses .rail-item__meta { font-size: 12px; color: var(--st-muted); margin-top: 1px; }
+
+.stance-responses .feed-scroll { min-width: 0; height: 100%; min-height: 0; overflow-y: auto; padding-right: 8px; }
+.stance-responses .feed { min-width: 0; display: flex; flex-direction: column; gap: 16px; padding-bottom: 8px; }
+.stance-responses .feed-race {
+  font-family: var(--accent);
+  font-size: 15px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--st-light-blue);
+  margin: 14px 0 -2px;
+  padding-bottom: 7px;
+  border-bottom: 2px solid var(--st-navy-tint);
+  scroll-margin-top: 84px;
+}
+.stance-responses .feed-race:first-child { margin-top: 0; }
+.stance-responses .feed-empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--st-muted);
+  background: var(--st-bg);
+  border: 1px dashed var(--st-border);
+  border-radius: 10px;
+}
+
+/* ---------------------------------------------------------------------------
+   Candidate card (feed)
+   --------------------------------------------------------------------------- */
+.stance-responses .cand-card {
+  border: 1px solid var(--st-border);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: var(--st-shadow);
+  padding: 20px 22px;
+  scroll-margin-top: 84px;
+}
+.stance-responses .cand-card[hidden] { display: none; }
+.stance-responses .cand-card__head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.stance-responses .cand-card__name { font-family: var(--display); font-size: 21px; font-weight: 700; margin: 0; color: var(--st-blue); }
+.stance-responses .cand-card__meta { display: flex; flex-wrap: wrap; gap: 7px; margin: 9px 0 0; }
+.stance-responses .cand-card__sub { color: var(--st-muted); font-size: 13px; margin-top: 9px; }
+
+.stance-responses .qa { border-top: 1px solid var(--st-border); margin-top: 14px; padding-top: 13px; }
+.stance-responses .qa[hidden] { display: none; }
+.stance-responses .qa__q {
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--st-blue);
+  margin: 0 0 7px;
+  line-height: 1.4;
+  text-wrap: pretty;
+}
+.stance-responses .qa__n {
+  display: inline-block;
+  font-family: var(--accent);
+  font-weight: 800;
+  font-size: 12px;
+  color: #fff;
+  background: var(--st-blue);
+  border-radius: 6px;
+  padding: 3px 7px;
+  margin-right: 7px;
+}
+.stance-responses .qa__tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 9px; }
+.stance-responses .qa__a { margin: 0; color: var(--st-answer); font-size: 15px; line-height: 1.62; text-wrap: pretty; }
+.stance-responses .qa__a p:last-child { margin-bottom: 0; }
+
+/* ---------------------------------------------------------------------------
+   Badges (explorer-scoped pill variants)
+   --------------------------------------------------------------------------- */
+.stance-responses .badge {
+  display: inline-block;
+  font-family: var(--accent);
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 3px 11px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--st-light-blue);
+  white-space: nowrap;
+}
+.stance-responses .badge--race,
+.stance-responses .badge--county { background: var(--st-light-blue); }
+.stance-responses .badge--dist { background: var(--st-navy-tint); color: var(--st-blue); }
+.stance-responses .badge--tag { background: var(--st-cream); color: var(--st-blue); }
+.stance-responses .badge--tag-on { background: var(--st-cream); color: var(--st-blue); box-shadow: 0 0 0 2px rgba(33, 56, 99, 0.35); }
+.stance-responses .badge--party { background: var(--party-no-party); color: #fff; }
+.stance-responses .badge--party-republican { background: var(--party-republican); color: #fff; }
+.stance-responses .badge--party-democratic { background: var(--party-democrat); color: #fff; }
+.stance-responses .badge--party-unity { background: var(--party-unity); color: #fff; }
+.stance-responses .badge--party-libertarian { background: var(--party-libertarian); color: #3a2a05; }
+.stance-responses .badge--party-no-party-preference { background: var(--party-no-party); color: #fff; }
+
+/* ---------------------------------------------------------------------------
+   Topic Hub view
+   --------------------------------------------------------------------------- */
+.stance-topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 0.85rem;
+  margin: 1.25rem 0;
+}
+.stance-topic-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+  padding: 0.9rem 1rem;
+  min-height: 6rem;
+  border: 1px solid var(--st-border);
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+  font: inherit;
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.stance-topic-tile:hover { background: var(--st-bg); }
+.stance-topic-tile:focus-visible { outline: 2px solid var(--st-orange); outline-offset: 2px; }
+.stance-topic-tile__name { font-family: var(--display); font-weight: 700; color: var(--st-blue); line-height: 1.2; }
+.stance-topic-tile__meta {
+  margin-top: auto;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-family: var(--accent);
+  font-size: 0.85rem;
+  color: var(--st-muted);
+}
+.stance-topic-tile__count { font-family: var(--display); font-weight: 700; font-size: 1.05rem; color: var(--st-orange-dark); }
+.stance-topic-tile.is-active { background: var(--st-orange); border-color: var(--st-orange); }
+.stance-topic-tile.is-active .stance-topic-tile__name,
+.stance-topic-tile.is-active .stance-topic-tile__meta,
+.stance-topic-tile.is-active .stance-topic-tile__count { color: #fff; }
+
+.stance-topic-panel[hidden] { display: none; }
+.stance-topic-panel__head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 0.5rem; margin: 0.5rem 0 0.75rem; }
+.stance-topic-panel__head h3 { font-family: var(--display); color: var(--st-blue); }
+.stance-topic-panel__count { color: var(--st-muted); font-size: 0.95rem; }
+.stance-topic-placeholder { padding: 1.5rem 0; color: var(--st-muted); }
+
+.stance-chip-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; margin-bottom: 1rem; }
+.stance-chip-row__label { font-family: var(--accent); font-size: 0.9rem; color: var(--st-muted); margin-right: 0.15rem; }
+.stance-chip {
+  font-family: var(--accent);
+  font-size: 0.85rem;
+  padding: 0.2rem 0.7rem;
+  border: 1px solid var(--st-border);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--body);
+  cursor: pointer;
+}
+.stance-chip:hover { background: var(--st-bg); }
+.stance-chip.is-active { background: var(--st-blue); border-color: var(--st-blue); color: #fff; }
+
+/* ---------------------------------------------------------------------------
+   Response cards (topic view)
+   --------------------------------------------------------------------------- */
+.stance-response-list { display: flex; flex-direction: column; gap: 1rem; }
+.stance-response-card {
+  border: 1px solid var(--st-border);
+  border-radius: 6px;
+  padding: 1rem 1.25rem;
+  background: #fff;
+}
+.stance-response-card[hidden] { display: none; }
+.stance-response-card__header { margin-bottom: 0.5rem; }
+.stance-response-card__candidate { font-family: var(--display); margin: 0 0 0.4rem; color: var(--st-blue); }
+.stance-response-card__meta { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.25rem; }
+.stance-response-card__question { color: var(--st-muted); }
+.stance-response-card__body p:last-child { margin-bottom: 0; }
+.stance-response-card__footer { margin-top: 0.75rem; color: var(--st-muted); }
+
+.stance-badge {
+  display: inline-block;
+  font-family: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.18rem 0.55rem;
+  border-radius: 999px;
+  background: #eee;
+  color: var(--body);
+  line-height: 1.4;
+}
+.stance-badge a { color: inherit; text-decoration: underline; }
+.stance-badge--state { background: var(--st-blue); color: #fff; }
+.stance-badge--state a { color: #fff; text-decoration: none; }
+.stance-badge--race,
+.stance-badge--county-race { background: var(--st-light-blue); color: #fff; }
+.stance-badge--tag { background: var(--st-cream); color: var(--st-blue); }
+.stance-badge--party { background: var(--party-no-party); color: #fff; }
+.stance-badge--party-republican { background: var(--party-republican); color: #fff; }
+.stance-badge--party-democratic { background: var(--party-democrat); color: #fff; }
+.stance-badge--party-unity { background: var(--party-unity); color: #fff; }
+.stance-badge--party-libertarian { background: var(--party-libertarian); color: #3a2a05; }
+.stance-badge--party-no-party-preference { background: var(--party-no-party); color: #fff; }
+
+/* ---------------------------------------------------------------------------
+   Compare view
+   --------------------------------------------------------------------------- */
+.stance-filter-bar {
+  background: var(--st-bg);
+  border: 1px solid var(--st-border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin: 16px 0 12px;
+}
+.stance-filter-bar__row { display: flex; flex-wrap: wrap; gap: 11px 13px; align-items: flex-end; }
+.stance-filter { display: flex; flex-direction: column; gap: 5px; min-width: 0; margin-bottom: 0; }
+.stance-filter__label {
+  font-family: var(--accent);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--st-muted);
+}
+.stance-filter select {
+  font-family: var(--accent);
+  font-size: 14px;
+  color: var(--st-ink);
+  padding: 0 30px 0 11px;
+  height: 37px;
+  border: 1px solid var(--st-border);
+  border-radius: 7px;
+  background: #fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' fill='none' stroke='%23687DA2' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/></svg>") no-repeat right 10px center;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  min-width: 8rem;
+  max-width: 230px;
+}
+.stance-filter select:hover { border-color: var(--st-light-blue); }
+.stance-filter select:focus { outline: none; border-color: var(--st-blue); box-shadow: var(--st-focus-ring); }
+
+.stance-compare[hidden] { display: none; }
+.stance-compare-q + .stance-compare-q { margin-top: 1.75rem; }
+.stance-compare-q__title {
+  font-family: var(--display);
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+  line-height: 1.4;
+  color: var(--st-blue);
+  text-wrap: pretty;
+}
+.stance-compare-q__n {
+  display: inline-block;
+  font-family: var(--accent);
+  font-weight: 800;
+  font-size: 12px;
+  color: #fff;
+  background: var(--st-blue);
+  border-radius: 6px;
+  padding: 3px 7px;
+  margin-right: 7px;
+  vertical-align: middle;
+}
+.stance-compare-q__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--st-border);
+}
+.stance-compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 0.75rem; }
+.stance-compare-card {
+  border: 1px solid var(--st-border);
+  border-radius: 6px;
+  padding: 0.75rem 0.85rem;
+  background: #fff;
+}
+.stance-compare-card__head { margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--st-border); }
+.stance-compare-card__cand { font-family: var(--display); font-weight: 600; color: var(--st-blue); }
+.stance-compare-card__meta { margin-top: 0.3rem; display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+.stance-compare-card__hint { font-size: 0.85rem; color: var(--st-muted); }
+.stance-compare-card .stance-answer-text { font-size: 0.9rem; color: var(--st-answer); }
+.stance-compare-card .stance-answer-text p:last-child { margin-bottom: 0; }
+.stance-compare-card__empty { color: var(--muted-2); }
+
+/* ---------------------------------------------------------------------------
+   Race-group accordion (intro "how to use" list)
+   --------------------------------------------------------------------------- */
+.stance-race-group {
+  border: 1px solid var(--st-border);
+  border-radius: 6px;
+  background: #fff;
+  margin-bottom: 0.85rem;
+  overflow: hidden;
+}
+.stance-race-group > summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  color: var(--st-blue);
+}
+.stance-race-group > summary::-webkit-details-marker { display: none; }
+.stance-race-group > summary:hover { background: var(--st-bg); }
+.stance-race-group > summary::after {
+  content: "\f054";
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  margin-left: auto;
+  color: var(--st-light-blue);
+  transition: transform 0.18s;
+}
+.stance-race-group[open] > summary::after { transform: rotate(90deg); }
+.stance-race-group ul { margin: 0.25rem 0 0.5rem 1.25rem; }
+
+/* Screen-reader-only helper. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Responsive — collapse to a single column
+   --------------------------------------------------------------------------- */
+@media (max-width: 860px) {
+  .stance-responses .responses__grid { grid-template-columns: 1fr; height: auto; max-height: none; }
+  .stance-responses .rail,
+  .stance-responses .rail__box { height: auto; }
+  .stance-responses .rail-list { max-height: 320px; }
+  .stance-responses .feed-scroll { height: auto; overflow: visible; padding-right: 0; }
+  .stance-responses .rail-item { min-height: 44px; }
+}

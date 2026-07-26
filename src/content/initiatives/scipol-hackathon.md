@@ -7,6 +7,6 @@ excerpt: "Learn more about our upcoming scipol hackathon!"
 
 ## Science Policy Hackathon
 
-SNAP is organizing a Science Policy Hackathon event to take place during the Spring semester! Small groups will tackle policy issues related to science and society, STEM professional formation, and bolstering the STEM workforce. Completed policy solutions will be showcased by SNAP.
+Be on the lookout, SNAP's SciPol Hackathon is coming this summer to a university near you! This project-focused initiative will bring together early-career researchers to work in interdisciplinary teams over three days to create a science-policy technical product, a multimedia piece, or a written output.
 
-Are you a graduate student at a university with a science policy group? Or don't have a science policy grad group, but are interested in forming one? Email us for more info!
+Following a recent planning meeting, we have defined key elements of the event, including team structure and coordination. We are also developing a code of conduct and guidance for team leads to support inclusive participation, clear expectations, and strong team dynamics, and are discussing ways to keep teams engaged beyond the event. Each team will present its work, with feedback centered on impact, creativity, and novelty.

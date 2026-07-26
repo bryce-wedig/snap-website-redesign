@@ -20,24 +20,23 @@ SNAP is launching a new initiative for the 2026 elections to change that. Our go
 
 ### How It Works
 
-We will send political candidates across various states a set of science policy-related questions and ask for written responses. Their answers will be posted publicly on our website so that voters can easily compare positions.
+Individual state teams will send political candidates a set of science policy-related (and state-specific) questions and ask for written responses. Their answers will be posted publicly on our website so that voters can easily compare positions.
 
-To help make these responses meaningful, SNAP will also use a grading rubric to evaluate candidate answers. The rubric will assess criteria such as:
-- Evidence-based decision making
-- Relevance to public health, environment, and innovation
-- Commitment to transparency and accountability
-- Willingness to listen to experts and communities
-- Equity and accessibility
+*The responses shared by candidates do not reflect the views of the Stance state teams nor SNAP. SNAP is a non-partisan organization. SNAP and the Stance state teams do not endorse any candidates.*
 
-We will also be organizing locally-held town halls where candidates for office can answer questions about their Stance on Science for the public directly.
+Some, but not all, of the states will be evaluating candidate answers with the publicly available grading rubric (which you can access [here](https://docs.google.com/document/d/1HFpqoIsq8DpBhChrxs-jU6NXkgSFmi7FEaasIwx6oKU/edit?usp=sharing)). The evaluations are intended to assist constituents as they interpret candidates' stances. The rubric is based on the following criteria:
+
+- Evidence-Based positions: this candidate regularly cites scientific findings as the basis for their policy goals (ends)
+- Sound policy-making: this candidate cites or pledges to utilize scientific findings or expertise in the design of their policies (means)
+- Thoroughness of Response: this candidate provides a well-thought-out, detailed response to this question
+
+To find out if your state is evaluating responses, check out the individual state pages. Teams will not be modifying candidate responses in any way.
+
+Additionally, some states are organizing local town halls where candidates for office can answer questions about their Stance on Science for the public directly.
 
 ### Why This Matters
 
-By highlighting candidates' views on science, we aim to elevate science as a key part of the political conversation and remind candidates that voters care about evidence-based leadership.
-
-### Why Us?
-
-As early-career scientists across various disciplines, we are passionate and committed to advocating for a future of science and science policy that serves society. We know that today's decisions affect tomorrow's world, so we are dedicated to ensuring science remains central to policy-making. As the future leaders of science and society, our goal is to bridge the gap between scientists and their communities through Stance on Science.
+By highlighting candidates' views on science, SNAP and local state teams aim to elevate science as a key part of the political conversation and remind candidates that voters care about evidence-based leadership.
 
 ### How to Get Involved
 

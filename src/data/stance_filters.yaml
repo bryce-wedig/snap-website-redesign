@@ -1,0 +1,42 @@
+# Master filter configuration for the Stance on Science search and per-state
+# pages. Update this file to add new tags, races, parties, or to change the
+# district number range. All Stance pages read from this file.
+
+tags:
+  - Agriculture
+  - Artificial Intelligence
+  - Climate
+  - Energy
+  - Environment
+  - Investment in Higher Education
+  - Jobs and Workforce
+  - K-12 Science Education
+  - Policymaking Process
+  - Public Health
+  - Science Diplomacy
+  - Science Funding
+  - Transportation
+  - Trust in Science
+
+races:
+  - Attorney General
+  - Governor
+  - Local County Races [All]
+  - Mayor
+  - Secretary of State
+  - State Board of Education
+  - State House of Representatives
+  - State Senate
+  - University Board of Regents
+  - US House of Representatives
+  - US Senate
+
+parties:
+  - Democratic
+  - Libertarian
+  - Republican
+  - Unity
+  - No Party Preference
+
+district_min: 1
+district_max: 54

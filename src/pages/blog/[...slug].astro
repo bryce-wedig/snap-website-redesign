@@ -4,7 +4,7 @@ import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  return posts.map(entry => ({
+  return posts.map((entry) => ({
     params: { slug: entry.id },
     props: { entry },
   }));
@@ -12,8 +12,16 @@ export async function getStaticPaths() {
 
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const base = import.meta.env.BASE_URL;
 ---
 
-<PostLayout title={entry.data.title} date={entry.data.date} author={entry.data.author}>
+<PostLayout
+  title={entry.data.title}
+  date={entry.data.date}
+  author={entry.data.author}
+  deck={entry.data.excerpt}
+  section="Blog"
+  sectionHref={`${base}blog/`}
+>
   <Content />
 </PostLayout>

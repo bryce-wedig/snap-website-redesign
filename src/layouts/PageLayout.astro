@@ -6,17 +6,74 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title: string;
   description?: string;
+  /** Optional eyebrow/kicker text above the title. */
+  eyebrow?: string;
+  /** Optional lede paragraph shown beside / under the title. */
+  lede?: string;
+  /** Suppress the auto-generated page header (the page provides its own). */
+  hideHeader?: boolean;
 }
 
-const { title, description } = Astro.props;
+const { title, description, eyebrow, lede, hideHeader = false } = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
 <BaseLayout title={title} description={description}>
   <Header slot="header" />
 
-  <div class="container" style="padding-top: 2rem; padding-bottom: 3rem; min-height: 60vh;">
-    <slot />
-  </div>
+  {!hideHeader && (
+    <header class="page-header">
+      <div class="container">
+        <div class="crumbs">
+          <a href={base}>SNAP</a><span class="sep">/</span>
+          <span>{title}</span>
+        </div>
+        <div class="page-head-inner">
+          <div>
+            {eyebrow && <div class="eyebrow">{eyebrow}</div>}
+            <h1 class="display">{title}</h1>
+          </div>
+          {lede && <p class="lede lg">{lede}</p>}
+        </div>
+      </div>
+    </header>
+  )}
+
+  <section class="page-body">
+    <div class="container">
+      <slot />
+    </div>
+  </section>
 
   <Footer slot="footer" />
 </BaseLayout>
+
+<style>
+  .page-head-inner {
+    display: grid; grid-template-columns: 1.5fr 1fr;
+    gap: 48px; align-items: end;
+  }
+  .page-head-inner h1.display { font-size: 72px; line-height: 0.96; }
+  .page-body { padding: 64px 0 100px; }
+  .page-body :global(h2) {
+    font-family: var(--display); font-weight: 700; font-size: 36px;
+    color: var(--navy); letter-spacing: -0.02em; line-height: 1.1;
+    margin: 2rem 0 1rem;
+  }
+  .page-body :global(h2:first-child) { margin-top: 0; }
+  .page-body :global(h3) {
+    font-family: var(--display); font-weight: 700; font-size: 24px;
+    color: var(--navy); letter-spacing: -0.01em;
+    margin: 1.5rem 0 0.75rem;
+  }
+  .page-body :global(p) { margin-bottom: 1rem; }
+  .page-body :global(hr) {
+    border: 0; height: 1px; background: var(--hairline);
+    margin: 1rem 0 2rem;
+  }
+
+  @media (max-width: 1080px) {
+    .page-head-inner { grid-template-columns: 1fr; gap: 24px; }
+    .page-head-inner h1.display { font-size: 52px; }
+  }
+</style>

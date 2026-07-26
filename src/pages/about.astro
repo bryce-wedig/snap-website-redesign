@@ -15,7 +15,11 @@ const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml')
 }>;
 ---
 
-<PageLayout title="About">
+<PageLayout
+  title="About"
+  eyebrow="eyebrow"
+  lede="desc"
+>
   <h2>Member Organizations</h2>
   <hr />
 

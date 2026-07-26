@@ -1,0 +1,504 @@
+---
+import { readFileSync } from 'fs';
+import { parse } from 'yaml';
+import { join } from 'path';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const base = import.meta.env.BASE_URL;
+
+const letters = parse(
+  readFileSync(join(process.cwd(), 'src/data/mcclintock_letters.yaml'), 'utf-8')
+) as Array<{ headline?: string; source?: string; date?: string; author?: string; website?: string; location?: string }>;
+
+const placed = letters
+  .filter((l) => l.headline && l.source && l.website)
+  .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
+
+const recentLetters = placed.slice(0, 5);
+const states = Array.from(new Set(placed.map((l) => l.location).filter(Boolean)));
+
+function formatDate(d: string | undefined): string {
+  if (!d) return '';
+  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+const pinPositions = [
+  { left: '14%', top: '50%' }, { left: '18%', top: '38%', big: true },
+  { left: '23%', top: '32%' }, { left: '28%', top: '58%' },
+  { left: '35%', top: '28%', big: true }, { left: '42%', top: '48%' },
+  { left: '48%', top: '34%' }, { left: '54%', top: '60%' },
+  { left: '62%', top: '42%' }, { left: '68%', top: '52%', big: true },
+  { left: '74%', top: '36%' }, { left: '79%', top: '48%' },
+  { left: '84%', top: '40%' }, { left: '38%', top: '72%' },
+  { left: '56%', top: '76%' }, { left: '71%', top: '70%' },
+];
+---
+
+<BaseLayout title="McClintock Letters">
+  <Header slot="header" />
+
+  <header class="page-header">
+    <div class="container">
+      <div class="crumbs">
+        <a href={base}>SNAP</a><span class="sep">/</span>
+        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
+        <span>McClintock Letters</span>
+      </div>
+
+      <div class="hero-wrap">
+        <div>
+          <div class="hero-status"><span class="pulse"></span>Award-winning · active campaign</div>
+          <h1 class="display">McClintock<br/><span class="italic-accent">Letters.</span></h1>
+          <p class="lede lg" style="margin-top: 24px;">Improving communication between scientists and the public is crucial for rebuilding trust and addressing misinformation. We're inviting scientists to share their stories with their local hometown paper through the McClintock Letters Initiative &mdash; a national op-ed writing campaign.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary btn-lg" href="https://mcclintocklet-jmj4172.slack.com/join/shared_invite/zt-37dzpgmdc-DqJlAP~yt9Qug~OCFnBh5g" target="_blank" rel="noopener">Join the writers' space</a>
+            <a class="btn btn-ghost-dark btn-lg" href="#placements">Read recent placements</a>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <h5>Campaign progress</h5>
+          <div class="cycle-bar"><div class="fill"></div></div>
+          <div class="cycle-meta">
+            <div>
+              <div class="pct">{placed.length}+</div>
+              <div class="pct-lbl">Letters placed</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="pct">{states.length}</div>
+              <div class="pct-lbl">States reached</div>
+            </div>
+          </div>
+          <div class="deadline">
+            <div>
+              <div class="lbl">Get assistance</div>
+              <div class="date">Submit a request →</div>
+            </div>
+            <a class="btn btn-primary btn-sm" href="https://docs.google.com/forms/d/e/1FAIpQLSei6nfOkkAuyzRt2dwJ3abCMwrGU-3vEDxzlg0koPpVVuCxSA/viewform?usp=header" target="_blank" rel="noopener">Apply</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-strip" style="margin-top: 64px;">
+        <div><div class="num">{placed.length}+</div><div class="lbl">Letters published</div></div>
+        <div><div class="num">{states.length}</div><div class="lbl">States reached</div></div>
+        <div><div class="num">2025</div><div class="lbl">First cycle</div></div>
+        <div><div class="num"><span class="em">1</span></div><div class="lbl">Research!America award</div></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HOW IT WORKS -->
+  <section class="howit">
+    <div class="container">
+      <div class="howit-head">
+        <div>
+          <div class="eyebrow">How it works</div>
+          <h2 class="display">A guided campaign.</h2>
+        </div>
+        <p class="lede" style="max-width: 640px;">Join the McClintock Letter Writer's Space for feedback, community, and resources, and submit a request when you need help getting your letter published.</p>
+      </div>
+
+      <div class="step-grid">
+        <div class="step">
+          <h5>Join</h5>
+          <p>Join the McClintock Letter Writer's Space for feedback, community, and resources, and connect with other scientists working on similar topics.</p>
+          <div class="step-meta">Slack · free</div>
+        </div>
+        <div class="step">
+          <h5>Write</h5>
+          <p>Share your story with your local hometown paper through a short op-ed, helping rebuild trust and address misinformation between scientists and the public.</p>
+          <div class="step-meta">Local hometown paper</div>
+        </div>
+        <div class="step">
+          <h5>Place</h5>
+          <p>Need help getting your letter published? Submit a request for assistance and the editorial team will help you target the right paper.</p>
+          <div class="step-meta">Request for assistance</div>
+        </div>
+        <div class="step">
+          <h5>Amplify</h5>
+          <p>Has your letter been published? Let us know by completing the placement form. We add it to the public archive and amplify across the coalition.</p>
+          <div class="step-meta">Add to archive</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PLACEMENTS -->
+  <section class="placements" id="placements">
+    <div class="container">
+      <div class="howit-head">
+        <div>
+          <div class="eyebrow">Recent placements</div>
+          <h2 class="display">Where letters<br/>have run.</h2>
+        </div>
+        <p class="lede" style="max-width: 600px;">Every published letter is in the public archive. The map shows reach &mdash; bigger dots are papers with multiple placements.</p>
+      </div>
+
+      <div class="placements-grid">
+        <div class="placement-map">
+          <svg class="usa" viewBox="0 0 800 500" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M 100 180 Q 140 130 220 130 L 360 110 L 540 100 L 700 130 L 740 170 L 750 270 L 700 360 L 580 400 L 460 410 L 320 400 L 200 380 L 130 320 Z"
+                  fill="#fefcf5" stroke="#c8c2ad" stroke-width="1.2" />
+          </svg>
+          {pinPositions.map((p) => (
+            <div class:list={['pin', { big: p.big }]} style={`left: ${p.left}; top: ${p.top};`}>
+              <div class="dot"></div>
+            </div>
+          ))}
+          <div class="map-legend">
+            <small>Coverage</small>
+            <div class="swatch"><i></i>1+ letters</div>
+            <div class="swatch"><i style="width:14px;height:14px;"></i>3+ letters</div>
+          </div>
+        </div>
+
+        <div class="letter-list">
+          {recentLetters.map((letter) => (
+            <a class="letter" href={letter.website} target="_blank" rel="noopener">
+              <div>
+                <div class="meta">{letter.source}{letter.location ? ` · ${letter.location}` : ''} · {formatDate(letter.date)}</div>
+                <h5>{letter.headline}</h5>
+                {letter.author && <div class="by">by {letter.author}</div>}
+              </div>
+              <div class="arrow">Read →</div>
+            </a>
+          ))}
+          <a class="btn btn-ghost-dark" href="https://blogs.cornell.edu/asap/events-initiatives/the-mcclintock-letters/published-mcclintock-letters/" target="_blank" rel="noopener" style="margin-top: 12px; justify-self: start;">Browse all placements →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT BARBARA -->
+  <section class="namesake">
+    <div class="container namesake-inner">
+      <div>
+        <div class="eyebrow">Our namesake</div>
+        <h2 class="display">Barbara<br/><span class="italic-accent">McClintock.</span></h2>
+        <p class="lede" style="margin-top: 16px;">
+          Barbara McClintock (1902–1992) was the first American woman to win an unshared Nobel Prize in science. She spoke about the obstacles she faced as a woman in science and credited her unique perspective as key to discoveries that revolutionized genetics, leading to breakthroughs from crop breeding to gene therapy.
+        </p>
+        <p class="lede" style="margin-top: 12px;">
+          A champion of basic research and an advocate for the founding of the NSF, her legacy and the values she embodied are under threat today &mdash; making her a powerful symbol for this effort.
+        </p>
+      </div>
+      <figure class="namesake-portrait">
+        <img src={`${base}images/initiatives/McClintock1947.png`} alt="Barbara McClintock in her lab, 1947" />
+        <figcaption>Barbara McClintock at Cold Spring Harbor, 1947. Image courtesy of the <a href="https://siarchives.si.edu/collections/siris_arc_306310" target="_blank" rel="noopener">Smithsonian Archives</a>.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- APPLY / GET INVOLVED -->
+  <section class="apply" id="apply">
+    <div class="container">
+      <div class="apply-inner">
+        <div>
+          <div class="eyebrow on-dark">Get involved</div>
+          <h2 class="display">Bring an idea.<br/>We'll bring the editor.</h2>
+          <p class="lede lg" style="margin-top: 18px; color: rgba(255,255,255,0.86);">Anyone can write a letter. Whether you've never published an op-ed before or you've placed a dozen, the campaign has a place for you.</p>
+
+          <div class="steps-list">
+            <div class="step-row">
+              <div class="num">1</div>
+              <div>
+                <strong>Join the writers' space</strong>
+                <p>Slack channel with coaches, past authors, and active drafters.</p>
+              </div>
+            </div>
+            <div class="step-row">
+              <div class="num">2</div>
+              <div>
+                <strong>Draft your letter</strong>
+                <p>Use the coaching resources to refine your pitch and prose.</p>
+              </div>
+            </div>
+            <div class="step-row">
+              <div class="num">3</div>
+              <div>
+                <strong>Request placement help</strong>
+                <p>Fill out the support form and the editorial team will help you target the right paper.</p>
+              </div>
+            </div>
+            <div class="step-row">
+              <div class="num">4</div>
+              <div>
+                <strong>Tell us when it runs</strong>
+                <p>Submit your placement so we can add it to the archive and amplify.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="apply-cta">
+          <h5>Three ways in</h5>
+          <a class="cta-block" href="https://mcclintocklet-jmj4172.slack.com/join/shared_invite/zt-37dzpgmdc-DqJlAP~yt9Qug~OCFnBh5g" target="_blank" rel="noopener">
+            <div class="cta-tag">For Writers</div>
+            <div class="cta-head">Join the writers' Slack</div>
+            <div class="cta-sub">Feedback, community, and resources.</div>
+          </a>
+          <a class="cta-block" href="https://docs.google.com/forms/d/e/1FAIpQLSei6nfOkkAuyzRt2dwJ3abCMwrGU-3vEDxzlg0koPpVVuCxSA/viewform?usp=header" target="_blank" rel="noopener">
+            <div class="cta-tag">For Drafters</div>
+            <div class="cta-head">Request placement help</div>
+            <div class="cta-sub">Editorial team will follow up with options.</div>
+          </a>
+          <a class="cta-block" href="https://docs.google.com/forms/d/e/1FAIpQLSd4ihDcDE8ezgKUuPG76ErmIuHDJ9fhIxahSAyCgSRXZb_kXw/viewform?usp=header" target="_blank" rel="noopener">
+            <div class="cta-tag">Already published?</div>
+            <div class="cta-head">Submit your letter</div>
+            <div class="cta-sub">We'll add it to the archive and amplify.</div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .hero-wrap { display: grid; grid-template-columns: 1.4fr 1fr; gap: 56px; align-items: end; }
+  .hero-status {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange);
+    padding: 8px 14px; border-radius: var(--r-pill);
+    background: rgba(232,145,66,0.14); border: 1px solid var(--orange);
+    margin-bottom: 18px;
+  }
+  .hero-status .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--orange);
+    animation: snap-pulse 2s ease-in-out infinite;
+  }
+  .hero-actions { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .hero-card {
+    background: white; border: 1px solid var(--hairline);
+    border-radius: var(--r-lg); padding: 28px;
+    box-shadow: var(--shadow-md);
+  }
+  .hero-card h5 {
+    font-family: var(--accent); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 14px;
+  }
+  .cycle-bar { height: 10px; background: #efece2; border-radius: var(--r-pill); overflow: hidden; }
+  .cycle-bar .fill { height: 100%; background: var(--orange); width: 78%; border-radius: var(--r-pill); }
+  .cycle-meta { display: flex; justify-content: space-between; align-items: baseline; margin-top: 16px; gap: 12px; }
+  .cycle-meta .pct {
+    font-family: var(--display); font-weight: 700; font-size: 32px;
+    color: var(--navy); letter-spacing: -0.025em; line-height: 1;
+  }
+  .cycle-meta .pct-lbl {
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+    margin-top: 4px;
+  }
+  .deadline {
+    margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--hairline);
+    display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  }
+  .deadline .date {
+    font-family: var(--display); font-weight: 700; font-size: 18px;
+    color: var(--navy); letter-spacing: -0.01em;
+  }
+  .deadline .lbl {
+    font-family: var(--accent); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  /* HOW IT WORKS */
+  .howit { padding: 100px 0; background: white; border-bottom: 1px solid var(--hairline); }
+  .howit-head { display: grid; grid-template-columns: 1fr 1.5fr; gap: 48px; align-items: end; margin-bottom: 56px; }
+  .step-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: step; }
+  .step {
+    border: 1px solid var(--hairline); border-right: none;
+    padding: 28px; counter-increment: step;
+    position: relative; background: var(--page);
+  }
+  .step:first-child { border-top-left-radius: var(--r-lg); border-bottom-left-radius: var(--r-lg); }
+  .step:last-child { border-right: 1px solid var(--hairline); border-top-right-radius: var(--r-lg); border-bottom-right-radius: var(--r-lg); }
+  .step::before {
+    content: '0' counter(step);
+    font-family: var(--display); font-weight: 700; font-size: 56px;
+    color: var(--orange); letter-spacing: -0.04em; line-height: 1;
+    display: block; margin-bottom: 14px;
+  }
+  .step h5 {
+    font-family: var(--display); font-weight: 700; font-size: 20px;
+    color: var(--navy); letter-spacing: -0.01em; line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .step p { font-size: 14.5px; line-height: 1.55; color: var(--body); }
+  .step .step-meta {
+    margin-top: 14px;
+    font-family: var(--accent); font-weight: 600; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* PLACEMENTS */
+  .placements { padding: 100px 0; background: var(--warm); }
+  .placements-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 48px; }
+  .placement-map {
+    position: relative; aspect-ratio: 5 / 4;
+    background: white; border: 1px solid var(--hairline);
+    border-radius: var(--r-lg); overflow: hidden;
+  }
+  .placement-map svg.usa { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .placement-map .pin { position: absolute; transform: translate(-50%, -50%); }
+  .placement-map .pin .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--orange); border: 2px solid white;
+    box-shadow: 0 1px 4px rgba(232,145,66,0.4), 0 0 0 1px rgba(0,0,0,0.04);
+  }
+  .placement-map .pin.big .dot { width: 14px; height: 14px; }
+  .map-legend {
+    position: absolute; left: 18px; bottom: 18px;
+    background: white; border: 1px solid var(--hairline);
+    padding: 10px 14px; border-radius: var(--r-md);
+    display: flex; gap: 16px; align-items: center;
+    box-shadow: var(--shadow-sm); flex-wrap: wrap;
+  }
+  .map-legend small {
+    font-family: var(--accent); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+  .map-legend .swatch {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    color: var(--body);
+  }
+  .map-legend .swatch i {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--orange); border: 1.5px solid white;
+    box-shadow: 0 0 0 1px var(--orange);
+  }
+  .letter-list { display: grid; gap: 14px; }
+  .letter {
+    background: white; border: 1px solid var(--hairline);
+    border-radius: var(--r-md); padding: 20px 22px;
+    display: grid; grid-template-columns: 1fr auto; gap: 18px; align-items: center;
+    transition: all .2s ease; text-decoration: none; color: inherit;
+  }
+  .letter:hover { border-color: var(--orange); transform: translateX(2px); box-shadow: var(--shadow-md); }
+  .letter .meta {
+    font-family: var(--accent); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange);
+    margin-bottom: 6px;
+  }
+  .letter h5 {
+    font-family: var(--display); font-weight: 600; font-size: 17px;
+    color: var(--navy); letter-spacing: -0.005em; line-height: 1.35;
+  }
+  .letter .by {
+    font-family: var(--accent); font-weight: 500; font-size: 12.5px;
+    color: var(--muted); margin-top: 4px;
+  }
+  .letter .arrow {
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy);
+  }
+
+  /* NAMESAKE */
+  .namesake { background: white; padding: 100px 0; border-top: 1px solid var(--hairline); }
+  .namesake-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; }
+  .namesake-inner .lede { color: var(--body); max-width: 540px; }
+  .namesake-portrait {
+    margin: 0; border-radius: var(--r-lg); overflow: hidden;
+    border: 1px solid var(--hairline); background: var(--warm);
+  }
+  .namesake-portrait img { width: 100%; height: auto; display: block; }
+  .namesake-portrait figcaption {
+    padding: 14px 18px; font-family: var(--accent); font-weight: 500; font-style: italic;
+    font-size: 12.5px; color: var(--muted); border-top: 1px solid var(--hairline);
+  }
+  .namesake-portrait figcaption a { color: var(--orange); font-weight: 700; }
+
+  /* APPLY */
+  .apply { padding: 110px 0; background: var(--plum); color: white; position: relative; overflow: hidden; }
+  .apply::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(232,145,66,0.22), transparent 50%);
+    pointer-events: none;
+  }
+  .apply > .container { position: relative; }
+  .apply-inner { display: grid; grid-template-columns: 1.2fr 1fr; gap: 56px; align-items: start; }
+  .apply h2 { color: white; }
+  .apply .lede { color: rgba(255,255,255,0.86); }
+  .steps-list { display: grid; gap: 18px; margin-top: 32px; max-width: 480px; }
+  .step-row { display: flex; gap: 14px; align-items: start; }
+  .step-row .num {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--orange); color: white;
+    font-family: var(--display); font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; flex-shrink: 0;
+  }
+  .step-row strong {
+    font-family: var(--accent); font-weight: 700; font-size: 13px;
+    letter-spacing: 0.04em; color: white;
+  }
+  .step-row p { font-size: 14px; color: rgba(255,255,255,0.72); margin-top: 2px; }
+
+  .apply-cta {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--r-lg); padding: 32px;
+    display: grid; gap: 14px;
+  }
+  .apply-cta h5 {
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange-soft);
+  }
+  .cta-block {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--r-md); padding: 18px;
+    display: grid; gap: 4px;
+    text-decoration: none; color: inherit;
+    transition: all .15s ease;
+  }
+  .cta-block:hover { border-color: var(--orange); transform: translateX(2px); color: inherit; }
+  .cta-block .cta-tag {
+    font-family: var(--accent); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--orange-soft);
+  }
+  .cta-block .cta-head {
+    font-family: var(--display); font-weight: 700; font-size: 16px;
+    color: white; letter-spacing: -0.005em; margin-top: 2px;
+  }
+  .cta-block .cta-sub {
+    font-family: var(--accent); font-weight: 500; font-size: 12.5px;
+    color: rgba(255,255,255,0.72);
+  }
+
+  /* FAQ */
+  .faq { padding: 100px 0; background: var(--page); border-top: 1px solid var(--hairline); }
+  .faq-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 64px; }
+  .faq-list { display: grid; gap: 0; }
+  .faq-item { border-top: 1px solid var(--hairline); padding: 24px 0; }
+  .faq-item:last-child { border-bottom: 1px solid var(--hairline); }
+  .faq-item q {
+    font-family: var(--display); font-weight: 600; font-size: 22px;
+    color: var(--navy); letter-spacing: -0.01em; line-height: 1.3;
+    display: block; quotes: none;
+  }
+  .faq-item q::before, .faq-item q::after { content: ''; }
+  .faq-item p {
+    font-size: 16px; line-height: 1.65; color: var(--body);
+    margin-top: 10px; max-width: 640px;
+  }
+
+  @media (max-width: 1080px) {
+    .hero-wrap, .placements-grid, .apply-inner, .faq-grid, .howit-head, .namesake-inner { grid-template-columns: 1fr; }
+    .step-grid { grid-template-columns: repeat(2, 1fr); }
+    .step { border-right: 1px solid var(--hairline); }
+    .step:nth-child(1) { border-radius: var(--r-lg) 0 0 0; }
+    .step:nth-child(2) { border-radius: 0 var(--r-lg) 0 0; border-left: none; }
+    .step:nth-child(3) { border-radius: 0 0 0 var(--r-lg); border-top: none; }
+    .step:nth-child(4) { border-radius: 0 0 var(--r-lg) 0; border-top: none; border-left: none; }
+  }
+</style>

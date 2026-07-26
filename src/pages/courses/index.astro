@@ -7,10 +7,7 @@ const available = allCourses.filter(c => !c.data.comingSoon);
 const comingSoon = allCourses.filter(c => c.data.comingSoon);
 ---
 
-<PageLayout title="Courses">
-  <h2>Courses</h2>
-  <hr />
-
+<PageLayout title="Courses" eyebrow="Education" lede="Short, self-paced modules from the SNAP coalition. Free for members and the public.">
   <div class="course-list">
     {available.map(course => (
       <a href={`${import.meta.env.BASE_URL}courses/${course.id}/`} class="course-card card">

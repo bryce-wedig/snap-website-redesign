@@ -8,30 +8,69 @@ interface Props {
   date?: Date;
   author?: string;
   description?: string;
+  /** Optional crumb segment shown between SNAP and the title (e.g. "Blog", "Initiatives"). */
+  section?: string;
+  /** Optional path that the section crumb links to. */
+  sectionHref?: string;
+  /** Optional italic deck / subtitle shown beneath the H1. */
+  deck?: string;
 }
 
-const { title, date, author, description } = Astro.props;
+const { title, date, author, description, section, sectionHref, deck } = Astro.props;
+const base = import.meta.env.BASE_URL;
 
 function formatDate(d: Date | undefined): string {
   if (!d) return '';
   return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function initials(name: string | undefined): string {
+  if (!name) return 'SN';
+  return name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 }
 ---
 
 <BaseLayout title={title} description={description}>
   <Header slot="header" />
 
-  <article class="container" style="padding-top: 2rem; padding-bottom: 3rem; min-height: 60vh;">
-    <header style="margin-bottom: 2rem;">
-      <h1>{title}</h1>
+  <header class="article-head">
+    <div class="container">
+      <div class="crumbs">
+        <a href={base}>SNAP</a>
+        {section && (
+          <>
+            <span class="sep">/</span>
+            {sectionHref ? <a href={sectionHref}>{section}</a> : <span>{section}</span>}
+          </>
+        )}
+        <span class="sep">/</span>
+        <span>{title}</span>
+      </div>
+
       {(date || author) && (
-        <div style="color: var(--snap-gray-500); font-size: var(--text-sm); display: flex; gap: 1rem; flex-wrap: wrap;">
-          {date && <span><i class="fa-regular fa-calendar"></i> {formatDate(date)}</span>}
-          {author && <span><i class="fa-regular fa-user"></i> {author}</span>}
+        <div class="post-meta-row">
+          {section && <span class="pill">{section}</span>}
+          {date && <span>{formatDate(date)}</span>}
+          {author && (<><span>·</span><span>by {author}</span></>)}
         </div>
       )}
-      <hr />
-    </header>
+
+      <h1>{title}</h1>
+      {deck && <p class="deck">{deck}</p>}
+
+      {author && (
+        <div class="byline">
+          <div class="avatar">{initials(author)}</div>
+          <div>
+            <div class="who-name">{author}</div>
+            <div class="who-role">SNAP coalition</div>
+          </div>
+        </div>
+      )}
+    </div>
+  </header>
+
+  <article class="article-body container-narrow">
     <div class="prose">
       <slot />
     </div>
@@ -39,3 +78,94 @@ function formatDate(d: Date | undefined): string {
 
   <Footer slot="footer" />
 </BaseLayout>
+
+<style>
+  .article-head {
+    background: var(--page);
+    padding: 64px 0 40px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .post-meta-row {
+    display: flex; gap: 14px; align-items: center;
+    font-family: var(--accent); font-weight: 600; font-size: 11.5px;
+    color: var(--muted); letter-spacing: 0.06em;
+    margin-bottom: 18px; flex-wrap: wrap;
+  }
+  .article-head h1 {
+    font-family: var(--display); font-weight: 700;
+    color: var(--navy);
+    font-size: 56px; letter-spacing: -0.03em; line-height: 1.05;
+    max-width: 920px;
+  }
+  .article-head .deck {
+    font-family: var(--accent); font-weight: 500; font-style: italic;
+    font-size: 22px; line-height: 1.45;
+    color: var(--body); margin-top: 22px;
+    max-width: 720px;
+  }
+  .byline {
+    margin-top: 32px;
+    display: flex; gap: 16px; align-items: center;
+    padding-top: 22px; border-top: 1px solid var(--hairline);
+  }
+  .byline .avatar {
+    width: 56px; height: 56px; border-radius: 50%;
+    background: linear-gradient(155deg, var(--peach), var(--orange));
+    color: white; display: flex; align-items: center; justify-content: center;
+    font-family: var(--display); font-weight: 700; font-size: 20px;
+    flex-shrink: 0;
+  }
+  .byline .who-name {
+    font-family: var(--display); font-weight: 700; font-size: 16px;
+    color: var(--navy); letter-spacing: -0.005em;
+  }
+  .byline .who-role {
+    font-family: var(--accent); font-weight: 500; font-size: 12px;
+    color: var(--muted); margin-top: 2px; letter-spacing: 0.04em;
+  }
+
+  .article-body {
+    margin: 64px auto;
+    font-size: 19px; line-height: 1.75; color: var(--body);
+  }
+  .article-body .prose > p:first-of-type::first-letter {
+    font-family: var(--display); font-weight: 700;
+    float: left; font-size: 84px; line-height: 0.85;
+    color: var(--orange); padding: 6px 14px 0 0;
+  }
+  .article-body :global(h2) {
+    font-family: var(--display); font-weight: 700; font-size: 34px;
+    color: var(--navy); letter-spacing: -0.02em; line-height: 1.15;
+    margin: 56px 0 16px;
+  }
+  .article-body :global(h3) {
+    font-family: var(--display); font-weight: 700; font-size: 22px;
+    color: var(--navy); letter-spacing: -0.01em;
+    margin: 36px 0 12px;
+  }
+  .article-body :global(blockquote) {
+    margin: 36px 0;
+    padding-left: 24px;
+    border-left: 3px solid var(--orange);
+    border-radius: 0;
+    background: transparent;
+    font-family: var(--accent); font-weight: 500; font-style: italic;
+    font-size: 24px; line-height: 1.4; color: var(--navy);
+  }
+  .article-body :global(a) {
+    color: var(--orange); text-decoration: underline; text-underline-offset: 3px;
+  }
+  .article-body :global(a:hover) { color: var(--navy); }
+  .article-body :global(strong) { color: var(--navy); font-weight: 700; }
+  .article-body :global(em) { font-style: italic; }
+  .article-body :global(img) {
+    border-radius: var(--r-lg);
+    margin: 2rem auto;
+    border: 1px solid var(--hairline);
+  }
+
+  @media (max-width: 720px) {
+    .article-head h1 { font-size: 36px; }
+    .article-body { font-size: 17px; }
+  }
+</style>

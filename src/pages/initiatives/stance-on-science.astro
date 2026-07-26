@@ -1,0 +1,366 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+
+const base = import.meta.env.BASE_URL;
+---
+
+<BaseLayout title="Stance on Science">
+  <Header slot="header" />
+
+  <!-- HEADER -->
+  <header class="page-header plum">
+    <div class="container">
+      <div class="crumbs">
+        <a href={base}>SNAP</a><span class="sep">/</span>
+        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
+        <span>Stance on Science</span>
+      </div>
+
+      <div class="header-grid">
+        <div>
+          <div class="live-tag"><span class="pulse"></span>2026 elections · launching now</div>
+          <h1 class="display">Stance on<br/><span class="italic-accent" style="color: var(--orange-soft);">Science.</span></h1>
+          <p class="lede lg" style="color: rgba(255,255,255,0.86); margin-top: 22px;">A public, sourced record of where political candidates stand on the key science-policy questions of the moment. Built and maintained by the SNAP coalition for the 2026 election cycle.</p>
+          <div style="display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap;">
+            <a class="btn btn-primary btn-lg" href="https://docs.google.com/forms/d/e/1FAIpQLSem6bVuZnK7eWls-CTMpxWxaxHpuElNj4oOXIvLkgDYRO6YNg/viewform?usp=header" target="_blank" rel="noopener">Get involved</a>
+            <a class="btn btn-ghost-light btn-lg" href="#method">Read the methodology</a>
+          </div>
+        </div>
+
+        <div class="header-meta">
+          <h5>Coverage goals</h5>
+          <dl>
+            <div><dt>Election cycle</dt><dd>2026</dd></div>
+            <div><dt>Scope</dt><dd style="font-size: 16px;">Local, state &amp; national races</dd></div>
+            <div><dt>Teams</dt><dd>State-led</dd></div>
+            <div><dt>Format</dt><dd>Public &amp; sourced</dd></div>
+          </dl>
+          <div class="last-update">
+            <span>status · outreach launching</span>
+            <span style="color: var(--orange-soft);">● live</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- WHY IT MATTERS -->
+  <section class="why">
+    <div class="container why-inner">
+      <div>
+        <div class="eyebrow">Why this matters</div>
+        <h3 class="display">Science deserves<br/>a seat at the table.</h3>
+      </div>
+      <div>
+        <p class="lede lg">
+          Science affects every part of our daily lives &mdash; from the safety of our food and water, to the health of our communities, to the jobs and technologies that power our future. Yet too often, science is left out of political debates.
+        </p>
+        <p class="lede" style="margin-top: 18px;">
+          SNAP is launching this initiative for the 2026 elections to change that &mdash; by directly asking candidates where they stand, giving voters clear information to compare positions, and holding candidates accountable through public, sourced responses.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FIND MY CANDIDATE -->
+  <section class="states" id="find-candidates">
+    <div class="container">
+      <div class="states-head">
+        <div>
+          <div class="eyebrow">Find my candidate</div>
+          <h2 class="display">Browse by state.</h2>
+        </div>
+        <p class="lede" style="max-width: 560px;">State teams publish candidate responses on their own pages. Pick your state to read, filter, and compare what candidates said. More states are joining throughout the 2026 cycle.</p>
+      </div>
+
+      <div class="states-grid">
+        <a class="state-card" href={`${base}initiatives/stance-on-science/states/ca/`}>
+          <div class="state-card__tag"><span class="dot"></span>Live</div>
+          <h4>California</h4>
+          <p>June 2026 primary — US House, Governor &amp; LA Mayor races.</p>
+          <span class="state-card__cta">View candidate responses →</span>
+        </a>
+        <div class="state-card state-card--soon">
+          <div class="state-card__tag state-card__tag--soon">Coming soon</div>
+          <h4>More states</h4>
+          <p>Additional state teams are preparing candidate pages for the 2026 cycle.</p>
+          <span class="state-card__cta state-card__cta--muted">Want to lead yours? Get involved ↓</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="howit">
+    <div class="container">
+      <div class="howit-head">
+        <div>
+          <div class="eyebrow">How it works</div>
+          <h2 class="display">From questions<br/>to public record.</h2>
+        </div>
+        <p class="lede" style="max-width: 640px;">Individual state teams send candidates a set of science policy-related questions, post their written responses publicly, and &mdash; in some states &mdash; evaluate them against a public rubric, so voters can compare positions side by side.</p>
+      </div>
+
+      <div class="step-grid">
+        <div class="step">
+          <h5>Ask</h5>
+          <p>Individual state teams send political candidates a set of science policy-related (and state-specific) questions and ask for written responses.</p>
+          <div class="step-meta">Direct · sourced</div>
+        </div>
+        <div class="step">
+          <h5>Score</h5>
+          <p>Some, but not all, states evaluate answers with a publicly available grading rubric covering evidence-based positions, sound policy-making, and thoroughness of response.</p>
+          <div class="step-meta">Rubric · public</div>
+        </div>
+        <div class="step">
+          <h5>Publish</h5>
+          <p>Responses are posted publicly on our website so that voters can easily compare candidate positions on the issues that matter.</p>
+          <div class="step-meta">Open · shareable</div>
+        </div>
+        <div class="step">
+          <h5>Convene</h5>
+          <p>Some states organize local town halls where candidates for office can answer questions about their Stance on Science for the public directly.</p>
+          <div class="step-meta">In-person · community</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RUBRIC -->
+  <section class="rubric">
+    <div class="container rubric-inner">
+      <div>
+        <div class="eyebrow">The rubric</div>
+        <h2 class="display">What we score.</h2>
+        <p class="lede" style="margin-top: 18px;">Some, but not all, states evaluate candidate answers with the publicly available grading rubric. The evaluations are intended to assist constituents as they interpret candidates' stances. The rubric is based on the following criteria:</p>
+      </div>
+      <div class="rubric-list">
+        <div>
+          <div class="r-num">01</div>
+          <h5>Evidence-Based positions</h5>
+          <p>This candidate regularly cites scientific findings as the basis for their policy goals (ends).</p>
+        </div>
+        <div>
+          <div class="r-num">02</div>
+          <h5>Sound policy-making</h5>
+          <p>This candidate cites or pledges to utilize scientific findings or expertise in the design of their policies (means).</p>
+        </div>
+        <div>
+          <div class="r-num">03</div>
+          <h5>Thoroughness of Response</h5>
+          <p>This candidate provides a well-thought-out, detailed response to this question.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- METHODOLOGY -->
+  <section class="method" id="method">
+    <div class="container">
+      <div class="method-inner">
+        <div>
+          <div class="eyebrow">Methodology</div>
+          <h2 class="display">How we work.</h2>
+          <p class="lede" style="margin-top: 16px;">Individual state teams send political candidates a set of science policy-related, state-specific questions and ask for written responses. Their answers are posted publicly on our website so that voters can easily compare positions. Teams will not be modifying candidate responses in any way.</p>
+        </div>
+        <div class="method-list">
+          <div>
+            <h5>Non-partisanship</h5>
+            <p>The responses shared by candidates do not reflect the views of the Stance state teams nor SNAP. SNAP is a non-partisan organization. SNAP and the Stance state teams do not endorse any candidates.</p>
+          </div>
+          <div>
+            <h5>Evaluating responses</h5>
+            <p>Some, but not all, of the states will be evaluating candidate answers with the publicly available grading rubric. To find out if your state is evaluating responses, check out the individual state pages.</p>
+          </div>
+          <div>
+            <h5>Town halls</h5>
+            <p>Some states are organizing local town halls where candidates for office can answer questions about their Stance on Science for the public directly.</p>
+          </div>
+          <div>
+            <h5>How to get involved</h5>
+            <p>If you'd like to support this initiative, fill out our interest form and we'll be in touch. There are opportunities for everyone &mdash; whether you're ready to help lead outreach in your state or make a few calls or send emails to political candidates.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta">
+    <div class="container cta-inner">
+      <div>
+        <div class="eyebrow on-dark">Get involved</div>
+        <h2 class="display" style="color: white;">Help make<br/>science count.</h2>
+        <p class="lede on-dark" style="margin-top: 18px; max-width: 540px;">
+          Whether you can help with candidate outreach in your state, organize a town hall, or make a few calls &mdash; every contribution strengthens this initiative.
+        </p>
+        <div style="display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap;">
+          <a class="btn btn-primary btn-lg" href="https://docs.google.com/forms/d/e/1FAIpQLSem6bVuZnK7eWls-CTMpxWxaxHpuElNj4oOXIvLkgDYRO6YNg/viewform?usp=header" target="_blank" rel="noopener">Fill out interest form</a>
+          <a class="btn btn-ghost-light btn-lg" href={`${base}initiatives/`}>See all initiatives</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<style>
+  .live-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--orange-soft);
+    padding: 8px 14px; border-radius: var(--r-pill);
+    border: 1px solid var(--orange-soft);
+    background: rgba(232,145,66,0.1);
+    margin-bottom: 18px;
+  }
+  .live-tag .pulse {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--orange-soft);
+    animation: livepulse 2s ease-in-out infinite;
+  }
+  @keyframes livepulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(240,167,102,0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(240,167,102,0); }
+  }
+  .header-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 64px; align-items: end; }
+  .header-meta {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: var(--r-lg); padding: 24px;
+  }
+  .header-meta h5 {
+    font-family: var(--accent); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.6); margin-bottom: 14px;
+  }
+  .header-meta dl { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; margin: 0; }
+  .header-meta dt {
+    font-family: var(--accent); font-weight: 600; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(255,255,255,0.55); margin-bottom: 3px;
+  }
+  .header-meta dd {
+    font-family: var(--display); font-weight: 700; font-size: 22px;
+    color: white; letter-spacing: -0.015em; margin: 0;
+  }
+  .header-meta .last-update {
+    margin-top: 18px; padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.18);
+    font-family: var(--mono); font-size: 11.5px; color: rgba(255,255,255,0.65);
+    display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  }
+
+  /* WHY */
+  .why { padding: 100px 0; background: white; }
+  .why-inner { display: grid; grid-template-columns: 1fr 1.5fr; gap: 56px; align-items: start; }
+  .why h3 { font-size: 56px; letter-spacing: -0.03em; line-height: 0.98; }
+  .why .lede { color: var(--body); max-width: 640px; }
+
+  /* FIND MY CANDIDATE */
+  .states { padding: 100px 0; background: var(--warm); border-top: 1px solid var(--hairline); }
+  .states-head { display: grid; grid-template-columns: 1fr 1.5fr; gap: 48px; align-items: end; margin-bottom: 48px; }
+  .states-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+  .state-card {
+    background: white; border: 1px solid var(--hairline); border-radius: var(--r-lg);
+    padding: 28px; display: grid; gap: 10px; text-decoration: none; color: inherit;
+    transition: all .2s ease;
+  }
+  a.state-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-xl); border-color: var(--plum); }
+  .state-card__tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--accent); font-weight: 700; font-size: 10px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--plum);
+  }
+  .state-card__tag .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--orange); }
+  .state-card__tag--soon { color: var(--muted); }
+  .state-card h4 { font-family: var(--display); font-weight: 700; font-size: 26px; color: var(--navy); letter-spacing: -0.015em; }
+  .state-card p { font-size: 14.5px; line-height: 1.55; color: var(--body); }
+  .state-card__cta {
+    margin-top: 4px;
+    font-family: var(--accent); font-weight: 700; font-size: 12px;
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--plum);
+  }
+  .state-card__cta--muted { color: var(--muted); text-transform: none; letter-spacing: 0.01em; font-weight: 600; }
+  .state-card--soon { background: transparent; border-style: dashed; }
+
+  /* HOW */
+  .howit { padding: 100px 0; background: var(--page); border-top: 1px solid var(--hairline); border-bottom: 1px solid var(--hairline); }
+  .howit-head { display: grid; grid-template-columns: 1fr 1.5fr; gap: 48px; align-items: end; margin-bottom: 56px; }
+  .step-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: step; }
+  .step {
+    border: 1px solid var(--hairline); border-right: none;
+    padding: 28px; counter-increment: step;
+    position: relative; background: white;
+  }
+  .step:first-child { border-top-left-radius: var(--r-lg); border-bottom-left-radius: var(--r-lg); }
+  .step:last-child { border-right: 1px solid var(--hairline); border-top-right-radius: var(--r-lg); border-bottom-right-radius: var(--r-lg); }
+  .step::before {
+    content: '0' counter(step);
+    font-family: var(--display); font-weight: 700; font-size: 56px;
+    color: var(--orange); letter-spacing: -0.04em; line-height: 1;
+    display: block; margin-bottom: 14px;
+  }
+  .step h5 {
+    font-family: var(--display); font-weight: 700; font-size: 20px;
+    color: var(--navy); letter-spacing: -0.01em; line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .step p { font-size: 14.5px; line-height: 1.55; color: var(--body); }
+  .step .step-meta {
+    margin-top: 14px;
+    font-family: var(--accent); font-weight: 600; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* RUBRIC */
+  .rubric { background: var(--warm); padding: 100px 0; }
+  .rubric-inner { display: grid; grid-template-columns: 1fr 1.4fr; gap: 64px; align-items: start; }
+  .rubric-list { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  .rubric-list > div { background: white; padding: 24px; border-radius: var(--r-lg); border: 1px solid var(--hairline); }
+  .r-num {
+    font-family: var(--display); font-weight: 700; font-size: 32px;
+    color: var(--orange); letter-spacing: -0.03em; line-height: 1;
+    margin-bottom: 10px;
+  }
+  .rubric-list h5 {
+    font-family: var(--display); font-weight: 700; font-size: 18px;
+    color: var(--navy); letter-spacing: -0.005em; margin-bottom: 8px;
+  }
+  .rubric-list p { font-size: 14.5px; line-height: 1.55; color: var(--body); }
+
+  /* METHODOLOGY */
+  .method { background: white; padding: 100px 0; border-top: 1px solid var(--hairline); }
+  .method-inner { display: grid; grid-template-columns: 1fr 2fr; gap: 64px; }
+  .method-list { display: grid; gap: 28px; }
+  .method-list > div { padding-left: 22px; border-left: 2px solid var(--orange); }
+  .method-list h5 {
+    font-family: var(--display); font-weight: 700; font-size: 19px;
+    color: var(--navy); letter-spacing: -0.005em; margin-bottom: 6px;
+  }
+  .method-list p { font-size: 15px; line-height: 1.6; color: var(--body); }
+
+  /* CTA */
+  .cta { background: var(--plum); color: white; padding: 100px 0; position: relative; overflow: hidden; }
+  .cta::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(232,145,66,0.22), transparent 50%);
+    pointer-events: none;
+  }
+  .cta-inner { position: relative; }
+
+  @media (max-width: 1080px) {
+    .header-grid, .why-inner, .howit-head, .rubric-inner, .method-inner, .states-head { grid-template-columns: 1fr; }
+    .step-grid { grid-template-columns: repeat(2, 1fr); }
+    .step { border-right: 1px solid var(--hairline); }
+    .step:nth-child(1) { border-radius: var(--r-lg) 0 0 0; }
+    .step:nth-child(2) { border-radius: 0 var(--r-lg) 0 0; border-left: none; }
+    .step:nth-child(3) { border-radius: 0 0 0 var(--r-lg); border-top: none; }
+    .step:nth-child(4) { border-radius: 0 0 var(--r-lg) 0; border-top: none; border-left: none; }
+    .rubric-list { grid-template-columns: 1fr; }
+  }
+</style>

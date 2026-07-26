@@ -1,0 +1,66 @@
+# Marker data for SNAP maps (home hero + About page).
+#   cities → orange pins (member locations)   orgs → navy pins (member organizations)
+# Edit a location by changing its lat/lng; add a member by appending to the list.
+
+cities:
+  - { lat: 38.876933, lng: -77.089309, name: "Arlington, VA" }
+  - { lat: 41.661256, lng: -91.529911, name: "Iowa City, IA" }
+  - { lat: 33.520682, lng: -86.802433, name: "Birmingham, AL" }
+  - { lat: 35.913154, lng: -79.055780, name: "Chapel Hill, NC" }
+  - { lat: 39.290882, lng: -76.610759, name: "Baltimore, MD" }
+  - { lat: 34.053691, lng: -118.242766, name: "Los Angeles, CA" }
+  - { lat: 33.959768, lng: -83.376398, name: "Athens, GA" }
+  - { lat: 42.365635, lng: -71.104002, name: "Cambridge, MA" }
+  - { lat: 42.437418, lng: -76.548372, name: "Ithaca, NY" }
+  - { lat: 41.308214, lng: -72.925052, name: "New Haven, CT" }
+  - { lat: 37.870839, lng: -122.272863, name: "Berkeley, CA" }
+  - { lat: 39.952724, lng: -75.163526, name: "Philadelphia, PA" }
+  - { lat: 29.651968, lng: -82.324985, name: "Gainesville, FL" }
+  - { lat: 39.739236, lng: -104.984862, name: "Denver, CO" }
+  - { lat: 47.603832, lng: -122.330062, name: "Seattle, WA" }
+  - { lat: 43.074690, lng: -89.384166, name: "Madison, WI" }
+  - { lat: 40.014986, lng: -105.270545, name: "Boulder, CO" }
+  - { lat: 37.787936, lng: -122.407520, name: "San Francisco, CA" }
+  - { lat: 38.625406, lng: -90.190009, name: "St. Louis, MO" }
+  - { lat: 38.980666, lng: -76.936919, name: "College Park, MD" }
+  - { lat: 25.774157, lng: -80.193597, name: "Miami, FL" }
+  - { lat: 42.331551, lng: -83.046640, name: "Detroit, MI" }
+  - { lat: 37.444329, lng: -122.159847, name: "Palo Alto, CA" }
+  - { lat: 41.875562, lng: -87.624421, name: "Chicago, IL" }
+  - { lat: 42.373195, lng: -72.519876, name: "Amherst, MA" }
+  - { lat: 38.029306, lng: -78.476678, name: "Charlottesville, VA" }
+  - { lat: 39.682836, lng: -75.751568, name: "Newark, DE" }
+  - { lat: 35.996653, lng: -78.901805, name: "Durham, NC" }
+  - { lat: 42.358834, lng: -71.057830, name: "Boston, MA" }
+  - { lat: 38.419250, lng: -82.445154, name: "Huntington, WV" }
+  - { lat: 41.683381, lng: -86.250007, name: "South Bend, IN" }
+  - { lat: 30.271129, lng: -97.743700, name: "Austin, TX" }
+  - { lat: 41.151311, lng: -81.357805, name: "Kent, OH" }
+  - { lat: 33.754466, lng: -84.389815, name: "Atlanta, GA" }
+  - { lat: 42.376238, lng: -71.235564, name: "Waltham, MA" }
+  - { lat: 40.712728, lng: -74.006015, name: "New York, NY" }
+  - { lat: 42.291707, lng: -85.587229, name: "Kalamazoo, MI" }
+  - { lat: 39.768333, lng: -86.158350, name: "Indianapolis, IN" }
+
+orgs:
+  - { lat: 40.44, lng: -79.95, name: "Allegheny Science Policy and Governance", location: "University of Pittsburgh" }
+  - { lat: 42.45, lng: -76.48, name: "Cornell Advancing Science and Policy Club (ASAP)", location: "Cornell University" }
+  - { lat: 38.90, lng: -77.07, name: "Georgetown Science Policy Network", location: "Georgetown University" }
+  - { lat: 42.37, lng: -71.12, name: "Harvard Griffin GSAS Science Policy Group", location: "Harvard University" }
+  - { lat: 38.95, lng: -95.26, name: "Jayhawks for Science Policy (JSP)", location: "University of Kansas" }
+  - { lat: 42.36, lng: -71.09, name: "MIT Graduate Student Council's External Affairs Board", location: "Massachusetts Institute of Technology" }
+  - { lat: 35.79, lng: -78.67, name: "SciPol Group", location: "North Carolina State University" }
+  - { lat: 39.95, lng: -75.19, name: "Penn Science Policy and Diplomacy Group (PSPDG)", location: "University of Pennsylvania" }
+  - { lat: 29.65, lng: -82.35, name: "Policy Advocacy in Science and Engineering", location: "University of Florida" }
+  - { lat: 38.65, lng: -90.31, name: "Promoting Science Policy, Education, and Research (ProSPER)", location: "Washington University in St. Louis" }
+  - { lat: 33.502041, lng: -86.805159, name: "Science Policy Advocacy Network (SPAN)", location: "University of Alabama at Birmingham" }
+  - { lat: 39.33, lng: -76.62, name: "Science Policy and Diplomacy Group", location: "Johns Hopkins University" }
+  - { lat: 34.07, lng: -118.44, name: "Science Policy Group at UCLA", location: "University of California, Los Angeles (UCLA)" }
+  - { lat: 38.99, lng: -76.94, name: "Science Policy Group at UMD", location: "University of Maryland" }
+  - { lat: 41.70, lng: -86.24, name: "Science Policy Initiative @ Notre Dame (SPI@ND)", location: "University of Notre Dame" }
+  - { lat: 40.72, lng: -73.99, name: "SciPol at NYU", location: "New York University" }
+  - { lat: 37.43, lng: -122.17, name: "Stanford Science Policy Group (SSPG)", location: "Stanford University" }
+  - { lat: 33.97, lng: -117.33, name: "UCR Science to Policy (S2P) student cabinet", location: "University of California, Riverside" }
+  - { lat: 35.90, lng: -79.05, name: "UNC Science Policy and Advocacy Group (SPAG)", location: "University of North Carolina" }
+  - { lat: 41.31, lng: -72.92, name: "Yale Graduate Student Government", location: "Yale University" }
+  - { lat: 33.96, lng: -83.38, name: "Coalition of Athens Scientists", location: "Athens, GA" }

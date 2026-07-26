@@ -38,6 +38,14 @@
   linkedin: harvard-science-policy
   website: https://sciencepolicy.hsites.harvard.edu/
 
+- name: Houston Science Policy and Advocacy Group (HSPAG)
+  photo: HSPAG_logo.png
+  email: sciencepolicygrouphtx@gmail.com
+  bluesky: 
+  instagram: houspag
+  linkedin: 
+  website: 
+
 - name: Jayhawks for Science Policy (JSP) at University of Kansas
   photo: group.png
   email: 
@@ -63,7 +71,7 @@
   website: 
 
 - name: Penn Science Policy and Diplomacy Group
-  photo: group.png
+  photo: PSPDG_logo.png
   email: 
   bluesky: pspdg.bsky.social
   instagram: penn.science.policy
@@ -71,7 +79,7 @@
   website: https://www.pspdg.com/
 
 - name: Policy Advocacy in Science and Engineering (PASE) at University of Florida
-  photo: PASE-logo.png
+  photo: PASE_logo.png
   email: PASE@bme.ufl.edu
   bluesky: gator-pase.bsky.social
   instagram: Gator_PASE
@@ -167,10 +175,10 @@
   website: 
 
 - name: UNC Science Policy and Advocacy Group (SPAG)
-  photo: group.png
+  photo: UNC_SPAG_logo.png
   email: 
   bluesky: 
-  instagram: 
+  instagram: spag_unc
   linkedin: 
   website: https://tarheels.live/spag/
 

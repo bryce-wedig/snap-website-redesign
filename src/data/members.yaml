@@ -121,7 +121,7 @@
 - name: Bryce Wedig
   pronouns: 
   photo: Bryce.jpg
-  info: Bryce is a 4th year PhD candidate in the Department of Physics at Washington University in St. Louis. He studies small-scale dark matter in distant galaxies using space telescopes. He is a co-president of WashU's science policy group ProSPER and works on the SNAP website.
+  info: Bryce is a PhD candidate in the Department of Physics at Washington University in St. Louis. He studies small-scale dark matter in distant galaxies using space telescopes. He is a co-president of WashU's science policy group [ProSPER](https://sites.wustl.edu/prosper/) and works on the SNAP website.
   email: 
   bluesky: 
   medium: 
@@ -139,6 +139,18 @@
   medium: 
   instagram: 
   linkedin: 
+  twitter: 
+  website: 
+
+- name: Celine Tsoi
+  pronouns: 
+  photo: Celine.jpg
+  info: Celine is a PhD student in Social Psychology at UC Santa Barbara. Her research focuses on identity and morality and their relationship with solidarity. Her other research interests include intergroup friendship, protest perceptions, public health, and open science efforts.
+  email: 
+  bluesky: celinetsoi.bsky.social
+  medium: 
+  instagram: celinetsoi_cat
+  linkedin: celine-tsoi
   twitter: 
   website: 
 
@@ -164,6 +176,18 @@
   instagram: 
   linkedin: disha-patel1212
   twitter: disha_patel3
+  website: 
+
+- name: Doran Goldman
+  pronouns: 
+  photo: Doran.jpg
+  info: Doran is a PhD student in Microbiology at the University of Wisconsin-Madison studying bacteriophages and antibiotic resistance. He is passionate about science communication, especially in areas of Wisconsin outside of Madison, and improving the accessibility of research education. In his free time he enjoys birding, singing in choir, and climbing.
+  email: 
+  bluesky: goldmandoran.bsky.social
+  medium: 
+  instagram: 
+  linkedin: doran-goldman-aa30b11b7
+  twitter: 
   website: 
 
 - name: Emily Selland
@@ -229,7 +253,7 @@
 - name: JP Flores
   pronouns: he/him
   photo: JP.jpg
-  info: JP is a 4th year PhD candidate in Bioinformatics & Computational Biology at UNC Chapel Hill studying 3D chromatin structure and gene regulation. At UNC, he is also pursuing a Graduate Certificate in Innovation for the Public Good.
+  info: JP is a Fulbright Scholar in Milan, Italy and HHMI Gilliam Postdoc at Case Western Reserve University. He finished his PhD in Bioinformatics & Computational Biology at UNC Chapel Hill, where he also completed a Graduate Certificate in Innovation for the Public Good.
   email: 
   bluesky: 
   medium: 
@@ -243,12 +267,12 @@
   photo: Kass.jpg
   info: PhD Candidate in Engineering Education at the University of Florida, Founding President of the Policy Advocacy in Science and Engineering student organization, and SNAP's Lead Web Developer
   email: kfernandez1@ufl.edu
-  bluesky: KassSTEM.bsky.social
+  bluesky: KassSTEM.com
   medium: kassstem
   instagram: 
-  linkedin: kassfedz
+  linkedin: kassstem
   twitter: 
-  website: https://kassstem.github.io/
+  website: https://kassstem.com/
 
 - name: Mikayla Smith-Craven
   pronouns: 

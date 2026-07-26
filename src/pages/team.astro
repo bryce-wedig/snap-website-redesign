@@ -19,10 +19,11 @@ const members = parse(readFileSync(join(process.cwd(), 'src/data/members.yaml'),
 }>;
 ---
 
-<PageLayout title="Team">
-  <h2>Meet the Team</h2>
-  <hr />
-
+<PageLayout
+  title="Team"
+  eyebrow="Meet the coalition"
+  lede="The early-career researchers organizing SNAP's initiatives across the country."
+>
   <div class="team-grid">
     {members.map(member => (
       <div class="team-card card">

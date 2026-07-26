@@ -7,13 +7,11 @@ import { join } from 'path';
 const siteData = parse(readFileSync(join(process.cwd(), 'src/data/site.yaml'), 'utf-8'));
 ---
 
-<PageLayout title="Get Involved">
-  <section class="join-hero">
-    <h1>Ready to Get Involved?</h1>
-    <p class="join-intro">
-      Whether you're part of an established science policy group or an individual advocate, you're welcome here.
-    </p>
-  </section>
+<PageLayout
+  title="Get Involved"
+  eyebrow="Join us"
+  lede="Whether you're part of an established science policy group or an individual advocate, you're welcome here."
+>
 
   <div class="join-actions">
     <div class="join-card card">

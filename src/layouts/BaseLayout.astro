@@ -26,6 +26,11 @@ const fullTitle = title === 'Home' ? siteTitle : `${title} | ${siteTitle}`;
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha384-EXatlQyrOJgDaM9/a74ArMzy7/2bTMSrZj8ID1IPeVmc3GncfCugefCFWSLj8JL/" crossorigin="anonymous" />
 
+  <!-- JetBrains Mono (used by tracker / data labels) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" />
+
   <!-- Academicons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
 
@@ -39,20 +44,10 @@ const fullTitle = title === 'Home' ? siteTitle : `${title} | ${siteTitle}`;
   </script>
 </head>
 <body>
-  <header>
-    <slot name="header">
-      <!-- Default header is included via the Header component in pages -->
-    </slot>
-  </header>
-
+  <slot name="header" />
   <main>
     <slot />
   </main>
-
-  <footer>
-    <slot name="footer">
-      <!-- Default footer is included via the Footer component in pages -->
-    </slot>
-  </footer>
+  <slot name="footer" />
 </body>
 </html>
