@@ -7,9 +7,12 @@
 // Configuration lives entirely in data:
 //   src/data/home_hero.yaml    — panel copy, map view, cycle settings, photo sets
 //   src/data/map_markers.yaml  — member-city (orange) and org (navy) markers
+//   src/data/stance_states.yaml — the Stance on Science state teams (shared
+//                                 with the initiative page's map)
 import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 import { join } from 'path';
+import { loadStates } from '../lib/stance';
 
 const base = import.meta.env.BASE_URL;
 const imageBase = `${base}images/`;
@@ -29,7 +32,6 @@ const hero = parse(
     enabled: boolean;
     slides: { id: string; eyebrow: string; sub?: string; duration_ms: number }[];
   };
-  stance_states: string[];
   photo_sets: {
     name: string;
     photos: {
@@ -81,6 +83,15 @@ const letters = letterRows
   .filter((l) => l.name && Number.isFinite(l.lat) && Number.isFinite(l.lng))
   .filter((l) => (seenLetters.has(l.name) ? false : (seenLetters.add(l.name), true)));
 
+// Stance on Science teams — the same registry the initiative page's map reads,
+// so a new state team lights up here and there from a single edit. Names must
+// match public/data/us-states.geojson (full state names); each state links to
+// its own page, as the initiative page's map does.
+const stanceStates = loadStates().map((s) => ({
+  name: s.name,
+  url: `${base}initiatives/stance-on-science/states/${s.code}/`,
+}));
+
 const site = parse(readFileSync(join(process.cwd(), 'src/data/site.yaml'), 'utf-8'));
 
 const socials = [
@@ -120,7 +131,7 @@ const clientConfig = {
       id: s.id, eyebrow: s.eyebrow, sub: s.sub ?? '', durationMs: s.duration_ms,
     })),
   },
-  stanceStates: hero.stance_states ?? [],
+  stanceStates,
   geojsonUrl: `${base}data/us-states.geojson`,
   sets: hero.photo_sets.map((set) => ({
     name: set.name,
@@ -291,17 +302,54 @@ const clientConfig = {
       L.marker([l.lat, l.lng], { icon: pin('letter', 'mk-letter', 10), autoPan: false }).addTo(map).bindPopup(l.name);
     });
 
-    // Stance-on-Science states: filled polygons, added/removed per slide.
-    var stanceLayer = null, stanceWanted = {};
-    (cfg.stanceStates || []).forEach(function (n) { stanceWanted[n] = true; });
+    // The slideshow assigns these so the stance states can hold their slide
+    // while a visitor reaches for one (the layer is otherwise pulled at 6s).
+    var pauseShow = function () {}, resumeShow = function () {};
+
+    // Stance-on-Science states: filled polygons, added/removed per slide. Each
+    // one links to its state page, like the initiative page's map.
+    var stanceLayer = null, stanceUrls = {};
+    (cfg.stanceStates || []).forEach(function (s) { stanceUrls[s.name] = s.url; });
     if (cfg.geojsonUrl && (cfg.stanceStates || []).length) {
       fetch(cfg.geojsonUrl).then(function (r) { return r.json(); }).then(function (gj) {
         var feats = (gj.features || []).filter(function (f) {
-          return f.properties && stanceWanted[f.properties.name];
+          return f.properties && stanceUrls[f.properties.name];
         });
         stanceLayer = L.geoJSON({ type: 'FeatureCollection', features: feats }, {
           className: 'stance-state',
           style: { color: C.plum, weight: 1.5, fillColor: C.plum, fillOpacity: 0.55, opacity: 0.9 },
+          onEachFeature: function (feature, layer) {
+            var name = feature.properties.name;
+            var url = stanceUrls[name];
+            var go = function () { window.location.href = url; };
+
+            layer.bindTooltip(name + ' — view responses', { sticky: true });
+            layer.on('click', go);
+            layer.on('mouseover', function () {
+              layer.setStyle({ fillOpacity: 0.75 });
+              pauseShow();
+            });
+            layer.on('mouseout', function () {
+              layer.setStyle({ fillOpacity: 0.55 });
+              resumeShow();
+            });
+            // Re-applied on every add: switching slides removes the layer,
+            // which throws away (and later recreates) these SVG paths.
+            layer.on('add', function () {
+              // a slide change can remove the layer mid-hover, with no mouseout
+              layer.setStyle({ fillOpacity: 0.55 });
+              var el = layer.getElement();
+              if (!el) return;
+              el.setAttribute('role', 'link');
+              el.setAttribute('tabindex', '0');
+              el.setAttribute('aria-label', name + ' — view Stance on Science responses');
+              el.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); }
+              });
+              el.addEventListener('focus', pauseShow);
+              el.addEventListener('blur', resumeShow);
+            });
+          },
         });
         if (stage.getAttribute('data-slide') === 'stance') { stanceLayer.addTo(map); focusSlide('stance'); }
       }).catch(function () {});
@@ -492,14 +540,15 @@ const clientConfig = {
         timer = setTimeout(function () { go(current + 1); }, ms || 6000);
       }
 
-      // pause while the visitor hovers/focuses the rail so they can read it
+      // pause while the visitor hovers/focuses the rail so they can read it,
+      // and while they hover a stance state so it stays clickable
+      pauseShow = function () { paused = true; if (timer) { clearTimeout(timer); timer = null; } };
+      resumeShow = function () { if (paused) { paused = false; schedule(slides[current] ? slides[current].durationMs : 6000); } };
       if (rail) {
-        var pause = function () { paused = true; if (timer) { clearTimeout(timer); timer = null; } };
-        var resume = function () { if (paused) { paused = false; schedule(slides[current] ? slides[current].durationMs : 6000); } };
-        rail.addEventListener('mouseenter', pause);
-        rail.addEventListener('mouseleave', resume);
-        rail.addEventListener('focusin', pause);
-        rail.addEventListener('focusout', resume);
+        rail.addEventListener('mouseenter', pauseShow);
+        rail.addEventListener('mouseleave', resumeShow);
+        rail.addEventListener('focusin', pauseShow);
+        rail.addEventListener('focusout', resumeShow);
         items.forEach(function (it, k) {
           it.addEventListener('click', function () { paused = false; go(k); });
         });
@@ -543,8 +592,11 @@ const clientConfig = {
   }
   /* whole marker layers fade in/out as slides change */
   .home-hero-stage :global(.mk) { transition: opacity .6s ease; }
-  /* stance state fills animate in */
+  /* stance state fills animate in; each one links to its state page */
   .home-hero-stage :global(.stance-state) { transition: fill-opacity .5s ease, opacity .5s ease; }
+  .home-hero-stage :global(.stance-state:focus-visible) {
+    outline: 3px solid var(--orange); outline-offset: 2px;
+  }
 
   /* per-slide layer visibility: the active layer is bright, the rest dim away.
      Rules only bind once JS sets [data-slide], so the no-JS SSR view is unaffected. */

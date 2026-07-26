@@ -45,7 +45,8 @@ cycle:
 #
 #   slides[].id         which layer to highlight — must be one of:
 #                         members      → member-city + org pins
-#                         stance       → filled state shapes (see stance_states)
+#                         stance       → filled state shapes, one per Stance on
+#                                        Science team in stance_states.yaml
 #                         mcclintock   → published McClintock-letter dots
 #   slides[].eyebrow    bold label shown on the rail
 #   slides[].sub        small caption under the label
@@ -66,11 +67,6 @@ slideshow:
       eyebrow: "McClintock Letters"
       sub: "295 letters published"
       duration_ms: 6000
-
-# States to fill on the `stance` slide. Names must match the US-states GeoJSON
-# in public/data/us-states.geojson (full state names). Add more as teams launch.
-stance_states:
-  - California
 
 # ----------------------------------------------------------------------------
 # Photo sets. Each set is an independent group of pinned photos. The hero shows
