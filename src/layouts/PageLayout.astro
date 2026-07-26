@@ -12,9 +12,12 @@ interface Props {
   lede?: string;
   /** Suppress the auto-generated page header (the page provides its own). */
   hideHeader?: boolean;
+  /** Header treatment: the default cream band, or the navy / plum variants from global.css. */
+  variant?: 'light' | 'dark' | 'plum';
 }
 
-const { title, description, eyebrow, lede, hideHeader = false } = Astro.props;
+const { title, description, eyebrow, lede, hideHeader = false, variant = 'light' } = Astro.props;
+const headerClass = variant === 'light' ? 'page-header' : `page-header ${variant}`;
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -22,7 +25,7 @@ const base = import.meta.env.BASE_URL;
   <Header slot="header" />
 
   {!hideHeader && (
-    <header class="page-header">
+    <header class={headerClass}>
       <div class="container">
         <div class="crumbs">
           <a href={base}>SNAP</a><span class="sep">/</span>
