@@ -1,0 +1,24 @@
+- id: mo-q1
+  question: >-
+    In their 2024–2025 report, the Missouri Office of Rural Health reported that 42% of counties in MO do not have a hospital. What policies, if any, do you plan to implement to address access to health care, primarily in rural areas? 
+  tag: Public Health
+
+- id: mo-q2
+  question: >-
+    The Missouri Department of Agriculture has reported that Agriculture and related industries have contributed 93.7 billion dollars in economic output and 456,618 jobs to Missouri in 2021. Would you continue to develop and support agtech business in Missouri as well as the education and scientific training for Missourians to contribute to this industry? Why or why not?
+  tag: Agriculture
+
+- id: mo-q3
+  question: >-
+    America has a growing AI industry, supporting cutting-edge innovation but raising issues of resource use, privacy, and economics. In your opinion, what are the costs and benefits of new data center construction in Missouri and how would your policies accomplish a balance between them?
+  tag: Artificial Intelligence
+
+- id: mo-q4
+  question: >-
+    If elected, in what capacities would you refer to scientists when you are deciding how to vote on a policy?
+  tag: Trust in Science
+
+- id: mo-q5
+  question: >-
+    What are your opinions on the current state of science literacy, and how could K-12 education standards be adapted to improve the public understanding of and relationship building in science?
+  tag: K-12 Science Education

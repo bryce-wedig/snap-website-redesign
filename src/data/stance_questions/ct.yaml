@@ -1,0 +1,30 @@
+- id: ct-q1
+  question: >-
+    PUBLIC HEALTH:  Many constituents are concerned by news of recent Hantavirus and Ebola outbreaks, compounded by recent changes to public health policy at the national level. What policies, if any, do you support that would address the constituent’s concerns? What policies and other strategies would you implement to protect and advance public health?
+  tag:
+    - Public Health
+
+- id: ct-q2
+  question: >-
+    RESEARCH FUNDING: Recent funding cuts are impacting Connecticut research universities’ and government-funded research programs’ goals of advancing scientific discovery, training the future workforce, and driving economic development. What policies, if any, would you support regarding funding and oversight of research universities and government-funded research programs, and what outcomes would those policies achieve?
+  tag:
+    - Investment in Higher Education
+    - Science Funding
+
+- id: ct-q3
+  question: >-
+    ENERGY: Connecticut residents and businesses pay some of the highest energy costs in the country, costs that are determined by our energy landscape. What policies, if any, would you implement regarding energy distribution and/or diversification of our energy sources?
+  tag:
+    - Energy
+
+- id: ct-q4
+  question: >-
+    ENVIRONMENT: Connecticut faces environmental challenges including coastal flooding, legacy industrial pollution, and air quality impacts from regional sources. What are your policy priorities, if any, for protecting the environment and the health of Connecticut residents?
+  tag:
+    - Environment
+
+- id: ct-q5
+  question: >-
+    ARTIFICIAL INTELLIGENCE:  Artificial intelligence is being rapidly adopted across many sectors of the economy and society, raising questions about workforce impacts, data privacy, equity of access, and economic competitiveness. What are your policy priorities, if any, for addressing the opportunities and challenges that AI presents for Connecticut residents?
+  tag:
+    - Artificial Intelligence

@@ -1,0 +1,129 @@
+- candidate_first_name: Rustin # this is Bryce's cat. titles and middle names go here
+  candidate_last_name: Provance # used for alphabetical sorting
+  state: wi
+  race: US House of Representatives # must match one of the options!
+  district: 3 # string, e.g. 14 or 14A; feel free to remove if not applicable
+  party: No Party Preference # must match one of the options!
+  question: wi-q1
+  date: 2026-07-10 # optional
+  primary_candidate: false # optional, default false; true = ran in the primary but did not advance. Must be the same on every row for a given candidate
+  response: |
+    I am against the data centers. Without real solid laws regarding A.I. inplace, we shouldn't be moving forward with anything. What limitations do corporations really have with A.I now or oversight? 
+    
+- candidate_first_name: Rustin
+  candidate_last_name: Provance
+  state: wi
+  race: US House of Representatives
+  district: 3
+  party: No Party Preference
+  question: wi-q2
+  date: 2026-07-04
+  primary_candidate: false
+  response: |
+    Robotics and A.I have its place. I also understand with any new technology it can be abused and used for bad intentions. With the advancements in A.I and the speed that it is advancing. The question really is, when do humans become the roadblock for A.I to keep advancing and what are the consequences of trying to stop it. Robotics and the purpose of A.I is to complete task in a more and efficient way. A job is a task. If we dont put restrictions on A.I. I feel it will create an economic disaster due to no or limited incomes.
+
+- candidate_first_name: Rustin
+  candidate_last_name: Provance
+  state: wi
+  race: US House of Representatives
+  district: 3
+  party: No Party Preference
+  question: wi-q3
+  date: 2026-07-04
+  primary_candidate: false
+  response: |
+    There are to many things wrong with the publice education system. We need a complete overhaul. We have teacher issues and the teachers Union. We student education and graduation issues. To administration and financial issues. This is a major task to take on and requires a lot of investigations into schools themselves before anything should be done. Is it an administrative issue or something totally different. What are the education system expectations vs the communitie expectations. Lots of issues and sometimes I think the overwhelming issues are on purpose. Dont know for sure. It sure feels like it. 
+
+- candidate_first_name: Rustin
+  candidate_last_name: Provance
+  state: wi
+  race: US House of Representatives
+  district: 3
+  party: No Party Preference
+  question: wi-q5
+  date: 2026-07-04
+  primary_candidate: false
+  response: |
+    I have high respect for scientists. Take the information with importance. I also understand science changes and so do some theories. So a good debate with facts can get to a more reasonable solution to problems we can solve for the betterment of all.
+
+- candidate_first_name: Rustin
+  candidate_last_name: Provance
+  state: wi
+  race: US House of Representatives
+  district: 3
+  party: No Party Preference
+  question: wi-q6
+  date: 2026-07-04
+  primary_candidate: false
+  response: |
+    I have high respect for scientists. Take the information with importance. I also understand science changes and so do some theories. So a good debate with facts can get to a more reasonable solution to problems we can solve for the betterment of all.  
+
+- candidate_first_name: Mark
+  candidate_last_name: Scheffler
+  state: wi
+  race: US House of Representatives
+  district: 8
+  party: Democratic
+  question: wi-q1
+  date: 2026-07-10
+  primary_candidate: false
+  response: |
+    Mark supports the development of artificial intelligence engines but only with iron-clad regulations to protect human wellbeing, jobs, data privacy, and of course environmental protections. He's proposing a 1-year moratorium on all new AI data center construction to give policymakers time to develop a regulatory framework to ensure that this powerful technology benefits humanity, is ecologically friendly, and can be powered entirely by 24/7 renewable energy created right here in America. He also supports strong water quality protections and the use of closed-loop geothermal cooling systems.
+
+    KEYWORDS: climate change, renewable energy, clean water
+
+- candidate_first_name: Mark
+  candidate_last_name: Scheffler
+  state: wi
+  race: US House of Representatives
+  district: 8
+  party: Democratic
+  question: wi-q2
+  date: 2026-07-10
+  primary_candidate: false
+  response: |
+    Mark is the only candidate in this Congressional race supporting the creation of the world's largest renewable biomass market powered by America's farmers. This plan builds on the excellent work being done at UW's agriculture school and would support the production of renewable biomass for 24/7 electrical generation, bio-fuels (including sustainable aviation fuel - SAF), bio-plastics, building materials, paper products, textiles, etc.. Wisconsin has the resources, Wisconsin has the talent; we just need fresh, independent leaders to think long-term again.
+
+    KEYWORDS: biomass, agriculture, next-generation, bio-fuels, renewable energy
+
+- candidate_first_name: Mark
+  candidate_last_name: Scheffler
+  state: wi
+  race: US House of Representatives
+  district: 8
+  party: Democratic
+  question: wi-q2
+  date: 2026-07-10
+  primary_candidate: false
+  response: |
+    As the only candidate in this 8th Congressional District race who has taught full-time in a Wisconsin public school, Mark brings a wealth of experience and expertise. He supports educational choice exclusively through public charter schools, his tax modernization plan (#TinyTax) would keep more than $20 billion per year in our local and Wisconsin economy which would be use to increase funding for our shared public infrastructure, including public schools. He also supports a massive increase in funding for the arts and humanities to offset the effects of artificial intelligence and to strengthen student understanding, curiosity, creativity and achievement. Lastly, he supports equalizing funding for schools across rural Wisconsin, winding down our broken voucher program, and supporting job training for advanced manufacturing across the state. 
+
+    KEYWORDS: public charter schools, tax reform, rural education
+
+- candidate_first_name: Mark
+  candidate_last_name: Scheffler
+  state: wi
+  race: US House of Representatives
+  district: 8
+  party: Democratic
+  question: wi-q5
+  date: 2026-07-10
+  primary_candidate: false
+  response: |
+    America must continue to lead on scientific research, and must always lead all policy decisions at the local, state, federal and international levels. And this includes not only physical science, but most especially social science research that can help us make better policy decisions designed to help improve human and environmental wellbeing. Mark believes that public policy should never be driven by religion, mythology, tribalism, nor by intuition. While there are certainly areas of human endeavor that can include these concepts, public policy should never be one of them.  
+
+    KEYWORDS: objectivity, social science, scientific discovery, prosperity, human wellbeing
+
+- candidate_first_name: Mark
+  candidate_last_name: Scheffler
+  state: wi
+  race: US House of Representatives
+  district: 8
+  party: Democratic
+  question: wi-q6
+  date: 2026-07-10
+  primary_candidate: false
+  response: |
+    Mark's tax reform proposal (#TinyTax) would fully fund all spending allocated by Congress in the 2022-24 budget, including fully funding the Centers for Disease Control, the National Institute on Health, the National Academy of Science, NASA, et.al.. Mark believes strongly that impounding Congressional spending by the executive branch is bth unconstitutional and outright unworkable and he supports strengthening the separation of powers between Congress and the Executive Branch. He also supports minimizing Presidential executive orders as a means of instituting public policy. 
+
+    KEYWORDS: #TinyTax, NIH, CDC, NASA

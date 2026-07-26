@@ -1,0 +1,45 @@
+- id: ma-q1
+  question: >-
+    Both research universities and government-funded research programs play a
+    critical role in advancing scientific discovery, training the future
+    workforce, and driving economic development. How would you approach funding
+    and oversight of research universities and government-funded research
+    programs, and what outcomes would you hope to achieve through those
+    investments?
+  tag:
+    - Investment in Higher Education
+    - Science Funding
+
+- id: ma-q2
+  question: >-
+    What specific forms of AI regulation do you support, and where would you
+    draw the line between necessary oversight and overregulation that could slow
+    innovation?
+  tag: Artificial Intelligence
+
+- id: ma-q3
+  question: >-
+    What policies, if any, do you support or envision to manage land-based
+    resources in your state (water, open-space preserves, parks, etc.)?
+  tag: Environment
+
+- id: ma-q4
+  question: >-
+    What policies do you support to secure affordable and ready access to
+    healthcare services for your constituents?
+  tag: Public Health
+
+- id: ma-q5
+  question: >-
+    Do you have any policies or programs in mind to reduce the financial burden
+    for students wanting to attend college?
+  tag: Investment in Higher Education
+
+- id: ma-q6
+  question: >-
+    How will you support fellowships and training grants that promote the
+    development of graduate students and other early career scientists in your
+    community?
+  tag:
+    - Investment in Higher Education
+    - Science Funding

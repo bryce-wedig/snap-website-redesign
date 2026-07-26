@@ -1,0 +1,24 @@
+- id: vt-q1
+  question: >-
+    What policies, if any, do you support or envision in managing land-based resources in Vermont (i.e. water, open-space preserves, parks)?
+  tag: Environment
+
+- id: vt-q2
+  question: >-
+    Natural resources and the natural environment in Vermont contribute to tourism, public health, agriculture, and manufacturing production. What policies, if any, do you support that could contribute to environmental stewardship, environmental research, or environmental protections in Vermont?
+  tag: Environment
+
+- id: vt-q3
+  question: >-
+    Vermont is facing growing flood risk, reduced snowpack, and altered forest composition. What policies, if any, do you support in addressing how natural disasters are affecting industries and life in Vermont?
+  tag: Environment
+
+- id: vt-q4
+  question: >-
+    Advances in artificial intelligence and expansion of data centers are expected to affect industries such as manufacturing, healthcare, education, and transportation across the country. What policies, if any, do you plan to implement to address these potential impacts in Vermont?
+  tag: Artificial Intelligence
+
+- id: vt-q5
+  question: >-
+    Electricity demand is increasing due to manufacturing, electrification, and data infrastructure. What role, if any, do you believe developing alternative energy sources should contribute to the country's future energy mix? What plans, if any, do you have to develop these alternative energy sources in Vermont, and how might they affect job opportunities in the state (if at all)?
+  tag: Energy

@@ -1,0 +1,33 @@
+- id: wa-q1
+  question: >-
+    America has a growing artificial intelligence (AI) industry, supporting cutting edge innovation and reshaping businesses, but raising concerns about education, ownership, and security. Application of AI technology has increased the demand placed on data centers, controversial for their resource use (such as water and land) and raising utility costs. What are your policy positions in regards to data centers and AI? What sources of evidence informed these policies?
+  tag: Artificial Intelligence
+
+- id: wa-q2
+  question: >-
+    What are your top funding priorities for environmental projects and research in our state? If you do not have specific priorities, how would you approach setting those priorities to ensure effective environmental stewardship?
+  tag: Environment
+
+- id: wa-q3
+  question: >-
+    What are your opinions on the current state of science literacy, and how could K-12 education standards be adapted to improve the public understanding of and relationship building in science?
+  tag: K-12 Science Education
+
+- id: wa-q4
+  question: >-
+    The Bear Gulch Fire, one of 2000 recorded fires in 2025, was the biggest on the Olympic Peninsula in 70 years, burning over 20,000 hectares and causing $42 million in damages. What are your policies around fire risk management for the state?
+  tag:
+    - Climate
+    - Environment
+
+- id: wa-q5
+  question: >-
+    Puget Sound and the Washington coast are experiencing rapid changes, such as warming waters, ocean acidification, and ecosystem shifts, that have major impacts on Washington’s wildlife and fisheries. What policies and funding, if any, would you prioritize for fisheries management, scientific monitoring, and to help communities adapt to these shifts?
+  tag: Environment
+
+- id: wa-q6
+  question: >-
+     In 2021, the WA legislature passed the Climate Commitment Act, which has helped to reduce carbon pollution, but puts extra economic burden on farmers and agricultural distributors in the state. What policies would you support, if any, for helping farmers and distributors balance these costs while maintaining Washington's commitment to environmental sustainability?
+  tag:
+    - Climate
+    - Environment

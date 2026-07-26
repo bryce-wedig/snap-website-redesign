@@ -1,0 +1,45 @@
+- id: fl-q1
+  question: >-
+    Homeowners' insurance premiums in Florida have increased substantially over the past decade, while many communities across the state continue to face hurricanes, flooding, extreme heat, and other natural hazards. What policies, if any, do you support to improve Florida's resilience and better protect residents, infrastructure, and the economy from these risks?
+  question_es: >-
+    Las primas del seguro para propietarios de viviendas en Florida han aumentado considerablemente durante la última década, mientras que muchas comunidades en todo el estado continúan enfrentando huracanes, inundaciones, calor extremo y otros peligros naturales. ¿Qué políticas, si las hay, apoya usted para fortalecer la resiliencia de Florida y proteger mejor a los residentes, la infraestructura y la economía frente a estos riesgos?
+  tag:
+    - Climate
+    - Environment
+
+- id: fl-q2
+  question: >-
+    Do you envision a role for renewable energy infrastructure and clean energy industries in Florida’s future economy, and if so, how would you support job creation and workforce development in those sectors in Florida?
+  question_es: >-
+    ¿Visualiza un papel para la infraestructura de energía renovable y las industrias de energía limpia en la economía futura de Florida? De ser así, ¿cómo apoyaría la creación de empleos y el desarrollo de la fuerza laboral en esos sectores en Florida?
+  tag: Energy
+
+- id: fl-q3
+  question: >-
+    Scientific issues increasingly influence public policy. When developing policy positions or making decisions on topics involving science, how do you seek out information, evaluate scientific evidence and expert input, and ensure your decisions are well informed? If you can, please share an example of when this process influenced your perspective or decision.
+  question_es: >-
+    Los temas científicos influyen cada vez más en las políticas públicas. Al desarrollar posiciones sobre políticas o tomar decisiones relacionadas con temas científicos, ¿cómo busca información, evalúa la evidencia científica y la opinión de expertos, y se asegura de que sus decisiones estén bien fundamentadas? Si es posible, comparta un ejemplo de una ocasión en la que este proceso haya influido en su perspectiva o en una decisión.
+  tag:
+    - Policymaking Process
+    - Trust in Science
+
+- id: fl-q4
+  question: >-
+    Florida is home to many high-quality STEM education programs, including specialized magnet schools, career academies, and advanced science and technology curricula. However, access to these opportunities varies across the state due to factors such as geography, school resources, and program availability. What policies, if any, do you support to expand equitable access to high-quality STEM education for students across Florida?
+  question_es: >-
+    Florida cuenta con numerosos programas de educación STEM (ciencia, tecnología, ingeniería y matemáticas) de alta calidad, incluyendo escuelas magnet especializadas, academias profesionales y programas avanzados de ciencia y tecnología. Sin embargo, el acceso a estas oportunidades varía en todo el estado debido a factores como la ubicación geográfica, los recursos escolares y la disponibilidad de programas. ¿Qué políticas, si las hay, apoya usted para ampliar el acceso equitativo a una educación STEM de alta calidad para los estudiantes de todo Florida?
+  tag: K-12 Science Education
+
+- id: fl-q5
+  question: >-
+    The 2026–2030 Florida Cancer Plan identifies several key cancer prevention strategies, including tobacco cessation, HPV vaccination, reducing UV radiation exposure, lowering excessive alcohol consumption, and reducing radon gas exposure. What policies or public health initiatives would you support to advance these prevention efforts and help reduce cancer rates in Florida?
+  question_es: >-
+    El Plan de Cáncer de Florida 2026–2030 identifica varias estrategias clave para la prevención del cáncer, entre ellas dejar de fumar, aumentar la vacunación contra el VPH, reducir la exposición a la radiación ultravioleta (UV), disminuir el consumo excesivo de alcohol y reducir la exposición al gas radón. ¿Qué políticas o iniciativas de salud pública apoyaría para fortalecer estos esfuerzos de prevención y ayudar a reducir las tasas de cáncer en Florida?
+  tag: Public Health
+
+- id: fl-q6
+  question: >-
+    Since 2017, Florida has offered tax incentives to encourage the construction of data centers. While these facilities can create jobs and support economic growth, they may also increase demand for electricity and water, potentially affecting nearby residents and businesses. In 2025, Senate Bill 484 established additional protections for small businesses and residents located near data centers. Do you believe Florida has struck the right balance between encouraging data center development and protecting local communities? If not, what additional policies, if any, would you support?
+  question_es: >-
+    Desde 2017, Florida ha ofrecido incentivos fiscales para fomentar la construcción de centros de datos. Si bien estas instalaciones pueden generar empleos y apoyar el crecimiento económico, también pueden aumentar la demanda de electricidad y agua, lo que podría afectar a los residentes y negocios cercanos. En 2025, el Proyecto de Ley del Senado 484 (Senate Bill 484) estableció protecciones adicionales para los pequeños negocios y los residentes ubicados cerca de centros de datos. ¿Cree que Florida ha logrado el equilibrio adecuado entre promover el desarrollo de centros de datos y proteger a las comunidades locales? De no ser así, ¿qué políticas adicionales, si las hay, apoyaría?
+  tag: Artificial Intelligence

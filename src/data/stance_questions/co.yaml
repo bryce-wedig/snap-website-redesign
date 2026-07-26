@@ -1,0 +1,30 @@
+- id: co-q1
+  question: >-
+    What advisory mechanisms will you implement to ensure that evidence and scientific findings play a crucial role in your policymaking process?
+  tag: Policymaking Process
+
+- id: co-q2
+  question: >-
+    Colorado farmers are facing multiple threats, amidst water scarcity and rising prices for fertilizer and other imported materials. As agriculture is our #1 export sector, in what ways do you imagine using your role to support evidence-based advancements to protect and support our farmers and natural resources in the years ahead?
+  tag:
+    - Agriculture
+    - Environment
+
+- id: co-q3
+  question: >-
+    America has a growing AI industry, supporting cutting-edge innovation but raising issues of resource use, privacy, and economics. What is the right balance of costs and benefits for new data center construction in Colorado, and how would your policies accomplish that balance?
+  tag:
+    - Artificial Intelligence
+    - Environment
+
+- id: co-q4
+  question: >-
+    Colorado has experienced a lingering measles outbreak since March of 2025. What evidence-based policies do you support to improve community and preventive health for your constituents, for infectious diseases and other threats?
+  tag: Public Health
+
+- id: co-q5
+  question: >-
+    What are your opinions on the current state of science literacy, and how could K-12 education standards be adapted to form a better public understanding of and relationship building in science?
+  tag:
+    - K-12 Science Education
+    - Trust in Science

@@ -1,0 +1,24 @@
+- id: nh-q1
+  question: >-
+    What policies, if any, do you support or envision in managing land-based resources in New Hampshire (i.e. water, open-space preserves, parks)?
+  tag: Environment
+
+- id: nh-q2
+  question: >-
+    What policies and programs, if any, do you plan to implement regarding vaccines in the state of New Hampshire or throughout the US? What role, if any, does collaboration between scientists and policymakers have in this process?
+  tag: Public Health
+
+- id: nh-q3
+  question: >-
+    New Hampshire is facing growing flood risk, reduced snowpack, and rising sea levels. What policies, if any, do you support in mitigating how natural disasters are affecting industries and life in New Hampshire?
+  tag: Environment
+
+- id: nh-q4
+  question: >-
+    Advances in artificial intelligence and expansion of data centers are expected to affect industries such as manufacturing, healthcare, education, and transportation across the country. What policies, if any, do you plan to implement to address these potential impacts in New Hampshire?
+  tag: Artificial Intelligence
+
+- id: nh-q5
+  question: >-
+    Electricity demand is increasing due to manufacturing, electrification, and data infrastructure. What role, if any, do you believe developing alternative energy sources should contribute to the country's future energy mix? What plans, if any, do you have to develop these alternative energy sources in New Hampshire, and how might they affect job opportunities in the state (if at all)?
+  tag: Energy

@@ -1,0 +1,173 @@
+# Registry of Stance on Science state teams. One entry per state page under
+# src/pages/initiatives/stance-on-science/states/. The hub page's map and
+# "Browse by state" grid, the global search, and the responses.json feed all
+# read from this file.
+#
+# `last_updated` mirrors the old site's git-derived "last commit that touched
+# _data/stance_responses/<code>.yml" date. Bump it when you update a state's
+# responses file. States without a responses file omit it.
+#
+# Socials are optional — leave blank/omit to hide a link.
+
+- code: ca
+  name: California
+  demonym_plural: Californians
+  team_email: ca.stanceonscience@gmail.com
+  ballot_lookup_url: https://findyourrep.legislature.ca.gov/
+  ballot_lookup_label: Find Your California Representatives
+  instagram_url: https://www.instagram.com/castanceonscience
+  bluesky_url: https://bsky.app/profile/castanceonscience.bsky.social
+  heading: June 2026 Primary Elections
+  last_updated: 2026-05-29
+  hub_blurb: June 2026 primary — US House, Governor & LA Mayor races.
+
+- code: co
+  name: Colorado
+  demonym_plural: Coloradans
+  team_email: stanceonsciencecolorado@gmail.com
+  ballot_lookup_url: https://myballot.coloradosos.gov/app/home
+  ballot_lookup_label: Colorado Secretary of State "My Ballot" website
+  instagram_url: https://www.instagram.com/stanceonscience.colorado/
+  x_url: https://x.com/co_stancesci
+  bluesky_url: https://bsky.app/profile/co-stanceonscience.bsky.social
+  heading: June 2026 Primary Elections
+  last_updated: 2026-06-01
+  hub_blurb: June 2026 primary — statewide, state legislature & county races.
+
+- code: ct
+  name: Connecticut
+  demonym_plural: Connecticut residents
+  team_email: ct.stanceonscience@gmail.com
+  ballot_lookup_url: https://portal.ct.gov/SOTS/Common-Elements/V5-Template---Redesign/Elections--Voting--Home-Page
+  ballot_lookup_label: website of the Office of the Secretary of State
+  heading: CT Governor Primary and CT US House Primary Elections
+  last_updated: 2026-07-14
+  hub_blurb: Governor & US House primary elections.
+
+- code: fl
+  name: Florida
+  demonym_plural: Floridians
+  team_email: stanceonscienceflorida@gmail.com
+  ballot_lookup_url: https://dos.fl.gov/elections/for-voters/check-your-voter-status-and-polling-place
+  ballot_lookup_label: Florida Department of State Voter Information Lookup
+  instagram_url: https://www.instagram.com/stanceonscienceflorida/
+  facebook_url: https://www.facebook.com/profile.php?id=61591393215552
+  heading: August 2026 Primary Election and November 2026 General Election
+  hub_blurb: August 2026 primary & November 2026 general election.
+
+- code: ga
+  name: Georgia
+  demonym_plural: Georgians
+  team_email: coalitionofathensscientists@gmail.com
+  hub_blurb: Athens 2026 candidate survey on energy & the environment.
+
+- code: ma
+  name: Massachusetts
+  demonym_plural: Bay Staters
+  team_email: stanceonscience.massachusetts@gmail.com
+  ballot_lookup_url: https://www.sec.state.ma.us/divisions/elections/recent-updates/upcoming-elections.htm
+  ballot_lookup_label: website of the Secretary of the Commonwealth of Massachusetts
+  heading: 2026 Massachusetts Elections
+  last_updated: 2026-07-14
+  hub_blurb: 2026 Massachusetts elections.
+
+- code: md
+  name: Maryland
+  demonym_plural: Marylanders
+  team_email: sabrinayasmeenkhan@gmail.com
+  ballot_lookup_url: https://elections.maryland.gov/elections/2026/primary_candidates/2026_GP_statewide_candidatelist.html
+  ballot_lookup_label: Maryland State Board of Elections Website
+  heading: June 2026 Primary Election
+  last_updated: 2026-06-09
+  hub_blurb: June 2026 primary election.
+
+- code: mi
+  name: Michigan
+  demonym_plural: Michiganders
+  team_email: stanceonsciencemichigan@gmail.com
+  ballot_lookup_url: https://mvic.sos.state.mi.us/Voter/Index
+  ballot_lookup_label: Michigan Voter Information Center
+  instagram_url: https://www.instagram.com/stanceonsciencemichigan/
+  heading: August 2026 Primary Elections
+  last_updated: 2026-07-22
+  hub_blurb: August 2026 primary elections.
+
+- code: mn
+  name: Minnesota
+  demonym_plural: Minnesotans
+  team_email: stanceonscienceminnesota@gmail.com
+  ballot_lookup_url: https://myballotmn.sos.mn.gov/
+  ballot_lookup_label: Minnesota Voting Information Portal
+  instagram_url: https://www.instagram.com/stanceonscience.mn/
+  heading: August 2026 Primary Election
+  last_updated: 2026-07-23
+  hub_blurb: August 2026 primary election.
+
+- code: mo
+  name: Missouri
+  demonym_plural: Missourians
+  team_email: stanceonsciencemissouri@gmail.com
+  ballot_lookup_url: https://voteroutreach.sos.mo.gov/portal/
+  ballot_lookup_label: Missouri Secretary of State "Check Your Voter Registration" portal
+  instagram_url: https://www.instagram.com/stanceonsciencemissouri/
+  heading: August 2026 primary election
+  hub_blurb: August 2026 primary election.
+
+- code: nh
+  name: New Hampshire
+  demonym_plural: New Hampshirites
+  team_email: jessa.e.burling.gr@dartmouth.edu
+  ballot_lookup_url: https://www.sos.nh.gov/elections/voting-districts
+  ballot_lookup_label: New Hampshire Secretary of State "Voting Districts" website
+  heading: September 2026 Primary Election and November 2026 General Election
+  hub_blurb: September 2026 primary & November 2026 general election.
+
+- code: pa
+  name: Pennsylvania
+  demonym_plural: Pennsylvanians
+  team_email: stanceonsciencepa@gmail.com
+  ballot_lookup_url: https://www.pavoterservices.pa.gov/Pages/PollingPlaceInfo.aspx
+  ballot_lookup_label: PA Voter Services
+  instagram_url: https://www.instagram.com/stanceonsciencepa/
+  tiktok_url: https://www.tiktok.com/@stanceonscience_pa
+  x_url: https://x.com/PAStanceonSci
+  bluesky_url: https://bsky.app/profile/stancepa.bsky.social
+  reddit_url: https://www.reddit.com/user/StanceOnSciencePA/
+  heading: November 2026 General Election
+  hub_blurb: November 2026 general election.
+
+- code: vt
+  name: Vermont
+  demonym_plural: Vermonters
+  team_email: jessa.e.burling.gr@dartmouth.edu
+  ballot_lookup_url: https://legislature.vermont.gov/reports-and-research/research/reapportionment/2022-house-of-representatives-reapportionment/districts-by-town-2/
+  ballot_lookup_label: Vermont General Assembly "House Districts by Town" website
+  heading: August 2026 Primary Election and November 2026 General Election
+  hub_blurb: August 2026 primary & November 2026 general election.
+
+- code: wa
+  name: Washington
+  demonym_plural: Washingtonians
+  team_email: WA.stanceonscience@gmail.com
+  ballot_lookup_url: https://voter.votewa.gov/CandidateList.aspx?e=899
+  ballot_lookup_label: VoteWA
+  instagram_url: https://www.instagram.com/stanceonscience.wa/
+  x_url: https://x.com/wastatestance
+  bluesky_url: https://bsky.app/profile/wa-stanceonscience.bsky.social
+  heading: August 2026 Primary Election
+  last_updated: 2026-07-22
+  hub_blurb: August 2026 primary election.
+
+- code: wi
+  name: Wisconsin
+  demonym_plural: Wisconsinites
+  team_email: wi.stanceonscience@gmail.com
+  ballot_lookup_url: https://myvote.wi.gov/en-us/
+  ballot_lookup_label: MyVote WI
+  instagram_url: https://www.instagram.com/stanceonscience.wi/
+  facebook_url: https://www.facebook.com/profile.php?id=61591945103540
+  bluesky_url: https://bsky.app/profile/wistanceonscience.bsky.social
+  reddit_url: https://www.reddit.com/user/WisconsinStance2026/
+  heading: August 2026 Primary Election
+  last_updated: 2026-07-21
+  hub_blurb: August 2026 primary election.

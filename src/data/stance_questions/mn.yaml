@@ -1,0 +1,29 @@
+- id: mn-q1
+  question: >-
+    If elected, in what capacities would you refer to scientists when you are deciding how to vote on a policy?
+  tag: Trust in Science
+
+- id: mn-q2
+  question: >-
+    Recently H.J. Res 140 passed, overturning a 20-year mining ban in the National Forest System land surrounding the Boundary Waters Canoe Area Wilderness. What is your position on mining projects in this region and what policies, if any, would you support to protect the surrounding watershed?
+  tag: Environment
+
+- id: mn-q3
+  question: >-
+    Contamination from PFAS and other "forever chemicals" in 21 community water systems in Minnesota exceed national regulations, putting residents at risk of negative health impacts. What policies, if any, do you propose to protect Minnesota residents from the potential impacts of PFAS?
+  tag: Environment
+
+- id: mn-q4
+  question: >-
+    There have been multiple hyperscale data centers proposed throughout the state, including one currently under construction. What policies and regulations, if any, do you support to assess and act on the potential impacts of these data centers?
+  tag: Artificial Intelligence
+
+- id: mn-q5
+  question: >-
+    In 2025 alone, the National Institute on Health (NIH) awarded over $700 million for research grants and contracts to Minnesota universities, which directly supported over 7,000 jobs and $1.79 billion of economic activity in Minnesota. What policies, if any, do you plan to implement or support regarding funding for continued science research either at the state or federal level?
+  tag: Science Funding
+
+- id: mn-q6
+  question: >-
+    Fatal drug overdoses in Minnesota have significantly declined in recent years, representing a 28% drop from a record peak of 1,392 overdose deaths in 2022. However, compared to White Minnesotans, Indigenous Minnesotans are 7 to 15 times more likely to experience a fatal drug overdose, while Black Minnesotans are 2 to 3 times more likely to die from a drug-related overdose. What policies, if any, do you support to continue the downward trend of overdose deaths for Minnesotans?
+  tag: Public Health

@@ -1,0 +1,62 @@
+- id: mi-q1-all-races
+  question: >-
+    Scientific and technical expertise can inform decisions related to healthcare, energy, infrastructure, manufacturing, and emerging technologies. What role, if any, should scientific evidence and expert input play in your policymaking process, and how would you communicate scientific uncertainty or evolving evidence to the public? 
+  tag: 
+    - Policymaking Process
+    - Trust in Science
+
+- id: mi-q2-all-races
+  question: >-
+    Government research funding supports universities, medical centers, and technology development across Michigan and the nation. What role, if any, should the federal government play in supporting scientific research and innovation, and what outcomes would you prioritize when evaluating those investments? 
+  tag: 
+    - Investment in Higher Education
+    - Jobs and Workforce
+    - Science Funding
+
+- id: mi-q3-house-senate
+  question: >-
+    Michigan farmers face challenges including shifting weather patterns, localized droughts, fluctuating input costs, and global market pressures. What policies or investments, if any, would you support to help farmers remain productive and economically competitive, and what role could scientific research and innovation play in those efforts?
+  tag: 
+    - Agriculture
+    - Climate
+    - Environment
+
+- id: mi-q4-governor-house
+  question: >-
+    Michigan communities continue to face challenges related to aging water infrastructure, contamination concerns such as PFAS, and long-term protection of the Great Lakes. What policies or investments, if any, would you support to improve drinking water safety and water infrastructure in Michigan? 
+  tag: 
+    - Environment
+    - Public Health
+
+- id: mi-q5-governor-house
+  question: >-
+    Many communities face shortages in healthcare providers and limited access to specialty care. What policies, if any, do you support to address this daily challenge and do you envision emerging technologies playing a role? 
+  tag: 
+    - Public Health
+
+- id: mi-q6-senate
+  question: >-
+    Public health emergencies can include infectious disease outbreaks, environmental disasters, and disruptions to medical supply chains. What policies or investments, if any, would you support to improve the nation’s and our state’s preparedness for future public health emergencies, and why?
+  tag: 
+    - Public Health
+
+- id: mi-q7-house-senate
+  question: >-
+    As electricity demand increases due to manufacturing, electrification, and data infrastructure, what role, if any, do you believe alternative energy sources, such as nuclear energy, wind, or solar, should play in America’s future energy mix? What policies, if any, would you support related to alternative energy development, regulation, and/or research, and why?
+  tag: 
+    - Energy
+
+- id: mi-q8-senate
+  question: >-
+    Advances in artificial intelligence are expected to affect industries such as manufacturing, healthcare, education, and transportation. What policies, if any, would you support regarding the development and use of artificial intelligence, and how would you balance innovation, workforce impacts, and public safety concerns?
+  tag: 
+    - Artificial Intelligence
+    - Jobs and Workforce
+
+- id: mi-q9-governor-house
+  question: >-
+    Rapid expansion of artificial intelligence and large-scale data centers are increasing demand for energy and water infrastructure. What policies, if any, would you support to balance technological growth with infrastructure reliability and environmental sustainability?
+  tag:
+    - Artificial Intelligence
+    - Energy
+    - Environment

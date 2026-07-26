@@ -1,0 +1,42 @@
+- id: md-q1
+  question: >-
+    Maryland residents are facing sharply rising electricity bills driven by a combination of power plant retirements, surging market prices, and rapidly growing demand (including from the proliferation of data centers across the region). If elected, what specific steps will you take to address the causes of high energy costs for Maryland residents and businesses, including data centers?
+  tag:
+    - Artificial Intelligence    
+    - Energy
+
+- id: md-q2
+  question: >-
+    Since early 2025, Maryland has lost nearly 25,000 federal jobs (more than any other state) as funding cuts to federal agencies including the NIH, NASA, and NIST take effect. How would you approach strengthening Maryland’s economy, and what steps would you take to ensure that workers across different roles and education levels benefit from those efforts?
+  tag:
+    - Jobs and Workforce
+    - Science Funding
+
+- id: md-q3
+  question: >-
+    Maryland faces public health challenges ranging from stark socioeconomic health disparities, a behavioral health and opioid crisis that disproportionately impacts communities of color, gaps in rural mental health access, and a strained public health infrastructure. What evidence-based policies do you support to improve community health for your constituents?
+  tag: Public Health
+
+- id: md-q4
+  question: >-
+    Across the state of Maryland, science and STEM education cultivate interest at a lower rate than intended, too few community-college students successfully transfer and complete bachelor’s degrees, and college affordability remains vulnerable to shifts in federal student aid and support. What evidence-based policies do you support to build a strong science and STEM pipeline from public schools and K-12 programs through colleges and universities for the next generation of Marylanders?
+  tag:
+    - Investment in Higher Education
+    - K-12 Science Education
+
+- id: md-q5
+  question: >-
+    What policies, if any, do you support or envision for managing land-based resources in your district (i.e. water, open-space preserves, parks)?
+  tag: Environment
+
+- id: md-q6
+  question: >-
+    What advisory mechanisms will you implement to ensure that evidence and scientific findings play a crucial role in your policymaking process?
+  tag:
+    - Policymaking Process
+    - Science Diplomacy
+
+- id: md-q7
+  question: >-
+    What initiatives will you take to support investment in innovation via federal science funding?
+  tag: Science Funding

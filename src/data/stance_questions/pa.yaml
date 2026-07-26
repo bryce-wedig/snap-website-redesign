@@ -1,0 +1,24 @@
+- id: pa-q1
+  question: >-
+    PFAS chemicals are widely used in consumer products but have raised health concerns due to their persistence in the environment and humans, and some Pennsylvanian legislators are considering restrictions on its use, such as in House Bill 2145. Should Pennsylvania restrict PFAS in consumer products? What scientific evidence would you use to inform your decision?
+  tag: Public Health
+
+- id: pa-q2
+  question: >-
+    Measles vaccination rates in Pennsylvania have declined in recent years, from 95.5% in 2020 to 92.5% in 2025. At the same time, measles outbreaks have emerged across the state, with 62 confirmed cases in PA in 2026. As a policymaker, how do you approach engaging with communities that have concerns that center on infectious disease outbreaks and vaccine safety, and what policies, if any, would you support related to these issues?
+  tag: Public Health
+
+- id: pa-q3
+  question: >-
+    There have been avian influenza outbreaks in Pennsylvania, with potential impacts on poultry and dairy operations, both industries that provide billions of dollars of economic value to the state. What policies, if any, do you support to strengthen the state’s preparedness and outbreak response? Are there specific strategies you would prioritize to protect farm workers, agricultural communities, and the broader public? 
+  tag: Agriculture
+
+- id: pa-q4
+  question: >-
+    Pennsylvania is the nation’s second-largest producer of natural gas and nuclear energy, as well as the third-largest producer of coal, per the Energy Information Administration. In contrast, PA currently ranks 45th in the country in terms of wind, solar, and hydropower energy production. How do you think these energy sources should be distributed across PA's energy production portfolio, and what policies, if any, would you support to facilitate this?
+  tag: Energy
+
+- id: pa-q5
+  question: >-
+    Pennsylvania has proposed more reporting, utility oversight, and zoning guidance for large data centers, along with shifting some generation, capacity, and reliability costs onto data center developers rather than ordinary ratepayers. How should the costs and benefits of large data center development be divided between developers and the public, and what requirements, if any, would you support on power, water, and public reporting before a project moves forward?
+  tag: Artificial Intelligence
