@@ -32,8 +32,8 @@ astro-site/
 │   ├── components/              # Reusable Astro components
 │   │   ├── Header.astro         # Site navigation bar
 │   │   ├── Footer.astro         # Site footer
-│   │   ├── Sidebar.astro        # Home page sidebar (social, initiatives, blog, press)
-│   │   └── Map.astro            # Interactive Leaflet.js map
+│   │   ├── HomeHero.astro       # Home page hero (interactive Leaflet.js map)
+│   │   └── stance/              # Stance on Science state explorer
 │   │
 │   ├── content/                 # Content collections (Markdown files)
 │   │   ├── blog/                # Blog posts
@@ -47,6 +47,8 @@ astro-site/
 │   │   ├── member_orgs.yaml     # Member organization details
 │   │   ├── press.yaml           # Press mentions
 │   │   ├── mcclintock_letters.yaml  # Published McClintock Letters by state
+│   │   ├── map_markers.yaml     # Map pins (member cities + organizations)
+│   │   ├── home_hero.yaml       # Home page hero slides and copy
 │   │
 │   ├── layouts/                 # Page layout templates
 │   │   ├── BaseLayout.astro     # Root HTML template (head, meta, analytics)
@@ -166,10 +168,10 @@ Content collections live in `src/content/` and are Markdown files with YAML fron
   website: https://example.edu/policy
 ```
 
-3. Add the organization's location to the map in `src/components/Map.astro`. Find the `orgs` array in the `<script>` tag and add a new entry:
+3. Add the organization's location to the map by appending an entry to the `orgs` list in `src/data/map_markers.yaml`:
 
-```javascript
-[[lat, lng], 'Organization Name', 'University Name'],
+```yaml
+  - { lat: 40.44, lng: -79.95, name: "Organization Name", location: "University Name" }
 ```
 
 > **Note:** Organizations are listed alphabetically. For `instagram` and `linkedin`, only the handle is needed.
@@ -268,10 +270,10 @@ nav:
 
 ### Adding a New Member City to the Map
 
-Edit `src/components/Map.astro` and add a new entry to the `memberCities` array in the `<script>` tag:
+Append a new entry to the `cities` list in `src/data/map_markers.yaml`:
 
-```javascript
-[[latitude, longitude], 'City, State'],
+```yaml
+  - { lat: 38.876933, lng: -77.089309, name: "City, State" }
 ```
 
 You can find coordinates using [Google Maps](https://maps.google.com) (right-click → "What's here?").
