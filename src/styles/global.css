@@ -223,7 +223,10 @@ hr { border: none; height: 1px; background: var(--hairline); margin: 2rem 0; }
   display: flex; align-items: center; justify-content: space-between;
   gap: 28px;
 }
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; flex: 0 0 auto; }
+/* Nothing in the bar may shrink: a shrunken row still "fits", which would
+   hide the overflow from the fit check in Header.astro (and squash the logo). */
+.nav-inner > * { flex: 0 0 auto; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 .brand img { height: 38px; width: auto; }
 
 .nav-links { display: flex; gap: 26px; align-items: center; }
@@ -243,6 +246,28 @@ hr { border: none; height: 1px; background: var(--hairline); margin: 2rem 0; }
 .nav-toggle {
   display: none; background: none; border: 0; cursor: pointer;
   font-size: 1.4rem; color: var(--navy); padding: 8px;
+}
+
+/* Collapsed bar. Header.astro measures what the expanded row needs and sets
+   .is-compact when it no longer fits, so this has no width threshold of its
+   own — add a nav link or change the type scale and it re-derives itself. */
+.nav.is-compact .nav-links { display: none; }
+.nav.is-compact .nav-toggle { display: inline-flex; }
+.nav.is-compact .nav-links.open {
+  display: flex; position: absolute;
+  top: var(--nav-h); left: 0; right: 0;
+  flex-direction: column; align-items: flex-start;
+  background: var(--page); border-bottom: 1px solid var(--hairline);
+  padding: 16px 32px 20px;
+  gap: 4px;
+}
+.nav.is-compact .nav-links.open a { padding: 12px 0; width: 100%; }
+
+/* Until that script has measured (and if it never runs), fall back to the
+   width the current nav happens to need. Only a starting guess. */
+@media (max-width: 1200px) {
+  .nav:not([data-nav-ready]) .nav-links { display: none; }
+  .nav:not([data-nav-ready]) .nav-toggle { display: inline-flex; }
 }
 
 /* =====================================================
@@ -689,21 +714,6 @@ footer.site {
   .stats-strip > div:nth-child(1),
   .stats-strip > div:nth-child(2) { border-bottom: 1px solid var(--hairline); }
   .foot-inner { grid-template-columns: 1fr 1fr; }
-}
-/* Logo, the 9 nav links, the CTA and the gaps between them measure ~1175px,
-   so the hamburger has to take over well before the phone breakpoint. */
-@media (max-width: 1200px) {
-  .nav-links { display: none; }
-  .nav-toggle { display: inline-flex; }
-  .nav-links.open {
-    display: flex; position: absolute;
-    top: var(--nav-h); left: 0; right: 0;
-    flex-direction: column; align-items: flex-start;
-    background: var(--page); border-bottom: 1px solid var(--hairline);
-    padding: 16px 32px 20px;
-    gap: 4px;
-  }
-  .nav-links.open a { padding: 12px 0; width: 100%; }
 }
 @media (max-width: 720px) {
   h1.display, .display-1 { font-size: 52px; }

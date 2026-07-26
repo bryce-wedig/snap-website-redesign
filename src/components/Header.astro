@@ -20,7 +20,7 @@ const navItems: NavItem[] = siteData.nav;
       <img src={`${base}images/snap-logo.png`} alt="SNAP — Scientist Network for Advancing Policy" />
     </a>
 
-    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+    <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">
       <i class="fa-solid fa-bars"></i>
     </button>
 
@@ -40,15 +40,58 @@ const navItems: NavItem[] = siteData.nav;
 </nav>
 
 <script>
+  const nav = document.querySelector<HTMLElement>('.nav');
+  const inner = nav?.querySelector<HTMLElement>('.nav-inner');
   const toggle = document.getElementById('nav-toggle');
   const links = document.getElementById('nav-links');
-  toggle?.addEventListener('click', () => {
-    const open = links?.classList.toggle('open');
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+
+  if (nav && inner && toggle && links) {
     const icon = toggle.querySelector('i');
-    if (icon) {
-      icon.classList.toggle('fa-bars', !open);
-      icon.classList.toggle('fa-xmark', !!open);
-    }
-  });
+
+    const setOpen = (open: boolean) => {
+      links.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      icon?.classList.toggle('fa-bars', !open);
+      icon?.classList.toggle('fa-xmark', open);
+    };
+
+    toggle.addEventListener('click', () => setOpen(!links.classList.contains('open')));
+
+    /* Width the expanded bar needs, measured rather than assumed. The links are
+       display:none while collapsed, so take them out of flow to read their
+       natural width instead of the zero the collapsed layout would report. */
+    let required = 0;
+    const measure = () => {
+      const probe = links.style.cssText;
+      links.style.cssText = 'display:flex;position:absolute;visibility:hidden';
+      const row = [...inner.children].filter((el) => el !== toggle);
+      const gap = parseFloat(getComputedStyle(inner).columnGap) || 0;
+      required =
+        row.reduce((sum, el) => sum + el.getBoundingClientRect().width, 0) +
+        gap * (row.length - 1);
+      links.style.cssText = probe;
+    };
+
+    const apply = () => {
+      const style = getComputedStyle(inner);
+      const available =
+        inner.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const compact = available < required;
+      nav.classList.toggle('is-compact', compact);
+      if (!compact) setOpen(false);
+    };
+
+    measure();
+    apply();
+    nav.setAttribute('data-nav-ready', '');
+
+    /* Webfonts land after first paint and change the labels' width — that swap
+       is what silently ate the old breakpoint's headroom. */
+    document.fonts?.ready.then(() => {
+      measure();
+      apply();
+    });
+
+    new ResizeObserver(apply).observe(inner);
+  }
 </script>
