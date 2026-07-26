@@ -16,6 +16,11 @@ function formatDate(d: Date): string {
   eyebrow="The Monthly"
   lede="Want to keep up with SNAP's latest updates? Read past issues of our monthly newsletter below."
 >
+  <p class="newsletter-signup">
+    Want SNAP's latest updates in your inbox?
+    <a href="https://docs.google.com/forms/d/e/1FAIpQLSclm6qDeLHbwRk4QPuZR34x77xx5dlKz3tHuHitBdWAiWe5vg/viewform" target="_blank" rel="noopener">Sign up for our newsletter</a>.
+  </p>
+
   <div class="newsletter-list">
     {newsletters.map(nl => (
       <a href={`${import.meta.env.BASE_URL}newsletters/${nl.id}/`} class="newsletter-card card">
