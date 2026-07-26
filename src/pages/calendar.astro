@@ -1,0 +1,30 @@
+---
+import PageLayout from '../layouts/PageLayout.astro';
+---
+
+<PageLayout
+  title="Calendar"
+  eyebrow="SNAP events"
+  lede="These events are open to the community: you all! Some are hosted by SNAP, while others we are sharing out that are put on by science policy and science communication groups we admire."
+>
+  <div class="calendar-wrap">
+    <iframe
+      src="https://calendar.google.com/calendar/embed?src=e69481345e2e2834b6f74d05e75ba5f1890f256d2fd7c183e6657dcf8710a0e7%40group.calendar.google.com&ctz=America%2FNew_York"
+      title="SNAP Events Calendar"
+      width="800"
+      height="600"
+      frameborder="0"
+      scrolling="no"
+    ></iframe>
+  </div>
+</PageLayout>
+
+<style>
+  .calendar-wrap iframe {
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    width: 100%;
+    max-width: 900px;
+    background: white;
+  }
+</style>

@@ -18,8 +18,12 @@ social:
 nav:
   - name: About
     href: /about/
+  - name: Calendar
+    href: /calendar/
   - name: Initiatives
     href: /initiatives/
+  - name: Resources
+    href: /resources/
   - name: Press
     href: /press/
   - name: Courses
