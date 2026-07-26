@@ -17,15 +17,17 @@ const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml')
 
 <PageLayout
   title="About"
-  eyebrow="eyebrow"
-  lede="desc"
+  eyebrow="Who we are"
+  lede="A coalition of early-career scientists mobilizing for large-scale initiatives and bridging the gaps between scientists, their communities, and the general public."
 >
-  <h2>Member Organizations</h2>
-  <hr />
+  <div class="cat-head">
+    <h2>Member Organizations</h2>
+    <span class="cat-count">{orgs.length} {orgs.length === 1 ? 'organization' : 'organizations'}</span>
+  </div>
 
   <div class="org-grid">
     {orgs.map(org => (
-      <div class="org-card card">
+      <div class="org-card">
         <div class="org-logo-wrapper">
           <img
             src={`${import.meta.env.BASE_URL}images/about/${org.photo}`}
@@ -70,18 +72,48 @@ const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml')
 </PageLayout>
 
 <style>
+  .cat-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 16px; margin-bottom: 28px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .cat-head h2 {
+    font-family: var(--display); font-weight: 700; font-size: 32px;
+    color: var(--navy); letter-spacing: -0.02em; margin: 0;
+  }
+  .cat-count {
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+
   .org-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+    gap: 20px;
   }
 
+  /* Card anatomy follows .init-card: hairline border, accent bar on hover, lift. */
   .org-card {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+    position: relative; overflow: hidden;
+    display: flex; gap: 18px; align-items: center;
+    background: white;
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    padding: 22px 24px;
+    transition: all .2s ease;
   }
+  .org-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; background: var(--orange);
+    transform: scaleY(0.3); transform-origin: top;
+    transition: transform .3s ease;
+  }
+  .org-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--orange);
+  }
+  .org-card:hover::before { transform: scaleY(1); }
 
   .org-logo-wrapper {
     flex-shrink: 0;
@@ -96,13 +128,12 @@ const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml')
     max-width: 72px;
     max-height: 72px;
     object-fit: contain;
-    border-radius: var(--radius-sm);
   }
 
   .org-info h4 {
-    font-size: var(--text-sm);
-    margin-bottom: 0.25rem;
-    line-height: 1.3;
+    font-family: var(--display); font-weight: 700; font-size: 19px;
+    color: var(--navy); letter-spacing: -0.01em;
+    line-height: 1.25; margin-bottom: 10px;
   }
 
   .org-info .social-links a {

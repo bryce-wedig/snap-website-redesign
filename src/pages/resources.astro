@@ -1,5 +1,58 @@
 ---
 import PageLayout from '../layouts/PageLayout.astro';
+
+const base = import.meta.env.BASE_URL;
+const email = 'snapscipolorg@gmail.com';
+const interestForm = 'https://docs.google.com/forms/d/e/1FAIpQLSclm6qDeLHbwRk4QPuZR34x77xx5dlKz3tHuHitBdWAiWe5vg/viewform';
+
+type Link = { label: string; href?: string; note?: string };
+
+const learnLinks: Link[] = [
+  { label: 'AAAS Learning Hub', href: 'https://learninghub.aaas.org/?adobe_mc=MCMID%3D59115423208208845660717175741397313264%7CMCORGID%3D242B6472541199F70A4C98A6%2540AdobeOrg%7CTS%3D1775240323', note: 'American Association for the Advancement of Science' },
+  { label: "SNAP's science policy 101 courses", href: `${base}courses/`, note: 'Internally developed — coming soon on our website' },
+  { label: '8-week e-series on Science & Policy', href: 'https://www.acs.org/policy/acs-science-and-policy-e-series.html?sc=260209_sc_sponsorcontent_GovAffairsE-Series_li_brandlab_acsgradspostdocs', note: 'American Chemical Society' },
+  { label: 'Science Policy Bootcamp', href: 'https://ocw.mit.edu/courses/res-stp-001-science-policy-bootcamp-january-iap-2011/?utm_source=mit-learn&utm_medium=referral&utm_content=science-policy-bootcamp', note: "MIT's OpenCourseWare MOOC" },
+];
+
+const careerLinks: Link[] = [
+  { label: 'Civic Science Career Roadmap', href: 'https://civic-science-f.nyc3.digitaloceanspaces.com/app/uploads/2023/10/Civic-Science-Career-Roadmap.pdf', note: 'Navigate the roles and opportunities available in the field' },
+  { label: "S&T Impact's fellowship dashboard", href: 'https://www.scitechimpact.org/dashboard', note: 'Active and developing science and technology policy fellowships, frequently updated' },
+  { label: 'Science policy programs database', href: 'https://scipolprograms.org/program-database/' },
+  { label: 'Emerging Tech Policy fellowship guides', href: 'https://emergingtechpolicy.org/pathways/policy-fellowships/', note: 'Fellowships, guides, and links to databases' },
+  { label: 'Active fellowships database', href: 'https://airtable.com/app3AlIYjrAVYhvIe/shr1dGfy6WQfJ5mei/tblD3ExDW2P8mtVlj' },
+  { label: 'S&T Policy Job Openings newsletter', href: 'https://www.linkedin.com/newsletters/s-t-policy-job-openings-7204924581470482433/', note: 'By Dr. Deborah Stine' },
+  { label: 'Science Careers job board', href: 'https://jobs.sciencecareers.org/', note: 'Filter by discipline or keyword' },
+];
+
+const workshopLinks: Link[] = [
+  { label: 'Catalyzing Advocacy in Science and Engineering', href: 'https://www.aaas.org/programs/catalyzing-advocacy-in-science-and-engineering', note: 'AAAS workshop — attended by SNAPpers' },
+  { label: 'Advocacy Training Program', href: 'https://www.asbmb.org/advocacy/advocacy-training-program', note: 'American Society for Biochemistry and Molecular Biology' },
+];
+
+const startLinks: Link[] = [
+  { label: 'How to start a science policy group', href: 'https://docs.google.com/document/d/1LMuge9HOy-K3Uv7UBcukeKIFMZTAgdV85R_SFyxZgvU/edit?usp=sharing', note: "SNAP's step-by-step outline" },
+  { label: 'Join SNAP as an Organizing Member', href: interestForm, note: 'For direct support and advice from members who have done it' },
+  { label: 'Open-access course material', href: `${base}courses/`, note: 'In development — from how the U.S. government works to science communication' },
+];
+
+const groups: Link[] = [
+  { label: 'American Association for the Advancement of Science', href: 'https://www.aaas.org/' },
+  { label: 'Association of Science Communicators', href: 'https://www.associationofsciencecommunicators.org/' },
+  { label: 'S&T Impact Advisory Group', href: 'https://www.scitechimpact.org/' },
+  { label: 'National Conference of State Legislatures', href: 'https://www.ncsl.org/' },
+  { label: 'Scientific Citizenship Initiative', href: 'https://scientific-citizenship.org/' },
+  { label: 'National Science Policy Network', href: 'https://www.scipolnetwork.org/' },
+  { label: 'Engineers and Scientists Acting Locally', href: 'https://esal.us/' },
+  { label: 'Innovations in Science', href: 'https://www.innovationsinscience.com/' },
+  { label: 'Public Health Communications Collaborative', href: 'https://academy.publichealthcollaborative.org/', note: 'Free training hub' },
+];
+
+const stateGroups: Link[] = [
+  { label: 'The Institute of Science & Policy', href: 'https://institute.dmns.org/', note: 'Colorado' },
+  { label: 'Missouri Science and Technology Policy Initiative', href: 'https://mostpolicyinitiative.org/', note: 'Missouri' },
+  { label: 'Science for Georgia', href: 'https://scienceforgeorgia.org/', note: 'Georgia' },
+  { label: 'California Council on Science and Technology', href: 'https://ccst.us/', note: 'California' },
+];
 ---
 
 <PageLayout
@@ -7,73 +60,213 @@ import PageLayout from '../layouts/PageLayout.astro';
   eyebrow="External resources"
   lede="Aligned with our mission, SNAP is dedicated to sharing resources to learn and engage with science policy."
 >
-  <div class="resources-body">
-    <p>We have compiled a non-exhaustive list of resources from <em>wonderful</em> organizations and groups we admire, pertaining to general Science Policy, fellowships and careers, and information for starting a group on university campuses.</p>
+  <p class="res-intro">
+    We have compiled a non-exhaustive list of resources from <em>wonderful</em> organizations and groups we admire,
+    covering general science policy, fellowships and careers, and how to start a group on your university campus.
+    If you have something you think belongs here, email us at <a href={`mailto:${email}`}>{email}</a> &mdash; we'd be thrilled to add it.
+  </p>
 
-    <p>If you have information that you believe should be included on this page, please reach out to us at <a href="mailto:snapscipolorg@gmail.com">snapscipolorg@gmail.com</a>. We'd be thrilled to add it!</p>
+  <section class="res-section">
+    <div class="cat-head">
+      <h2>Learn Science Policy</h2>
+      <span class="cat-count">{learnLinks.length} resources</span>
+    </div>
+    <div class="res-grid">
+      {learnLinks.map(link => (
+        <a class="res-card c-learn" href={link.href} target={link.href?.startsWith('http') ? '_blank' : undefined} rel="noopener">
+          <h4>{link.label}</h4>
+          {link.note && <p>{link.note}</p>}
+          <span class="arrow">Open</span>
+        </a>
+      ))}
+    </div>
+  </section>
 
-    <h2>Learn more about Science Policy</h2>
+  <section class="res-section">
+    <div class="cat-head">
+      <h2>Experience &amp; Careers</h2>
+      <span class="cat-count">{careerLinks.length} resources</span>
+    </div>
+    <div class="res-grid">
+      {careerLinks.map(link => (
+        <a class="res-card c-career" href={link.href} target="_blank" rel="noopener">
+          <h4>{link.label}</h4>
+          {link.note && <p>{link.note}</p>}
+          <span class="arrow">Open</span>
+        </a>
+      ))}
+    </div>
 
-    <ul>
-      <li><a href="https://learninghub.aaas.org/?adobe_mc=MCMID%3D59115423208208845660717175741397313264%7CMCORGID%3D242B6472541199F70A4C98A6%2540AdobeOrg%7CTS%3D1775240323">Learning Hub from the American Association for the Advancement of Science (AAAS)</a></li>
-      <li>SNAP's internally developed science policy 101 courses (<a href="https://snapcoalition.org/initiatives/scipol-courses">coming soon on our website</a>)</li>
-      <li><a href="https://www.acs.org/policy/acs-science-and-policy-e-series.html?sc=260209_sc_sponsorcontent_GovAffairsE-Series_li_brandlab_acsgradspostdocs">8-week e-series on Science &amp; Policy</a> from the American Chemical Society (ACS)</li>
-      <li><a href="https://ocw.mit.edu/courses/res-stp-001-science-policy-bootcamp-january-iap-2011/?utm_source=mit-learn&utm_medium=referral&utm_content=science-policy-bootcamp">Science Policy Bootcamp</a> through MIT's MOOC</li>
-    </ul>
+    <h3 class="res-sub">Workshops &amp; internships</h3>
+    <p class="res-sub-lede">Workshops and internships are a great way to get some experience. SNAPpers have attended both of these.</p>
+    <div class="res-grid">
+      {workshopLinks.map(link => (
+        <a class="res-card c-career" href={link.href} target="_blank" rel="noopener">
+          <h4>{link.label}</h4>
+          {link.note && <p>{link.note}</p>}
+          <span class="arrow">Open</span>
+        </a>
+      ))}
+    </div>
+  </section>
 
-    <h2>Experience &amp; Career Resources</h2>
+  <section class="res-section">
+    <div class="cat-head">
+      <h2>Start a Group</h2>
+      <span class="cat-count">{startLinks.length} resources</span>
+    </div>
+    <p class="res-sub-lede">
+      Several SNAP Organizing Members have started groups at their universities and may be able to offer direct advice.
+      We are always motivated to help &mdash; reach out at <a href={`mailto:${email}`}>{email}</a>.
+    </p>
+    <div class="res-grid">
+      {startLinks.map(link => (
+        <a class="res-card c-start" href={link.href} target={link.href?.startsWith('http') ? '_blank' : undefined} rel="noopener">
+          <h4>{link.label}</h4>
+          {link.note && <p>{link.note}</p>}
+          <span class="arrow">Open</span>
+        </a>
+      ))}
+    </div>
+  </section>
 
-    <p>We recommend checking out the <a href="https://civic-science-f.nyc3.digitaloceanspaces.com/app/uploads/2023/10/Civic-Science-Career-Roadmap.pdf">Civic Science Career Roadmap</a> to help you navigate the various roles and opportunities available within the field(s)!</p>
+  <section class="res-section">
+    <div class="cat-head">
+      <h2>Groups We Admire</h2>
+      <span class="cat-count">{groups.length + stateGroups.length} organizations</span>
+    </div>
+    <p class="res-sub-lede">
+      There are many amazing individuals, groups, networks, and coalitions working in this space.
+      If we are missing someone, <em>please let us know</em> so that we can add them.
+    </p>
+    <div class="group-grid">
+      {groups.map(g => (
+        <a class="group-card" href={g.href} target="_blank" rel="noopener">
+          <span class="group-name">{g.label}</span>
+          {g.note && <span class="group-note">{g.note}</span>}
+        </a>
+      ))}
+    </div>
 
-    <h3>Science-Policy Fellowship &amp; Job Information</h3>
-
-    <ul>
-      <li>S&amp;T Impact's <a href="https://www.scitechimpact.org/dashboard">dashboard</a> for "active and developing science and technology policy fellowships," which they try to keep frequently updated</li>
-      <li><a href="https://scipolprograms.org/program-database/">Database</a> on science policy programs</li>
-      <li><a href="https://emergingtechpolicy.org/pathways/policy-fellowships/">Information</a> on fellowships, guides, and links to databases such as <a href="https://airtable.com/app3AlIYjrAVYhvIe/shr1dGfy6WQfJ5mei/tblD3ExDW2P8mtVlj">this one</a> on active fellowships</li>
-      <li>S&amp;T Policy Job Openings <a href="https://www.linkedin.com/newsletters/s-t-policy-job-openings-7204924581470482433/">newsletter</a> by Dr. Deborah Stine</li>
-      <li>The <a href="https://jobs.sciencecareers.org/">job board</a> from Science Careers can be filtered by discipline, or with keywords</li>
-    </ul>
-
-    <h3>Workshops and internships/externships are a great way to get some experience.</h3>
-
-    <p>SNAPpers have attended AAAS' <a href="https://www.aaas.org/programs/catalyzing-advocacy-in-science-and-engineering">Catalyzing Advocacy in Science and Engineering Workshop</a> and the <a href="https://www.asbmb.org/advocacy/advocacy-training-program">Advocacy Training Program</a> by the American Society for Biochemistry and Molecular Biology.</p>
-
-    <h2>Start a Science Policy Group at your University</h2>
-
-    <p>SNAP has outlined some steps to start a science policy group <a href="https://docs.google.com/document/d/1LMuge9HOy-K3Uv7UBcukeKIFMZTAgdV85R_SFyxZgvU/edit?usp=sharing">here</a>. We are always motivated to help support this process, so we recommend that you reach out to chat with us at <a href="mailto:snapcoalition@gmail.com">snapcoalition@gmail.com</a>! Several SNAP Organizing Members have started groups at their universities and may be able to offer direct advice. If you are interested, you can also <a href="https://docs.google.com/forms/d/e/1FAIpQLSclm6qDeLHbwRk4QPuZR34x77xx5dlKz3tHuHitBdWAiWe5vg/viewform">sign up for our newsletter</a> and <a href="https://docs.google.com/forms/d/e/1FAIpQLSclm6qDeLHbwRk4QPuZR34x77xx5dlKz3tHuHitBdWAiWe5vg/viewform">join SNAP as an Organizing Member</a> for more support and assistance along this process and to help us grow and instigate meaningful change!</p>
-
-    <p>Additionally, feel free to utilize our <a href="https://snapcoalition.org/initiatives/scipol-courses">open-access course material</a> (in development) to educate yourself or hold meetings for your new group. These courses range from how the U.S. government works to science communication and writing.</p>
-
-    <h2>Groups We Admire</h2>
-
-    <p>We would also like to highlight some of the groups we admire in the Science Policy and Science Communication spaces. There are many amazing individuals, groups, networks, and coalitions working in this space, so if we are missing someone, <em>please let us know</em> so that we can add them!</p>
-
-    <ul>
-      <li><a href="https://www.aaas.org/">American Association for the Advancement of Science</a></li>
-      <li><a href="https://www.associationofsciencecommunicators.org/">Association of Science Communicators</a></li>
-      <li><a href="https://www.scitechimpact.org/">S&amp;T Impact Advisory Group</a></li>
-      <li><a href="https://www.ncsl.org/">National Conference of State Legislatures</a></li>
-      <li><a href="https://scientific-citizenship.org/">Scientific Citizenship Initiative</a></li>
-      <li><a href="https://www.scipolnetwork.org/">National Science Policy Network</a></li>
-      <li><a href="https://esal.us/">Engineers and Scientists Acting Locally</a></li>
-      <li><a href="https://www.innovationsinscience.com/">Innovations in Science</a></li>
-      <li>Public Health Communications Collaborative (and their free <a href="https://academy.publichealthcollaborative.org/">training hub!</a>)</li>
-    </ul>
-
-    <p>Some of these groups are state-specific, such as</p>
-
-    <ul>
-      <li><a href="https://institute.dmns.org/">The Institute of Science &amp; Policy</a></li>
-      <li><a href="https://mostpolicyinitiative.org/">Missouri Science and Technology Policy Initiative</a></li>
-      <li><a href="https://scienceforgeorgia.org/">Science for Georgia</a></li>
-      <li><a href="https://ccst.us/">California Council on Science and Technology</a></li>
-    </ul>
-  </div>
+    <h3 class="res-sub">State-specific groups</h3>
+    <div class="group-grid">
+      {stateGroups.map(g => (
+        <a class="group-card" href={g.href} target="_blank" rel="noopener">
+          <span class="group-name">{g.label}</span>
+          {g.note && <span class="group-note">{g.note}</span>}
+        </a>
+      ))}
+    </div>
+  </section>
 </PageLayout>
 
 <style>
-  .resources-body { max-width: 800px; }
-  .resources-body ul { margin: 0 0 1.25rem 1.25rem; }
-  .resources-body li { margin-bottom: 0.5rem; line-height: 1.6; }
+  .res-intro {
+    font-family: var(--accent); font-weight: 500; font-size: 19px;
+    line-height: 1.55; color: var(--body);
+    max-width: 720px; margin-bottom: 56px;
+  }
+
+  .res-section { margin-bottom: 64px; }
+  .res-section:last-child { margin-bottom: 0; }
+
+  .cat-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 16px; margin-bottom: 24px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .cat-head h2 {
+    font-family: var(--display); font-weight: 700; font-size: 32px;
+    color: var(--navy); letter-spacing: -0.02em; margin: 0;
+  }
+  .cat-count {
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+
+  .res-sub {
+    font-family: var(--display); font-weight: 700; font-size: 22px;
+    color: var(--navy); letter-spacing: -0.01em;
+    margin: 40px 0 8px;
+  }
+  .res-sub-lede {
+    font-size: 16px; line-height: 1.6; color: var(--body);
+    max-width: 680px; margin-bottom: 24px;
+  }
+
+  .res-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 16px;
+  }
+
+  /* Card anatomy follows .init-card: hairline border, accent bar on hover, lift. */
+  .res-card {
+    position: relative; overflow: hidden;
+    display: grid; gap: 8px; align-content: start;
+    background: white;
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    padding: 24px 26px 22px;
+    text-decoration: none; color: inherit;
+    transition: all .2s ease;
+  }
+  .res-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; background: var(--card-color, var(--orange));
+    transform: scaleY(0.3); transform-origin: top;
+    transition: transform .3s ease;
+  }
+  .res-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--card-color, var(--orange));
+  }
+  .res-card:hover::before { transform: scaleY(1); }
+
+  .c-learn { --card-color: var(--orange); }
+  .c-career { --card-color: var(--navy); }
+  .c-start { --card-color: var(--olive-deep); }
+
+  .res-card h4 {
+    font-family: var(--display); font-weight: 700; font-size: 19px;
+    color: var(--navy); letter-spacing: -0.01em; line-height: 1.25;
+  }
+  .res-card p { font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+  .res-card .arrow {
+    font-family: var(--accent); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--card-color, var(--orange));
+    display: inline-flex; gap: 6px; align-items: center;
+    margin-top: 4px;
+  }
+  .res-card .arrow::after { content: '↗'; transition: transform .2s ease; }
+  .res-card:hover .arrow::after { transform: translate(3px, -3px); }
+
+  /* Groups We Admire — a denser directory grid, no accent bars. */
+  .group-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+    gap: 12px;
+  }
+  .group-card {
+    display: grid; gap: 4px;
+    background: var(--warm);
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-md);
+    padding: 16px 18px;
+    text-decoration: none; color: inherit;
+    transition: all .18s ease;
+  }
+  .group-card:hover {
+    background: var(--peach-tint);
+    border-color: var(--orange);
+    transform: translateY(-2px);
+  }
+  .group-name {
+    font-family: var(--display); font-weight: 600; font-size: 15px;
+    color: var(--navy); line-height: 1.35;
+  }
+  .group-note {
+    font-family: var(--accent); font-weight: 600; font-size: 10px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
 </style>

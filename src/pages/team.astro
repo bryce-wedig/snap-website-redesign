@@ -24,9 +24,14 @@ const members = parse(readFileSync(join(process.cwd(), 'src/data/members.yaml'),
   eyebrow="Meet the coalition"
   lede="The early-career researchers organizing SNAP's initiatives across the country."
 >
+  <div class="cat-head">
+    <h2>Organizing Members</h2>
+    <span class="cat-count">{members.length} {members.length === 1 ? 'member' : 'members'}</span>
+  </div>
+
   <div class="team-grid">
     {members.map(member => (
-      <div class="team-card card">
+      <div class="team-card">
         <img
           src={`${import.meta.env.BASE_URL}images/team/${member.photo}`}
           alt={`Photo of ${member.name}`}
@@ -81,52 +86,76 @@ const members = parse(readFileSync(join(process.cwd(), 'src/data/members.yaml'),
 </PageLayout>
 
 <style>
+  .cat-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 16px; margin-bottom: 28px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .cat-head h2 {
+    font-family: var(--display); font-weight: 700; font-size: 32px;
+    color: var(--navy); letter-spacing: -0.02em; margin: 0;
+  }
+  .cat-count {
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+
   .team-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(min(100%, 480px), 1fr));
-    gap: 1.5rem;
-    margin-top: 2rem;
+    gap: 20px;
   }
 
+  /* Card anatomy follows .init-card: hairline border, accent bar on hover, lift. */
   .team-card {
-    display: flex;
-    gap: 1.25rem;
-    align-items: flex-start;
+    position: relative; overflow: hidden;
+    display: flex; gap: 22px; align-items: flex-start;
+    background: white;
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    transition: all .2s ease;
   }
+  .team-card::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; background: var(--orange);
+    transform: scaleY(0.3); transform-origin: top;
+    transition: transform .3s ease;
+  }
+  .team-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--orange);
+  }
+  .team-card:hover::before { transform: scaleY(1); }
 
-  .team-card .member-photo {
-    flex-shrink: 0;
-  }
+  .team-card .member-photo { flex-shrink: 0; }
 
   .member-info h4 {
-    margin-bottom: 0;
-    font-size: var(--text-base);
+    font-family: var(--display); font-weight: 700; font-size: 22px;
+    color: var(--navy); letter-spacing: -0.015em;
+    line-height: 1.2; margin-bottom: 4px;
   }
 
   .pronouns {
-    display: inline-block;
-    font-style: italic;
-    font-size: var(--text-sm);
-    color: var(--snap-gray-500);
-    margin-bottom: 0.5rem;
+    display: block;
+    font-family: var(--accent); font-weight: 600; font-size: 10.5px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
   }
 
   .member-bio {
-    font-size: var(--text-sm);
+    font-size: 15.5px;
     line-height: 1.6;
-    color: var(--snap-gray-600);
-    margin-bottom: 0.5rem;
+    color: var(--body);
+    margin-bottom: 14px;
   }
 
   @media (max-width: 600px) {
     .team-card {
       flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-
-    .social-links {
-      justify-content: center;
+      align-items: flex-start;
     }
   }
 </style>

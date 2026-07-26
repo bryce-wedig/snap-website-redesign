@@ -29,93 +29,64 @@ function formatDate(d: string): string {
 ---
 
 <PageLayout
-  title="Press, Publication, & Report Mentions"
+  title="Press"
   eyebrow="In the press"
   lede="Publication and report mentions, and press coverage of SNAP and the coalition's work."
 >
   {validPubs.length > 0 && (
-    <>
-      <h2>Publication &amp; Report Mentions</h2>
-      <hr />
-      <div class="press-list">
-        {validPubs.map(article => (
-          <div class="press-item">
-            <span class="press-date">{formatDate(article.date)}</span>
-            <div class="press-content">
-              <a href={article.website} target="_blank" rel="noopener" class="press-headline">
-                {article.headline}
-              </a>
-              <span class="press-source">in <em>{article.source}</em></span>
-            </div>
-          </div>
-        ))}
+    <section class="press-section">
+      <div class="cat-head">
+        <h2>Publications &amp; Reports</h2>
+        <span class="cat-count">{validPubs.length} {validPubs.length === 1 ? 'mention' : 'mentions'}</span>
       </div>
-    </>
+      <ul class="press-list">
+        {validPubs.map(article => (
+          <li>
+            <div class="source">{article.source}</div>
+            <a class="head" href={article.website} target="_blank" rel="noopener">{article.headline}</a>
+            <time>{formatDate(article.date)}</time>
+          </li>
+        ))}
+      </ul>
+    </section>
   )}
 
-  <h2 style="margin-top: 3rem;">Press Mentions</h2>
-  <hr />
-  <div class="press-list">
-    {validPress.map(article => (
-      <div class="press-item">
-        <span class="press-date">{formatDate(article.date)}</span>
-        <div class="press-content">
-          <a href={article.website} target="_blank" rel="noopener" class="press-headline">
-            {article.headline}
-          </a>
-          <span class="press-source">in <em>{article.source}</em></span>
-        </div>
-      </div>
-    ))}
-  </div>
+  <section class="press-section">
+    <div class="cat-head">
+      <h2>Press Mentions</h2>
+      <span class="cat-count">{validPress.length} {validPress.length === 1 ? 'article' : 'articles'}</span>
+    </div>
+    <ul class="press-list">
+      {validPress.map(article => (
+        <li>
+          <div class="source">{article.source}</div>
+          <a class="head" href={article.website} target="_blank" rel="noopener">{article.headline}</a>
+          <time>{formatDate(article.date)}</time>
+        </li>
+      ))}
+    </ul>
+  </section>
 </PageLayout>
 
 <style>
-  .press-list {
-    margin-top: 1.5rem;
-  }
+  /* Rows come from the global .press-list component in global.css — the same one
+     the home page uses. Only the section chrome is local. */
+  .press-section { margin-bottom: 64px; }
+  .press-section:last-child { margin-bottom: 0; }
 
-  .press-item {
-    display: flex;
-    gap: 1rem;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid var(--snap-gray-200);
-    align-items: baseline;
+  .cat-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 16px; margin-bottom: 0;
+    border-bottom: 1px solid var(--hairline);
   }
-
-  .press-item:last-child {
-    border-bottom: none;
+  /* The head rule already closes the top of the ledger. */
+  .press-list li:first-child { border-top: none; }
+  .cat-head h2 {
+    font-family: var(--display); font-weight: 700; font-size: 32px;
+    color: var(--navy); letter-spacing: -0.02em; margin: 0;
   }
-
-  .press-date {
-    flex-shrink: 0;
-    font-size: var(--text-xs);
-    color: var(--snap-gray-500);
-    min-width: 100px;
-    font-weight: 600;
-  }
-
-  .press-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-  }
-
-  .press-headline {
-    font-weight: 600;
-    font-size: var(--text-sm);
-    line-height: 1.4;
-  }
-
-  .press-source {
-    font-size: var(--text-xs);
-    color: var(--snap-gray-500);
-  }
-
-  @media (max-width: 600px) {
-    .press-item {
-      flex-direction: column;
-      gap: 0.25rem;
-    }
+  .cat-count {
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
   }
 </style>
