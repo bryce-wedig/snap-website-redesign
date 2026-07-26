@@ -269,7 +269,7 @@ const clientConfig = {
       boxZoom: false,
       keyboard: false,
     });
-    L.control.zoom({ position: 'bottomleft' }).addTo(map);
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       maxZoom: 19, attribution: '&copy; OpenStreetMap &copy; CARTO', crossOrigin: true,
     }).addTo(map);
@@ -705,6 +705,9 @@ const clientConfig = {
     .home-hero-title { font-size: 30px; }
     /* drop the rail toward the bottom so it clears the full-width panel */
     .hero-rail { top: auto; bottom: 16px; transform: none; right: 14px; gap: 5px; }
+    /* ...which means the bottom-right corner is taken: send the zoom
+       control and attribution back to the left edge on phones */
+    .home-hero-stage :global(.leaflet-bottom.leaflet-right) { right: auto; left: 0; }
     .rail-text { min-width: 0; padding: 4px 0; }
     .rail-sub { display: none; }
     .rail-eyebrow { font-size: 10px; }
