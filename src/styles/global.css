@@ -235,7 +235,7 @@ hr { border: none; height: 1px; background: var(--hairline); margin: 2rem 0; }
   display: flex; align-items: center; justify-content: space-between;
   gap: 28px;
 }
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; flex: 0 0 auto; }
 .brand img { height: 38px; width: auto; }
 
 .nav-links { display: flex; gap: 26px; align-items: center; }
@@ -701,7 +701,9 @@ footer.site {
   .stats-strip > div:nth-child(2) { border-bottom: 1px solid var(--hairline); }
   .foot-inner { grid-template-columns: 1fr 1fr; }
 }
-@media (max-width: 720px) {
+/* Logo, the 9 nav links, the CTA and the gaps between them measure ~1175px,
+   so the hamburger has to take over well before the phone breakpoint. */
+@media (max-width: 1200px) {
   .nav-links { display: none; }
   .nav-toggle { display: inline-flex; }
   .nav-links.open {
@@ -713,6 +715,8 @@ footer.site {
     gap: 4px;
   }
   .nav-links.open a { padding: 12px 0; width: 100%; }
+}
+@media (max-width: 720px) {
   h1.display, .display-1 { font-size: 52px; }
   h2.display, .display-2 { font-size: 40px; }
   .display-3 { font-size: 34px; }
