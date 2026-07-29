@@ -42,13 +42,11 @@ export interface Publication {
   when: string;
   /** Resolved DOI link, or null when the sheet has no usable one. */
   url: string | null;
-  /** Pill tone class for the primary field. */
-  tone: string;
   /** Cloud term keys this paper matches — the whole of the filter's runtime work. */
   keys: string[];
 }
 
-export type CloudKind = 'disc' | 'cat' | 'word';
+export type CloudKind = 'disc' | 'cat';
 
 export interface CloudTerm {
   key: string;
@@ -57,42 +55,14 @@ export interface CloudTerm {
   weight: number;
   /** Papers the term appears in (fields/disciplines) — shown in the tooltip. */
   count: number;
-  /** Total occurrences across summaries and abstracts (prose terms only). */
-  mentions: number;
   /** Computed font size in px, 15–55. */
   size: number;
 }
-
-/* Field -> pill tone. "orange" is the default .pill, the rest are modifiers. */
-const CAT_TONE: Record<string, string> = {
-  'Biological and Chemical Sciences': 'navy',
-  Neuroscience: 'plum',
-  Ecology: 'olive',
-  'Public Health': 'orange',
-  Psychology: 'navy',
-  Physics: 'navy',
-  'Chemical Engineering': 'olive',
-  Chemistry: 'orange',
-};
 
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
-
-/* Generic and academic filler that would otherwise dominate the cloud. */
-const CLOUD_STOP = new Set([
-  'study', 'studies', 'these', 'those', 'which', 'their', 'while', 'there', 'were', 'have',
-  'been', 'with', 'that', 'this', 'from', 'also', 'more', 'than', 'when', 'both', 'such',
-  'they', 'each', 'into', 'over', 'other', 'using', 'used', 'found', 'shown', 'showed',
-  'higher', 'lower', 'could', 'would', 'after', 'before', 'between', 'because', 'however',
-  'therefore', 'people', 'participants', 'results', 'result', 'analysis', 'levels', 'level',
-  'effects', 'effect', 'increased', 'decreased', 'associated', 'compared', 'significantly',
-  'significant', 'suggest', 'suggests', 'potential', 'important', 'through', 'across',
-  'within', 'during', 'often', 'first', 'second', 'about', 'above', 'among', 'whether',
-  'measured', 'observed', 'greater', 'reduced', 'well', 'like', 'time', 'times', 'test',
-  'tested', 'data',
-]);
 
 /** "5/1/2024" -> "May 2024"; free text passes through; empty/"In Press" -> "In press · {year}". */
 export function formatWhen(raw: string, year: string | null): string {
@@ -146,20 +116,19 @@ export function markAuthor(citation: string, author: string): string {
 
 /**
  * The page's idea: one cloud built from the register itself. Disciplines carry
- * the most signal, then the broad field, then words that recur across the
- * plain-language summaries and abstracts. Terms are keyed by lowercased label,
+ * the most signal, then the broad field. Terms are keyed by lowercased label,
  * so a word that is both a field and a discipline (Physics, Psychology,
  * Ecology) merges into one word whose weights sum.
  */
-export function buildCloud(papers: Array<Pick<Publication, 'cats' | 'disciplines' | 'summary' | 'abstract'>>): CloudTerm[] {
+export function buildCloud(papers: Array<Pick<Publication, 'cats' | 'disciplines'>>): CloudTerm[] {
   const terms = new Map<string, CloudTerm>();
   const add = (key: string, label: string, kind: CloudKind, weight: number) => {
     const k = key.toLowerCase();
-    if (!terms.has(k)) terms.set(k, { key: k, label, kind, weight: 0, count: 0, mentions: 0, size: 0 });
+    if (!terms.has(k)) terms.set(k, { key: k, label, kind, weight: 0, count: 0, size: 0 });
     const t = terms.get(k)!;
     t.weight += weight;
     t.count += 1;
-    if (kind === 'disc' || (kind === 'cat' && t.kind === 'word')) {
+    if (kind === 'disc') {
       t.kind = kind;
       t.label = label;
     }
@@ -170,34 +139,6 @@ export function buildCloud(papers: Array<Pick<Publication, 'cats' | 'disciplines
     p.cats.forEach((c) => add(c, c, 'cat', 3.2));
     p.disciplines.forEach((d) => add(d, d, 'disc', 4.4));
   });
-
-  const words = new Map<string, { n: number; docs: number }>();
-  papers.forEach((p) => {
-    const seen = new Set<string>();
-    `${p.summary} ${p.abstract}`
-      .toLowerCase()
-      .replace(/[^a-z\s-]/g, ' ')
-      .split(/\s+/)
-      .forEach((w) => {
-        if (w.length < 5 || CLOUD_STOP.has(w)) return;
-        const e = words.get(w) || { n: 0, docs: 0 };
-        e.n += 1;
-        if (!seen.has(w)) {
-          e.docs += 1;
-          seen.add(w);
-        }
-        words.set(w, e);
-      });
-  });
-
-  Array.from(words.entries())
-    .filter(([, e]) => e.docs >= 4)
-    .sort((a, b) => b[1].n - a[1].n)
-    .slice(0, 12)
-    .forEach(([w, e]) => {
-      const t = add(w, w, 'word', 0.6 + Math.min(e.n, 22) / 9);
-      t.mentions = e.n;
-    });
 
   const list = Array.from(terms.values()).sort((a, b) => b.weight - a.weight);
   const max = list.length ? list[0].weight : 1;
@@ -223,9 +164,6 @@ export function buildCloud(papers: Array<Pick<Publication, 'cats' | 'disciplines
 
 /** Does this paper belong under this cloud term? */
 function matches(p: Publication, t: CloudTerm): boolean {
-  if (t.kind === 'word') {
-    return `${p.title} ${p.summary} ${p.abstract}`.toLowerCase().includes(t.key);
-  }
   return (
     p.cats.some((c) => c.toLowerCase() === t.key) ||
     p.disciplines.some((d) => d.toLowerCase() === t.key)
@@ -284,7 +222,6 @@ export function loadPublications(): {
       year,
       when: formatWhen(p.date, year),
       url,
-      tone: CAT_TONE[cats[0]] || 'navy',
       keys: [],
     };
   });
