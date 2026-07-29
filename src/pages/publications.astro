@@ -1,0 +1,401 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { loadPublications, cleanBlurb } from '../lib/publications';
+
+const base = import.meta.env.BASE_URL;
+const email = 'snapscipolorg@gmail.com';
+
+const { papers, cloud, authorCount } = loadPublications();
+---
+
+<BaseLayout
+  title="Publications"
+  description={`Peer-reviewed work from across the SNAP coalition — ${papers.length} papers from ${authorCount} members.`}
+>
+  <Header slot="header" />
+
+  <!-- ============ PAGE HEADER ============ -->
+  <header class="page-header">
+    <div class="container">
+      <div class="crumbs">
+        <a href={base}>SNAP</a><span class="sep">/</span>
+        <a href={`${base}resources/`}>Resources</a><span class="sep">/</span>
+        <span>Publications</span>
+      </div>
+      <div class="page-head-inner">
+        <div>
+          <div class="eyebrow">Member publications</div>
+          <h1 class="display">What SNAPpers<br /><em>are publishing.</em></h1>
+        </div>
+        <p class="lede lg">
+          Peer-reviewed work from across the coalition — {papers.length} papers from {authorCount} members.
+          Every entry credits the SNAPper on the byline.
+        </p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ WORD CLOUD ============ -->
+  <section class="band band--warm">
+    <div class="container">
+      <div class="pub-cloud" id="pub-cloud">
+        {cloud.map((t) => (
+          <button
+            type="button"
+            class={`pub-term pub-term--${t.kind}`}
+            style={`font-size:${t.size.toFixed(1)}px`}
+            data-key={t.key}
+            data-label={t.label}
+            aria-pressed="false"
+            title={t.kind === 'word'
+              ? `${t.mentions} ${t.mentions === 1 ? 'mention' : 'mentions'}`
+              : `${t.count} ${t.count === 1 ? 'paper' : 'papers'}`}
+          >{t.label}</button>
+        ))}
+      </div>
+      <div class="cloud-legend">
+        <span><i class="key key--disc"></i>Discipline</span>
+        <span><i class="key key--cat"></i>Broad field</span>
+        <span><i class="key key--word"></i>Recurring term in summaries</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REGISTER ============ -->
+  <section class="band">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="pub-heading">The full register</h2>
+        <span class="section-count" id="pub-count">
+          {papers.length} {papers.length === 1 ? 'paper' : 'papers'}
+        </span>
+      </div>
+
+      <p class="filter-note" id="pub-filter-note" hidden>
+        Filtered by <strong id="pub-filter-label"></strong> ·
+        <button type="button" class="link-btn" id="pub-clear">clear filter</button>
+      </p>
+
+      <ul class="pub-list" id="pub-list">
+        {papers.map((p) => {
+          const blurb = cleanBlurb(p.summary || p.abstract);
+          return (
+            <li class="pub-row" data-keys={p.keys.join('|')}>
+              <div>
+                <span class="pub-when">{p.when}</span>
+                <span class="pub-journal">{p.journal}</span>
+              </div>
+              <div>
+                <div class="pub-tags">
+                  <span class={p.tone === 'orange' ? 'pill' : `pill ${p.tone}`}>{p.cat}</span>
+                  {p.disciplines.map((d) => <span class="pub-disc">{d}</span>)}
+                </div>
+                {p.url
+                  ? <a class="pub-title" href={p.url} target="_blank" rel="noopener">{p.title}</a>
+                  : <span class="pub-title">{p.title}</span>}
+                <p class="pub-cite" set:html={p.citationHtml}></p>
+                {blurb && (
+                  <>
+                    <button
+                      type="button"
+                      class="pub-more"
+                      aria-expanded="false"
+                      aria-controls={`pub-sum-${p.id}`}
+                      data-open-label={p.summary ? 'Science for society →' : 'Read the abstract →'}
+                    >{p.summary ? 'Science for society →' : 'Read the abstract →'}</button>
+                    <div class="pub-sum" id={`pub-sum-${p.id}`} hidden>
+                      <span class="pub-sum-lbl">{p.summary ? 'Science for society' : 'Abstract'}</span>
+                      {blurb}
+                    </div>
+                  </>
+                )}
+              </div>
+              <div class="pub-who">
+                <span>
+                  <span class="pub-role">SNAPper</span>
+                  <span class="pub-name">{p.author}</span>
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <section class="cta-band">
+    <div class="container cta-inner">
+      <div>
+        <div class="eyebrow on-dark">Keep the register current</div>
+        <h2>Published something? <em>Send it in.</em></h2>
+        <p class="lede on-dark">
+          Citation, DOI, broad field, and two sentences a non-specialist could follow.
+          We add it to the register and share it in The Monthly.
+        </p>
+      </div>
+      <div class="cta-btns">
+        <a class="btn btn-primary" href={`mailto:${email}`}>Submit a paper →</a>
+        <a class="btn btn-ghost-light" href={`${base}newsletters/`}>Read The Monthly</a>
+      </div>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
+
+<script>
+  /* Two independent behaviors: one page-wide cloud filter, and a per-row
+     summary disclosure that the filter never touches. */
+  const cloud = document.getElementById('pub-cloud');
+  const list = document.getElementById('pub-list');
+  const heading = document.getElementById('pub-heading');
+  const count = document.getElementById('pub-count');
+  const note = document.getElementById('pub-filter-note');
+  const noteLabel = document.getElementById('pub-filter-label');
+  const clear = document.getElementById('pub-clear');
+
+  if (cloud && list && heading && count && note && noteLabel && clear) {
+    const terms = [...cloud.querySelectorAll<HTMLButtonElement>('.pub-term')];
+    const rows = [...list.querySelectorAll<HTMLLIElement>('.pub-row')];
+    let active: string | null = null;
+
+    const apply = () => {
+      const label = active ? terms.find((t) => t.dataset.key === active)?.dataset.label ?? '' : '';
+      let shown = 0;
+
+      rows.forEach((row) => {
+        const keys = (row.dataset.keys || '').split('|');
+        const on = !active || keys.includes(active);
+        row.hidden = !on;
+        if (on) shown++;
+      });
+
+      terms.forEach((t) => {
+        const on = t.dataset.key === active;
+        t.classList.toggle('is-on', on);
+        t.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
+
+      heading.textContent = active ? `Papers on ${label.toLowerCase()}` : 'The full register';
+      count.textContent = `${shown} ${shown === 1 ? 'paper' : 'papers'}`;
+      noteLabel.textContent = label;
+      note.hidden = !active;
+    };
+
+    terms.forEach((t) => {
+      t.addEventListener('click', () => {
+        active = active === t.dataset.key ? null : t.dataset.key ?? null;
+        apply();
+      });
+    });
+
+    clear.addEventListener('click', () => {
+      active = null;
+      apply();
+    });
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.pub-more').forEach((btn) => {
+    const panel = document.getElementById(btn.getAttribute('aria-controls') || '');
+    if (!panel) return;
+    btn.addEventListener('click', () => {
+      const open = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', open ? 'false' : 'true');
+      panel.hidden = open;
+      btn.textContent = open ? btn.dataset.openLabel ?? '' : 'Hide summary';
+    });
+  });
+</script>
+
+<style>
+  /* ---- bands ---- */
+  .band { padding: 80px 0; }
+  .band--warm {
+    background: var(--warm);
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  /* ---- page header ---- */
+  .page-head-inner {
+    display: grid; grid-template-columns: 1.5fr 1fr;
+    gap: 48px; align-items: end;
+  }
+  .page-head-inner h1.display { font-size: 72px; line-height: 0.96; margin-top: 14px; }
+  .page-head-inner .eyebrow { margin-bottom: 0; }
+
+  /* ---- word cloud ---- */
+  .pub-cloud {
+    display: flex; flex-wrap: wrap;
+    justify-content: center; align-items: center;
+    gap: 2px 20px; max-width: 900px; margin: 0 auto;
+  }
+  .pub-term {
+    background: none; border: 0; padding: 2px; cursor: pointer;
+    font-family: var(--display); font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1.15;
+    color: var(--navy); transition: color .15s ease;
+  }
+  /* Broad fields sit at the same weight as disciplines, set apart by italics. */
+  .pub-term--cat { font-style: italic; }
+  .pub-term--word {
+    font-family: var(--accent); font-weight: 600;
+    color: var(--slate); letter-spacing: 0;
+  }
+  .pub-term:hover, .pub-term.is-on { color: var(--orange); }
+  .pub-term:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+  .cloud-legend {
+    display: flex; gap: 24px; justify-content: center; flex-wrap: wrap;
+    margin-top: 40px; padding-top: 22px;
+    border-top: 1px solid var(--hairline-strong);
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  }
+  .cloud-legend span { display: flex; align-items: center; gap: 8px; }
+  .key { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .key--disc { background: var(--navy); }
+  .key--cat { background: var(--navy); opacity: 0.5; }
+  .key--word { background: var(--slate); }
+
+  /* ---- register ---- */
+  .section-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding-bottom: 16px; margin-bottom: 28px;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .section-head h2 {
+    font-family: var(--display); font-weight: 700; font-size: 32px;
+    color: var(--navy); letter-spacing: -0.02em;
+  }
+  .section-count {
+    font-family: var(--accent); font-weight: 600; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+    white-space: nowrap;
+  }
+  .filter-note {
+    font-family: var(--accent); font-weight: 500; font-size: 13px;
+    color: var(--muted); margin: -12px 0 22px;
+  }
+  .filter-note strong { color: var(--navy); }
+  .link-btn {
+    background: none; border: 0; padding: 0; font: inherit;
+    color: var(--orange); cursor: pointer; text-decoration: underline;
+  }
+
+  /* The closing rule lives on the list, so filtering rows out never leaves the
+     register open at the bottom. */
+  .pub-list {
+    list-style: none; margin: 0; padding: 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+  .pub-row {
+    display: grid; grid-template-columns: 170px 1fr 210px;
+    gap: 32px; padding: 24px 0; align-items: start;
+    border-top: 1px solid var(--hairline);
+  }
+  /* display:grid would otherwise win over the UA's [hidden] rule. */
+  .pub-row[hidden] { display: none; }
+  .pub-when {
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+    display: block;
+  }
+  .pub-journal {
+    font-family: var(--accent); font-weight: 500; font-style: italic;
+    font-size: 12.5px; line-height: 1.4; color: var(--muted-2);
+    display: block; margin-top: 5px;
+  }
+  .pub-tags {
+    display: flex; flex-wrap: wrap; gap: 8px; align-items: center;
+    margin-bottom: 10px;
+  }
+  .pub-disc {
+    font-family: var(--accent); font-weight: 600; font-size: 10.5px;
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    border: 1px solid var(--hairline-strong); border-radius: var(--r-pill);
+    padding: 2px 9px;
+  }
+  .pub-title {
+    font-family: var(--display); font-weight: 700; font-size: 20px;
+    color: var(--navy); line-height: 1.3; letter-spacing: -0.01em;
+    text-decoration: none; display: block; text-wrap: pretty;
+  }
+  a.pub-title:hover { color: var(--orange); }
+  .pub-cite {
+    font-size: 13px; line-height: 1.6; color: var(--muted);
+    margin: 10px 0 0; text-wrap: pretty;
+  }
+  .pub-cite :global(mark.pub-me) {
+    background: none; color: var(--orange); font-weight: 700;
+  }
+  .pub-more {
+    background: none; border: 0; padding: 0; margin-top: 12px;
+    font-family: var(--accent); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--navy); cursor: pointer;
+  }
+  .pub-more:hover { color: var(--orange); }
+  .pub-sum {
+    margin-top: 14px; padding: 16px 20px;
+    background: var(--warm); border-left: 3px solid var(--orange);
+    border-radius: 4px;
+    font-size: 15px; line-height: 1.65; color: var(--body); text-wrap: pretty;
+  }
+  .pub-sum-lbl {
+    display: block;
+    font-family: var(--accent); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 8px;
+  }
+  /* The block hugs its content and sits at the right of the column; the two
+     lines inside stay left-aligned to each other. */
+  .pub-who { display: flex; align-items: center; justify-content: flex-end; }
+  .pub-role {
+    display: block;
+    font-family: var(--accent); font-weight: 700; font-size: 9.5px;
+    letter-spacing: 0.18em; text-transform: uppercase; color: var(--orange);
+  }
+  .pub-name {
+    display: block;
+    font-family: var(--display); font-weight: 700; font-size: 14px;
+    color: var(--navy); margin-top: 2px;
+  }
+
+  /* ---- cta ---- */
+  .cta-band {
+    background: var(--navy); color: #fff; padding: 96px 0;
+    position: relative; overflow: hidden;
+  }
+  .cta-band::before {
+    content: ''; position: absolute; inset: 0;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(232,145,66,.22), transparent 50%),
+      radial-gradient(circle at 8% 92%, rgba(194,195,84,.12), transparent 45%);
+    pointer-events: none;
+  }
+  .cta-inner {
+    position: relative;
+    display: grid; grid-template-columns: 1.4fr 1fr;
+    gap: 48px; align-items: end;
+  }
+  .cta-inner .eyebrow { margin-bottom: 0; }
+  .cta-inner h2 {
+    font-family: var(--display); font-weight: 700; font-size: 52px;
+    letter-spacing: -0.03em; line-height: 0.98; color: #fff; margin-top: 14px;
+  }
+  .cta-inner h2 em { color: var(--orange-soft); font-style: italic; }
+  .cta-inner .lede.on-dark { max-width: 660px; margin-top: 16px; font-size: 18px; line-height: 1.55; }
+  .cta-btns { display: flex; gap: 12px; flex-wrap: wrap; justify-content: flex-end; }
+
+  @media (max-width: 1080px) {
+    .page-head-inner { grid-template-columns: 1fr; gap: 24px; }
+    .page-head-inner h1.display { font-size: 52px; }
+    .pub-row { grid-template-columns: 1fr; gap: 12px; }
+    .cta-inner { grid-template-columns: 1fr; }
+    .cta-btns { justify-content: flex-start; }
+  }
+</style>
