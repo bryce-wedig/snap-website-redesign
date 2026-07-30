@@ -18,10 +18,6 @@ const comingSoon = allCourses.filter(c => c.data.comingSoon);
       <div class="course-grid">
         {available.map(course => (
           <a href={`${base}courses/${course.id}/`} class="init-card c-courses">
-            <div class="row1">
-              <div class="init-tag"><span class="dot"></span>SciPol Courses</div>
-              <div class="init-status live">Open</div>
-            </div>
             <h4>{course.data.title}</h4>
             <div class="foot">
               <div class="next"><span class="next-lbl">Format</span>Self-paced</div>
@@ -42,10 +38,6 @@ const comingSoon = allCourses.filter(c => c.data.comingSoon);
       <div class="course-grid">
         {comingSoon.map(course => (
           <div class="init-card c-courses is-upcoming">
-            <div class="row1">
-              <div class="init-tag"><span class="dot"></span>SciPol Courses</div>
-              <div class="init-status">In development</div>
-            </div>
             <h4>{course.data.title}</h4>
             <div class="foot">
               <div class="next"><span class="next-lbl">Status</span>Coming soon</div>
