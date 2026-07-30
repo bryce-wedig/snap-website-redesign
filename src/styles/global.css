@@ -226,8 +226,10 @@ hr { border: none; height: 1px; background: var(--hairline); margin: 2rem 0; }
 /* Nothing in the bar may shrink: a shrunken row still "fits", which would
    hide the overflow from the fit check in Header.astro (and squash the logo). */
 .nav-inner > * { flex: 0 0 auto; }
-.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.brand img { height: 38px; width: auto; }
+/* The logo fills the bar's full height, so it stretches instead of centring at
+   a fixed size — the img then resolves 100% against that definite height. */
+.brand { display: flex; align-self: stretch; align-items: center; gap: 12px; text-decoration: none; }
+.brand img { height: 100%; width: auto; }
 
 .nav-links { display: flex; gap: 26px; align-items: center; }
 .nav-links a {
