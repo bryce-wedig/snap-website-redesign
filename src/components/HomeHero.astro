@@ -20,7 +20,10 @@ const imageBase = `${base}images/`;
 const hero = parse(
   readFileSync(join(process.cwd(), 'src/data/home_hero.yaml'), 'utf-8')
 ) as {
-  map: { center: [number, number]; zoom: number; min_zoom: number; max_zoom: number };
+  map: {
+    center: [number, number]; zoom: number; min_zoom: number; max_zoom: number;
+    fit_max_zoom?: number;
+  };
   panel: {
     eyebrow: string; heading: string; heading_em: string; lede: string;
     stats: { num: string; label: string }[];
@@ -120,6 +123,7 @@ const clientConfig = {
     zoom: hero.map.zoom,
     minZoom: hero.map.min_zoom,
     maxZoom: hero.map.max_zoom,
+    fitMaxZoom: hero.map.fit_max_zoom ?? 6,
   },
   cycle: { enabled: hero.cycle.enabled, intervalMs: hero.cycle.interval_ms },
   cities: markers.cities,
@@ -355,22 +359,97 @@ const clientConfig = {
       }).catch(function () {});
     }
 
-    // Pan/zoom so the active slide's subject is clear of the floating panel.
-    // Stance states would otherwise sit hidden behind it (e.g. California).
-    function focusSlide(id) {
-      if (!map) return;
-      var anim = !reduceMotion && !document.hidden;
-      if (id === 'stance' && stanceLayer) {
-        var padL = window.innerWidth > 900 ? 440 : 30;
-        try {
-          map.flyToBounds(stanceLayer.getBounds(), {
-            paddingTopLeft: [padL, 50], paddingBottomRight: [80, 90],
-            maxZoom: 6, animate: anim, duration: 0.8,
-          });
-        } catch (e) {}
-      } else {
-        map.flyTo(cfg.map.center, cfg.map.zoom, { animate: anim, duration: 0.8 });
+    // ---- auto-zoom: each slide frames *all* of its own content ----
+    // Everything the active slide shows (member/org pins, letter dots, or the
+    // filled Stance states) has to land inside the space the floating panel and
+    // the rail leave free — those insets are measured from the live DOM so the
+    // responsive layouts, and a resized window, stay honest.
+    function boundsOf(points) {
+      if (!points || !points.length) return null;
+      var b = L.latLngBounds([]);
+      points.forEach(function (p) {
+        if (Number.isFinite(p.lat) && Number.isFinite(p.lng)) b.extend(L.latLng(p.lat, p.lng));
+      });
+      return b.isValid() ? b : null;
+    }
+    var memberBounds = boundsOf((cfg.cities || []).concat(cfg.orgs || []));
+    var letterBounds = boundsOf(cfg.letters || []);
+
+    function slideBounds(id) {
+      if (id === 'stance') {
+        if (!stanceLayer) return null;
+        var b = stanceLayer.getBounds();
+        return b && b.isValid() ? b : null;
       }
+      if (id === 'mcclintock') return letterBounds;
+      return memberBounds;
+    }
+
+    // Insets for the UI floating over the map. Each floating block is charged to
+    // one edge: a tall column (the desktop panel) to left/right, a wide band
+    // (the panel once it stacks on phones) to top/bottom, and a small corner
+    // block (the rail) to whichever of the two costs the map less room.
+    function fitPadding() {
+      var s = stage.getBoundingClientRect();
+      var pad = { top: 30, right: 30, bottom: 46, left: 30 }; // bottom: attribution strip
+      var gap = 18; // breathing room between the UI edge and the outermost pin
+      [stage.querySelector('.home-hero-panel'), document.getElementById('hero-rail')]
+        .forEach(function (node) {
+          if (!node || node.offsetParent === null) return;
+          var r = node.getBoundingClientRect();
+          // inset needed on each axis, charged to the edge the block hugs
+          var hSide = (r.left - s.left <= s.right - r.right) ? 'left' : 'right';
+          var vSide = (r.top - s.top <= s.bottom - r.bottom) ? 'top' : 'bottom';
+          var hInset = hSide === 'left' ? r.right - s.left + gap : s.right - r.left + gap;
+          var vInset = vSide === 'top' ? r.bottom - s.top + gap : s.bottom - r.top + gap;
+          var horizontal;
+          if (r.width > s.width * 0.5) horizontal = false;      // wide band
+          else if (r.height > s.height * 0.5) horizontal = true; // tall column
+          else horizontal = hInset / s.width <= vInset / s.height; // corner block
+          if (horizontal) pad[hSide] = Math.max(pad[hSide], hInset);
+          else pad[vSide] = Math.max(pad[vSide], vInset);
+        });
+      // ...but never squeeze the free viewport down to a sliver: past this the
+      // map would zoom out further than the content is worth.
+      var cap = function (a, b, total) {
+        var room = total * 0.62, used = pad[a] + pad[b];
+        if (used > room) { var k = room / used; pad[a] *= k; pad[b] *= k; }
+      };
+      cap('left', 'right', s.width);
+      cap('top', 'bottom', s.height);
+      return pad;
+    }
+
+    var didFit = false; // the opening view snaps; later slide changes animate
+    function focusSlide(id, instant) {
+      if (!map) return;
+      var anim = !reduceMotion && !document.hidden && didFit && !instant;
+      didFit = true;
+      var b = slideBounds(id);
+      if (b) {
+        var pad = fitPadding();
+        try {
+          // flyToBounds falls back to setView when animate is false
+          map.flyToBounds(b, {
+            paddingTopLeft: [Math.round(pad.left), Math.round(pad.top)],
+            paddingBottomRight: [Math.round(pad.right), Math.round(pad.bottom)],
+            maxZoom: cfg.map.fitMaxZoom,
+            animate: anim, duration: 0.8,
+          });
+          return;
+        } catch (e) {}
+      }
+      map.flyTo(cfg.map.center, cfg.map.zoom, { animate: anim, duration: 0.8 });
+    }
+
+    // A resized stage changes the free space, so re-frame the active slide.
+    var refitTimer = null;
+    function refit() {
+      if (refitTimer) clearTimeout(refitTimer);
+      refitTimer = setTimeout(function () {
+        map.invalidateSize();
+        focusSlide(stage.getAttribute('data-slide') || 'members', true);
+      }, 160);
     }
 
     // ---- photo cards + connectors ----
@@ -470,10 +549,15 @@ const clientConfig = {
 
     map.on('move zoom zoomend moveend resize viewreset', recompute);
     map.whenReady(function () {
-      setTimeout(function () { map.invalidateSize(); recompute(); }, 60);
+      // the fit above ran before the container had its final size
+      setTimeout(function () {
+        map.invalidateSize();
+        focusSlide(stage.getAttribute('data-slide') || 'members', true);
+        recompute();
+      }, 60);
       setTimeout(recompute, 200);
     });
-    window.addEventListener('resize', recompute);
+    window.addEventListener('resize', function () { recompute(); refit(); });
 
     // cycle through sets when more than one is defined
     if (cfg.cycle && cfg.cycle.enabled && sets.length > 1 && !reduceMotion) {
@@ -557,6 +641,7 @@ const clientConfig = {
       go(0);
     } else {
       stage.setAttribute('data-slide', 'members');
+      focusSlide('members', true);
     }
   }
 

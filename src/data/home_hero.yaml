@@ -6,16 +6,24 @@
 #
 # Everything here is data-driven:
 #   • Edit the copy / stats / buttons under `panel`.
-#   • Change the starting view under `map`.
+#   • Tune the zoom limits under `map` (the view itself is auto-fitted to the
+#     content of whichever slide is showing).
 #   • Add, remove, or re-locate photos under `photo_sets` (see notes there).
 #   • Member-city (orange) and org (navy) markers live in `map_markers.yaml`.
 # ============================================================================
 
 map:
-  center: [39.5, -96]   # [lat, lng] the map opens on
+  center: [39.5, -96]   # [lat, lng] fallback view (used only if a slide has no content)
   zoom: 4
-  min_zoom: 3
+  min_zoom: 2   # the auto-fit needs this headroom: the McClintock letters slide
+                # spans Alaska to Puerto Rico, which won't fit at zoom 3 once the
+                # panel takes its share of a narrow window
   max_zoom: 10
+  # Each slide auto-zooms to frame *all* of its own content (markers, or the
+  # highlighted Stance states) inside the space the floating panel and rail
+  # leave free. `fit_max_zoom` caps how far in that fit may go, so a slide with
+  # only one or two nearby markers doesn't dive to street level.
+  fit_max_zoom: 6
 
 panel:
   eyebrow: "Scientist Network for Advancing Policy"
