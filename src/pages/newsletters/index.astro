@@ -9,75 +9,46 @@ const newsletters = (await getCollection('newsletters')).sort(
   (a, b) => b.data.date.getTime() - a.data.date.getTime()
 );
 
-// Group by year so the archive reads as a timeline rather than one long stack.
-const byYear = newsletters.reduce((acc, nl) => {
-  const year = nl.data.date.getFullYear();
-  (acc[year] ||= []).push(nl);
-  return acc;
-}, {} as Record<number, typeof newsletters>);
-
-const years = Object.keys(byYear).map(Number).sort((a, b) => b - a);
-
-// Cycle the same thumbnail treatments the blog index uses.
-const thumbVariants = ['', 'navy', 'olive', 'warm', 'plum'];
-
 function formatDate(d: Date): string {
-  return d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-}
-function issueLabel(d: Date): string {
-  return d.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+  // Frontmatter dates parse as UTC midnight; format in UTC so the day doesn't
+  // shift backwards when the site is built in a western timezone.
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
 }
 ---
 
 <PageLayout
   title="Newsletters"
-  eyebrow="The Monthly"
-  lede="Letters that ran, offices we visited, what's coming next. Read past issues of the coalition's monthly newsletter below."
+  eyebrow="Stay in the loop"
+  lede="One newsletter, once a month."
 >
-  {years.map((year, yi) => (
-    <section class="nl-section">
-      <div class="cat-head">
-        <h2>{year}</h2>
-        <span class="cat-count">{byYear[year].length} {byYear[year].length === 1 ? 'issue' : 'issues'}</span>
-      </div>
-      <div class="nl-grid">
-        {byYear[year].map((nl, idx) => {
-          const variant = thumbVariants[(idx + yi) % thumbVariants.length];
-          return (
-            <a class="nl-card" href={`${base}newsletters/${nl.id}/`}>
-              <div class:list={['nl-thumb', variant]}>
-                <div class="corner-tag">Newsletter</div>
-                <div class="issue">{issueLabel(nl.data.date)}</div>
-              </div>
-              <div class="nl-meta">
-                <span class="pill">The Monthly</span>
-                <span>{formatDate(nl.data.date)}</span>
-              </div>
-              <h4>{nl.data.title}</h4>
-              <span class="arrow">Read issue</span>
-            </a>
-          );
-        })}
-      </div>
-    </section>
-  ))}
+  <a slot="head-cta" class="btn btn-primary" href={siteInterestForm} target="_blank" rel="noopener">Sign up →</a>
 
-  <section class="nl-subscribe">
-    <div class="eyebrow">Stay in the loop</div>
-    <h3>One newsletter,<br/><span class="italic-accent">once a month.</span></h3>
-    <p class="lede">Want SNAP's latest updates in your inbox? Sign up and we'll send the next issue straight to you.</p>
-    <a class="btn btn-primary" href={siteInterestForm} target="_blank" rel="noopener">Sign up →</a>
+  <section class="nl-section">
+    <div class="cat-head">
+      <h2>Archive</h2>
+      <span class="cat-count">{newsletters.length} {newsletters.length === 1 ? 'issue' : 'issues'}</span>
+    </div>
+    <ul class="press-list nl-list">
+      {newsletters.map(nl => (
+        <li>
+          <a class="head" href={`${base}newsletters/${nl.id}/`}>{nl.data.title}</a>
+          <time>{formatDate(nl.data.date)}</time>
+        </li>
+      ))}
+    </ul>
   </section>
 </PageLayout>
 
 <style>
-  .nl-section { margin-bottom: 64px; }
+  .nl-section { margin-bottom: 0; }
 
   .cat-head {
     display: flex; justify-content: space-between; align-items: baseline;
-    padding-bottom: 16px; margin-bottom: 28px;
+    padding-bottom: 16px; margin-bottom: 0;
     border-bottom: 1px solid var(--hairline);
   }
+  /* The head rule already closes the top of the ledger. */
+  .nl-list li:first-child { border-top: none; }
   .cat-head h2 {
     font-family: var(--display); font-weight: 700; font-size: 32px;
     color: var(--navy); letter-spacing: -0.02em; margin: 0;
@@ -87,72 +58,10 @@ function issueLabel(d: Date): string {
     letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
   }
 
-  .nl-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
-    gap: 32px 24px;
-  }
-  .nl-card { display: grid; gap: 12px; text-decoration: none; color: inherit; align-content: start; }
+  /* Same ledger rows as the press page, minus the source column. */
+  .nl-list li { grid-template-columns: 1fr 130px; }
 
-  .nl-thumb {
-    aspect-ratio: 16 / 10; border-radius: var(--r-md);
-    background: linear-gradient(135deg, var(--peach-tint), var(--peach));
-    position: relative; overflow: hidden;
-    border: 1px solid var(--hairline);
-    transition: transform .2s ease, box-shadow .2s ease;
+  @media (max-width: 720px) {
+    .nl-list li { grid-template-columns: 1fr; }
   }
-  .nl-thumb::after {
-    content: ''; position: absolute; inset: 0;
-    background: repeating-linear-gradient(135deg, rgba(255,255,255,0.1) 0 8px, transparent 8px 18px);
-  }
-  .nl-thumb.navy { background: linear-gradient(135deg, var(--navy), var(--plum)); }
-  .nl-thumb.olive { background: linear-gradient(135deg, var(--yellow), var(--olive)); }
-  .nl-thumb.warm { background: linear-gradient(135deg, var(--warm), var(--peach)); }
-  .nl-thumb.plum { background: linear-gradient(135deg, var(--plum-soft), var(--plum)); }
-  .nl-card:hover .nl-thumb { transform: translateY(-3px); box-shadow: var(--shadow-xl); }
-
-  .nl-thumb .issue {
-    position: absolute; left: 50%; top: 50%;
-    transform: translate(-50%, -50%);
-    font-family: var(--display); font-weight: 700; font-size: 40px;
-    letter-spacing: -0.02em; color: rgba(0,0,0,0.28);
-  }
-  .nl-thumb.navy .issue, .nl-thumb.plum .issue { color: rgba(255,255,255,0.55); }
-  .nl-thumb .corner-tag {
-    position: absolute; left: 14px; top: 14px;
-    padding: 4px 10px; border-radius: var(--r-sm);
-    background: rgba(255,255,255,0.92); color: var(--navy);
-    font-family: var(--accent); font-weight: 700; font-size: 10px;
-    letter-spacing: 0.14em; text-transform: uppercase;
-  }
-
-  .nl-meta {
-    display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-    font-family: var(--accent); font-weight: 600; font-size: 11px;
-    letter-spacing: 0.06em; color: var(--muted);
-  }
-  .nl-card h4 {
-    font-family: var(--display); font-weight: 700; font-size: 22px;
-    color: var(--navy); letter-spacing: -0.012em; line-height: 1.25;
-  }
-  .nl-card:hover h4 { color: var(--orange); }
-  .nl-card .arrow {
-    font-family: var(--accent); font-weight: 700; font-size: 11.5px;
-    letter-spacing: 0.14em; text-transform: uppercase; color: var(--navy);
-    display: inline-flex; gap: 6px; align-items: center;
-  }
-  .nl-card .arrow::after { content: '→'; transition: transform .2s ease; }
-  .nl-card:hover .arrow { color: var(--orange); }
-  .nl-card:hover .arrow::after { transform: translateX(4px); }
-
-  .nl-subscribe {
-    margin-top: 24px; padding: 48px 0;
-    border-top: 1px solid var(--hairline);
-    border-bottom: 1px solid var(--hairline);
-    display: grid; gap: 16px; justify-items: start;
-  }
-  .nl-subscribe h3 {
-    font-family: var(--display); font-weight: 700; font-size: 42px;
-    color: var(--navy); letter-spacing: -0.025em; line-height: 1.05;
-  }
-  .nl-subscribe .lede { margin-bottom: 8px; }
 </style>
