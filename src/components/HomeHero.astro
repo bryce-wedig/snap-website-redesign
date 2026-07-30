@@ -216,22 +216,36 @@ const clientConfig = {
 
     <!-- slideshow progress rail (labels what the map is currently showing) -->
     {hero.slideshow?.enabled && hero.slideshow.slides.length > 0 && (
-      <div class="hero-rail" id="hero-rail" role="tablist" aria-label="Map highlights">
-        {hero.slideshow.slides.map((s, i) => (
-          <button
-            type="button"
-            class={`rail-item rail-item--${s.id}${i === 0 ? ' active' : ''}`}
-            data-index={i}
-            role="tab"
-            aria-selected={i === 0 ? 'true' : 'false'}
-          >
-            <span class="rail-text">
-              <span class="rail-eyebrow">{s.eyebrow}</span>
-              {s.sub && <span class="rail-sub">{s.sub}</span>}
-            </span>
-            <span class="rail-track"><span class="rail-fill"></span></span>
-          </button>
-        ))}
+      <div class="hero-rail" id="hero-rail" role="group" aria-label="Map highlights">
+        <div class="rail-tabs" role="tablist" aria-label="Map highlights">
+          {hero.slideshow.slides.map((s, i) => (
+            <button
+              type="button"
+              class={`rail-item rail-item--${s.id}${i === 0 ? ' active' : ''}`}
+              data-index={i}
+              role="tab"
+              aria-selected={i === 0 ? 'true' : 'false'}
+            >
+              <span class="rail-text">
+                <span class="rail-eyebrow">{s.eyebrow}</span>
+                {s.sub && <span class="rail-sub">{s.sub}</span>}
+              </span>
+              <span class="rail-track"><span class="rail-fill"></span></span>
+            </button>
+          ))}
+        </div>
+        <!-- explicit stop control for the auto-advance (WCAG 2.2.2); the client
+             script keeps its label, icon, and title in sync with the state -->
+        <button
+          type="button"
+          class="rail-toggle"
+          id="hero-rail-toggle"
+          aria-label="Pause map highlights"
+          title="Pause map highlights"
+        >
+          <i class="fa-solid fa-pause" aria-hidden="true"></i>
+          <span class="rail-toggle-label">Pause</span>
+        </button>
       </div>
     )}
   </div>
@@ -559,10 +573,18 @@ const clientConfig = {
     });
     window.addEventListener('resize', function () { recompute(); refit(); });
 
-    // cycle through sets when more than one is defined
-    if (cfg.cycle && cfg.cycle.enabled && sets.length > 1 && !reduceMotion) {
-      setInterval(function () { showSet((active + 1) % sets.length); }, cfg.cycle.intervalMs || 7000);
+    // cycle through sets when more than one is defined. Start/stop are exposed so
+    // the rail's pause button stops *all* the hero's self-driven motion at once.
+    var cycling = !!(cfg.cycle && cfg.cycle.enabled && sets.length > 1 && !reduceMotion);
+    var cycleTimer = null;
+    function startCycle() {
+      if (!cycling || cycleTimer) return;
+      cycleTimer = setInterval(function () { showSet((active + 1) % sets.length); }, cfg.cycle.intervalMs || 7000);
     }
+    function stopCycle() {
+      if (cycleTimer) { clearInterval(cycleTimer); cycleTimer = null; }
+    }
+    startCycle();
 
     // ---- slideshow: auto-advance highlight slides + progress rail ----
     var show = cfg.slideshow || {};
@@ -571,12 +593,67 @@ const clientConfig = {
       var rail = document.getElementById('hero-rail');
       var items = rail ? Array.prototype.slice.call(rail.querySelectorAll('.rail-item')) : [];
       var fills = items.map(function (it) { return it.querySelector('.rail-fill'); });
-      var current = -1, timer = null, paused = false;
+      var toggle = document.getElementById('hero-rail-toggle');
+      var current = -1, timer = null;
+
+      // Two independent reasons to hold a slide: a transient hover/focus over the
+      // rail, and the visitor's own pause button. The clock runs only when neither
+      // applies, and it resumes with the time the held slide had left — so pausing
+      // never costs (or gifts) a slide part of its turn.
+      var hoverPaused = false, userPaused = false;
+      var running = false, remaining = 0, startedAt = 0;
+      function isPaused() { return hoverPaused || userPaused; }
 
       function setFill(el, pct, dur) {
         if (!el) return;
         el.style.transition = (dur && !reduceMotion) ? 'height ' + dur + 'ms linear' : 'none';
         el.style.height = pct + '%';
+      }
+
+      // where the fill has actually got to, as a percentage of its track
+      function fillPct(el) {
+        if (!el || !el.parentNode) return 0;
+        var h = el.getBoundingClientRect().height;
+        var t = el.parentNode.getBoundingClientRect().height;
+        return t ? Math.max(0, Math.min(100, (h / t) * 100)) : 0;
+      }
+
+      function startClock(ms) {
+        remaining = ms || 6000;
+        startedAt = Date.now();
+        running = true;
+        setFill(fills[current], 100, remaining);
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(function () { running = false; go(current + 1); }, remaining);
+      }
+
+      function stopClock() {
+        if (!running) return;
+        running = false;
+        if (timer) { clearTimeout(timer); timer = null; }
+        remaining = Math.max(0, remaining - (Date.now() - startedAt));
+        // pin the progress fill mid-flight, so the rail reads as held rather than
+        // marching on toward a slide change that isn't coming
+        var f = fills[current];
+        if (f) { setFill(f, fillPct(f), 0); void f.offsetHeight; }
+      }
+
+      // single place that reconciles the timer with the two pause flags
+      function syncClock() {
+        if (isPaused()) stopClock();
+        else if (!running && current >= 0) startClock(remaining);
+      }
+
+      function renderToggle() {
+        if (!toggle) return;
+        var label = userPaused ? 'Play' : 'Pause';
+        var icon = toggle.querySelector('i');
+        var text = toggle.querySelector('.rail-toggle-label');
+        if (icon) icon.className = 'fa-solid ' + (userPaused ? 'fa-play' : 'fa-pause');
+        if (text) text.textContent = label;
+        toggle.setAttribute('aria-label', label + ' map highlights');
+        toggle.setAttribute('title', label + ' map highlights');
+        stage.setAttribute('data-paused', userPaused ? 'true' : 'false');
       }
 
       function applyVisibility(slide) {
@@ -612,32 +689,52 @@ const clientConfig = {
         // backgrounded, which would freeze the fill at 0).
         setFill(fills[i], 0, 0);
         if (fills[i]) void fills[i].offsetHeight;
-        setFill(fills[i], 100, slide.durationMs);
 
         recompute();
-        schedule(slide.durationMs);
-      }
 
-      function schedule(ms) {
-        if (timer) clearTimeout(timer);
-        if (paused) return;
-        timer = setTimeout(function () { go(current + 1); }, ms || 6000);
+        // a slide entered while paused waits at 0% with its full turn banked
+        remaining = slide.durationMs || 6000;
+        if (isPaused()) { running = false; if (timer) { clearTimeout(timer); timer = null; } }
+        else startClock(remaining);
       }
 
       // pause while the visitor hovers/focuses the rail so they can read it,
       // and while they hover a stance state so it stays clickable
-      pauseShow = function () { paused = true; if (timer) { clearTimeout(timer); timer = null; } };
-      resumeShow = function () { if (paused) { paused = false; schedule(slides[current] ? slides[current].durationMs : 6000); } };
-      if (rail) {
-        rail.addEventListener('mouseenter', pauseShow);
-        rail.addEventListener('mouseleave', resumeShow);
-        rail.addEventListener('focusin', pauseShow);
-        rail.addEventListener('focusout', resumeShow);
-        items.forEach(function (it, k) {
-          it.addEventListener('click', function () { paused = false; go(k); });
+      pauseShow = function () { hoverPaused = true; syncClock(); };
+      resumeShow = function () { hoverPaused = false; syncClock(); };
+      // The read-it hold covers the labels only, not the whole rail: the play/pause
+      // pill shares that corner, and holding while the pointer rests on *it* would
+      // swallow the Play just pressed until the visitor moved the mouse away.
+      var tabs = rail ? rail.querySelector('.rail-tabs') : null;
+      if (tabs) {
+        tabs.addEventListener('mouseenter', pauseShow);
+        tabs.addEventListener('mouseleave', resumeShow);
+        tabs.addEventListener('focusin', pauseShow);
+        tabs.addEventListener('focusout', resumeShow);
+      }
+      // Picking a slide by hand doesn't clear the pause button: while the pointer
+      // is still on the labels the chosen slide holds, and it starts its full turn
+      // when the pointer leaves (unless the visitor has pressed Pause).
+      items.forEach(function (it, k) {
+        it.addEventListener('click', function () { go(k); });
+      });
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          userPaused = !userPaused;
+          // Play is authoritative: it starts the clock now, whatever the pointer or
+          // focus happens to be resting on, so the fill moves the instant it's hit.
+          if (!userPaused) hoverPaused = false;
+          renderToggle();
+          if (userPaused) stopCycle(); else startCycle();
+          syncClock();
         });
       }
 
+      // Visitors who ask for less motion get the hero already stopped — the rail
+      // still labels every highlight, and Play (or a rail click) opts them in.
+      userPaused = reduceMotion;
+      renderToggle();
+      if (userPaused) stopCycle();
       go(0);
     } else {
       stage.setAttribute('data-slide', 'members');
@@ -705,8 +802,29 @@ const clientConfig = {
   /* slideshow progress rail (right edge, vertically centred between polaroids) */
   .hero-rail {
     position: absolute; right: 20px; top: 50%; transform: translateY(-50%);
-    z-index: 20; display: flex; flex-direction: column; gap: 8px;
+    z-index: 20; display: flex; flex-direction: column;
+    align-items: flex-end; gap: 12px;
   }
+  .rail-tabs { display: flex; flex-direction: column; gap: 8px; }
+
+  /* play/pause pill: borrows the floating panel's translucent card language so it
+     reads as chrome over the map rather than as another highlight */
+  .rail-toggle {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 13px 8px 11px; border-radius: 999px; cursor: pointer;
+    background: rgba(251,250,246,0.92);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    border: 1px solid var(--hairline);
+    box-shadow: 0 2px 10px rgba(20,33,58,0.10);
+    font-family: var(--accent); font-weight: 700; font-size: 9.5px;
+    letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+    transition: color .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .rail-toggle i { font-size: 9px; color: var(--navy); }
+  .rail-toggle:hover { color: var(--navy); border-color: var(--navy); background: #fff; }
+  .rail-toggle:focus-visible { outline: 2px solid var(--orange); outline-offset: 2px; }
+  /* a held slide keeps its label bright but stops pretending to be counting down */
+  .home-hero-stage[data-paused="true"] .rail-fill { opacity: 0.55; }
   .rail-item {
     --fill: var(--orange);
     display: flex; align-items: stretch; gap: 12px;
@@ -841,7 +959,11 @@ const clientConfig = {
     .home-hero-panel { left: 16px; right: 16px; top: 16px; width: auto; padding: 22px 22px 20px; }
     .home-hero-title { font-size: 30px; }
     /* drop the rail toward the bottom so it clears the full-width panel */
-    .hero-rail { top: auto; bottom: 16px; transform: none; right: 14px; gap: 5px; }
+    .hero-rail { top: auto; bottom: 16px; transform: none; right: 14px; gap: 8px; }
+    .rail-tabs { gap: 5px; }
+    /* icon-only on phones — the pill's text would crowd the shortened labels */
+    .rail-toggle { width: 32px; height: 32px; padding: 0; justify-content: center; }
+    .rail-toggle-label { display: none; }
     /* ...which means the bottom-right corner is taken: send the zoom
        control and attribution back to the left edge on phones */
     .home-hero-stage :global(.leaflet-bottom.leaflet-right) { right: auto; left: 0; }
