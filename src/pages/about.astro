@@ -4,6 +4,8 @@ import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 import { join } from 'path';
 
+const base = import.meta.env.BASE_URL;
+
 const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml'), 'utf-8')) as Array<{
   name: string;
   photo: string;
@@ -20,7 +22,38 @@ const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml')
   eyebrow="Who we are"
   lede="A coalition of early-career scientists mobilizing for large-scale initiatives and bridging the gaps between scientists, their communities, and the general public."
 >
-  <div class="cat-head">
+  <p class="about-intro">
+    Scientist Network for Advancing Policy (SNAP) was conceptualized in early 2025 and formed through a
+    (still ongoing!) gathering of science policy-minded early career researchers from across the United States.
+    SNAP is a nationwide non-partisan grassroots organization.
+  </p>
+
+  <div class="about-links">
+    <a class="about-link c-pubs" href={`${base}publications/`}>
+      <h4>SNAPper research</h4>
+      <p>Check out scientific publications by SNAPpers.</p>
+      <span class="arrow">Publications</span>
+    </a>
+    <a class="about-link c-events" href={`${base}calendar/`}>
+      <h4>Upcoming meetings and events</h4>
+      <p>See what SNAP has coming up on our events calendar.</p>
+      <span class="arrow">Calendar</span>
+    </a>
+  </div>
+
+  <section class="about-section">
+    <div class="cat-head">
+      <h2>Mission Statement</h2>
+    </div>
+    <p class="mission">
+      We are a coalition of early-career scientists dedicated to mobilizing for large-scale initiatives and
+      bridging gaps between scientists, their communities, and the general public. Our mission is to inspire
+      and engage fellow scientists by establishing a peer network, developing and sharing resources, and
+      instigating meaningful change.
+    </p>
+  </section>
+
+  <!-- <div class="cat-head">
     <h2>Member Organizations</h2>
     <span class="cat-count">{orgs.length} {orgs.length === 1 ? 'organization' : 'organizations'}</span>
   </div>
@@ -68,10 +101,69 @@ const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml')
         </div>
       </div>
     ))}
-  </div>
+  </div> -->
 </PageLayout>
 
 <style>
+  .about-intro {
+    font-family: var(--accent); font-weight: 500; font-size: 19px;
+    line-height: 1.55; color: var(--body);
+    max-width: 720px; margin-bottom: 56px;
+  }
+
+  .about-section { margin-bottom: 48px; }
+  .mission {
+    font-size: 17px; line-height: 1.65; color: var(--body);
+    max-width: 760px; margin: 0;
+  }
+
+  .about-links {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
+    gap: 16px; margin-bottom: 64px;
+  }
+
+  /* Card anatomy follows .init-card: hairline border, accent bar on hover, lift. */
+  .about-link {
+    position: relative; overflow: hidden;
+    display: grid; gap: 8px; align-content: start;
+    background: white;
+    border: 1px solid var(--hairline);
+    border-radius: var(--r-lg);
+    padding: 24px 26px 22px;
+    text-decoration: none; color: inherit;
+    transition: all .2s ease;
+  }
+  .about-link::before {
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px; background: var(--card-color, var(--orange));
+    transform: scaleY(0.3); transform-origin: top;
+    transition: transform .3s ease;
+  }
+  .about-link:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--card-color, var(--orange));
+  }
+  .about-link:hover::before { transform: scaleY(1); }
+
+  .c-pubs { --card-color: var(--navy); }
+  .c-events { --card-color: var(--orange); }
+
+  .about-link h4 {
+    font-family: var(--display); font-weight: 700; font-size: 19px;
+    color: var(--navy); letter-spacing: -0.01em; line-height: 1.25;
+  }
+  .about-link p { font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+  .about-link .arrow {
+    font-family: var(--accent); font-weight: 700; font-size: 10.5px;
+    letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--card-color, var(--orange));
+    display: inline-flex; gap: 6px; align-items: center;
+    margin-top: 4px;
+  }
+  .about-link .arrow::after { content: '→'; transition: transform .2s ease; }
+  .about-link:hover .arrow::after { transform: translateX(3px); }
+
   .cat-head {
     display: flex; justify-content: space-between; align-items: baseline;
     padding-bottom: 16px; margin-bottom: 28px;
