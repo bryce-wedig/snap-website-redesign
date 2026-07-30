@@ -4,6 +4,8 @@ import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 import { join } from 'path';
 
+const base = import.meta.env.BASE_URL;
+
 const members = parse(readFileSync(join(process.cwd(), 'src/data/members.yaml'), 'utf-8')) as Array<{
   name: string;
   pronouns: string;
@@ -24,6 +26,8 @@ const members = parse(readFileSync(join(process.cwd(), 'src/data/members.yaml'),
   eyebrow="Meet the coalition"
   lede="The early-career researchers organizing SNAP's initiatives across the country."
 >
+  <a class="pub-link" href={`${base}publications/`}>Check out what we've been publishing!</a>
+
   <div class="cat-head">
     <h2>Organizing Members</h2>
     <span class="cat-count">{members.length} {members.length === 1 ? 'member' : 'members'}</span>
@@ -86,6 +90,19 @@ const members = parse(readFileSync(join(process.cwd(), 'src/data/members.yaml'),
 </PageLayout>
 
 <style>
+  .pub-link {
+    font-family: var(--accent); font-weight: 600; font-size: 17px;
+    color: var(--navy); text-decoration: none;
+    display: inline-flex; gap: 8px; align-items: center;
+    margin-bottom: 40px;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 2px;
+    transition: color .2s ease, border-color .2s ease;
+  }
+  .pub-link::after { content: '→'; transition: transform .2s ease; }
+  .pub-link:hover { color: var(--orange); border-color: var(--orange); }
+  .pub-link:hover::after { transform: translateX(3px); }
+
   .cat-head {
     display: flex; justify-content: space-between; align-items: baseline;
     padding-bottom: 16px; margin-bottom: 28px;
