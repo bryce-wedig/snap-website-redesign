@@ -404,30 +404,6 @@ hr { border: none; height: 1px; background: var(--hairline); margin: 2rem 0; }
   border-color: var(--card-color, var(--orange));
 }
 .init-card:hover::before { transform: scaleY(1); }
-.init-card .row1 { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.init-card .init-tag {
-  display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--accent); font-weight: 700; font-size: 10px;
-  letter-spacing: 0.18em; text-transform: uppercase;
-  color: var(--card-color, var(--orange));
-}
-.init-card .init-tag .dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: var(--card-color, var(--orange));
-}
-.init-card .init-status {
-  font-family: var(--accent); font-weight: 600; font-size: 10px;
-  letter-spacing: 0.12em; text-transform: uppercase;
-  color: var(--muted);
-  padding: 4px 10px; border-radius: var(--r-pill);
-  border: 1px solid var(--hairline);
-  white-space: nowrap;
-}
-.init-card .init-status.live {
-  color: var(--card-color, var(--orange));
-  border-color: var(--card-color, var(--orange));
-  background: color-mix(in srgb, var(--card-color, var(--orange)) 8%, transparent);
-}
 .init-card h4 {
   font-family: var(--display); font-weight: 700; font-size: 30px;
   color: var(--navy); letter-spacing: -0.018em; line-height: 1.1;
