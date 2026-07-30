@@ -93,6 +93,8 @@ astro-site/
 - [Node.js](https://nodejs.org/) v18+ (LTS recommended)
 - npm (comes with Node.js)
 
+If you are developing in VSCode, the [Astro extension for VSCode](https://marketplace.visualstudio.com/items?itemName=astro-build.astro-vscode) is useful.
+
 ### Setup
 
 ```bash
