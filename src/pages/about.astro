@@ -29,15 +29,15 @@ const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml')
   </p>
 
   <div class="about-links">
-    <a class="about-link c-pubs" href={`${base}publications/`}>
-      <h4>SNAPper research</h4>
-      <p>Check out scientific publications by SNAPpers.</p>
-      <span class="arrow">Publications</span>
-    </a>
     <a class="about-link c-events" href={`${base}calendar/`}>
       <h4>Upcoming meetings and events</h4>
       <p>See what SNAP has coming up on our events calendar.</p>
       <span class="arrow">Calendar</span>
+    </a>
+    <a class="about-link c-pubs" href={`${base}publications/`}>
+      <h4>SNAPper research</h4>
+      <p>Check out scientific publications by SNAPpers.</p>
+      <span class="arrow">Publications</span>
     </a>
   </div>
 
