@@ -1,0 +1,103 @@
+---
+// Looping, silent video for post content — a drop-in replacement for a GIF.
+//
+// Animated GIFs cannot go through Astro's image pipeline (sharp would flatten
+// them to a single frame), so <Figure> passes them through at full size. That
+// is harmless for a small clip and ruinous for a long one: the 246-frame
+// microscopy timelapse in member-snapshot-may-2026 was a 18.9 MB GIF, which
+// alone made that page an order of magnitude heavier than any other on the
+// site. The same footage as h264/VP9 is roughly 1.2 MB / 0.7 MB.
+//
+// Usage in .mdx, after importing the two encodes and a poster frame:
+//
+//   import clipMp4 from '../../assets/videos/blog/clip.mp4';
+//   import clipWebm from '../../assets/videos/blog/clip.webm';
+//   import clipPoster from '../../assets/images/blog/clip_poster.webp';
+//
+//   <Video mp4={clipMp4} webm={clipWebm} poster={clipPoster}
+//          alt="What the footage shows, for screen readers">
+//     Caption. Markdown works here, exactly as in <Figure>.
+//   </Video>
+//
+// See "Adding a Video to a Post" in the README for the ffmpeg commands that
+// produce the three files.
+//
+// Styling deliberately mirrors Figure.astro so the two read identically in a
+// post; keep them in step if either changes.
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  /** URL of the h264 MP4 — the fallback every browser understands. */
+  mp4: string;
+  /** URL of the VP9 WebM, offered first because it is the smaller encode. */
+  webm?: string;
+  /** First frame. Also supplies the intrinsic size, so nothing shifts on load. */
+  poster: ImageMetadata;
+  alt: string;
+  /** Square corners, matching <Figure>'s option of the same name. */
+  square?: boolean;
+}
+
+const { mp4, webm, poster, alt, square = false } = Astro.props;
+
+const posterImg = await getImage({ src: poster, format: 'webp' });
+---
+
+<figure class="post-figure">
+  <video
+    autoplay
+    loop
+    muted
+    playsinline
+    preload="metadata"
+    poster={posterImg.src}
+    width={poster.width}
+    height={poster.height}
+    aria-label={alt}
+    class:list={['post-figure__vid', { 'is-square': square }]}
+  >
+    {webm && <source src={webm} type="video/webm" />}
+    <source src={mp4} type="video/mp4" />
+  </video>
+  <script is:inline>
+    /* WCAG 2.2.2: motion that plays for more than five seconds needs a way to
+       stop it. Visitors who ask for reduced motion get the poster frame and
+       ordinary controls instead of an autoplaying loop. Inline and adjacent to
+       the element so it runs during parsing, before playback has begun. */
+    (function () {
+      var v = document.currentScript.previousElementSibling;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        v.autoplay = false;
+        v.controls = true;
+        v.pause();
+      }
+    })();
+  </script>
+  {Astro.slots.has('default') && (
+    <figcaption class="post-figure__cap"><slot /></figcaption>
+  )}
+</figure>
+
+<style>
+  .post-figure { margin: 2rem 0; text-align: center; }
+  .post-figure__vid {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--hairline);
+  }
+  .post-figure__vid.is-square { border-radius: 0; }
+  .post-figure__cap {
+    margin-top: 0.5em;
+    font-size: 0.875em;
+    color: #6b6b6b;
+    text-align: center;
+    line-height: 1.4;
+  }
+  /* Captions are markdown, so they can contain paragraphs and links. */
+  .post-figure__cap :global(p) { margin: 0; }
+  .post-figure__cap :global(a) { color: inherit; text-decoration: underline; }
+</style>
