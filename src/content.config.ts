@@ -28,6 +28,8 @@ const initiatives = defineCollection({
     category: z.enum(['current', 'past', 'upcoming']),
     excerpt: z.string().optional(),
     permalink: z.string().optional(),
+    /** Sub-pages of an initiative: routed, but kept off the /initiatives/ index. */
+    unlisted: z.boolean().optional().default(false),
   }),
 });
 
@@ -37,6 +39,8 @@ const courses = defineCollection({
     title: z.string(),
     slug: z.string().optional(),
     comingSoon: z.boolean().optional().default(false),
+    /** Supporting pages linked from a course: routed, but kept off the /courses/ index. */
+    unlisted: z.boolean().optional().default(false),
   }),
 });
 

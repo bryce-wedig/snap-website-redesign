@@ -3,7 +3,9 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import { getCollection } from 'astro:content';
 
 const base = import.meta.env.BASE_URL;
-const allCourses = await getCollection('courses');
+// Supporting pages (FAQ, mission statement examples, ...) are linked from the
+// course that owns them, not surfaced as courses in their own right.
+const allCourses = (await getCollection('courses')).filter(c => !c.data.unlisted);
 const available = allCourses.filter(c => !c.data.comingSoon);
 const comingSoon = allCourses.filter(c => c.data.comingSoon);
 ---
