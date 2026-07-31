@@ -31,7 +31,8 @@ astro-site/
 ├── scripts/                     # Maintenance tools, not part of the build
 │   ├── build-icon-subset.mjs    # Regenerates the Font Awesome subset
 │   ├── reencode-sources.mjs     # Caps the resolution of source images
-│   └── page-weight.mjs          # Reports per-page weight; also run by CI
+│   ├── page-weight.mjs          # Reports per-page weight; also run by CI
+│   └── check-links.mjs          # Verifies internal links resolve in dist/
 │
 ├── src/
 │   ├── assets/                  # Images, video, and fonts processed by Astro
@@ -172,6 +173,17 @@ node scripts/page-weight.mjs --max 10       # exit 1 if any page is over the CI 
 ```
 
 See [MEDIA.md](MEDIA.md) for the budgets and what to do when a page is over.
+
+A fourth checks that every internal link in the built site resolves to a real
+file. It has to run against `dist/`, not the source: in `src/content/` an
+internal link is still a bare root-relative path that the deployment base has
+not been applied to and no route has been generated for, so only the build
+knows whether it resolves. This is the gap the lychee workflow cannot cover.
+
+```bash
+npm run build
+npm run check:links                         # exit 1 if any internal link 404s
+```
 
 ## How Content is Organized
 
