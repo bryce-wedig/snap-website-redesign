@@ -6,8 +6,11 @@ excerpt: "A spotlight on the early-career researchers who make up SNAP and the r
 ---
 
 import Figure from '../../components/Figure.astro';
+import Video from '../../components/Video.astro';
 import img20260512Youssef from '../../assets/images/blog/2026-05-12_youssef.jpg';
-import img20260512SnehaScience from '../../assets/images/blog/2026-05-12_sneha_science.gif';
+import vid20260512SnehaScienceMp4 from '../../assets/videos/blog/2026-05-12_sneha_science.mp4';
+import vid20260512SnehaScienceWebm from '../../assets/videos/blog/2026-05-12_sneha_science.webm';
+import img20260512SnehaSciencePoster from '../../assets/images/blog/2026-05-12_sneha_science_poster.webp';
 import img20260512Sneha from '../../assets/images/blog/2026-05-12_sneha.jpg';
 import img20260512Doran from '../../assets/images/blog/2026-05-12_doran.jpg';
 
@@ -59,9 +62,15 @@ University of California, San Francisco
 
 > *Infertility is on the rise. According to the World Health Organization, 1 in 6 adults worldwide experience infertility. Reproductive therapies like IVF, or in vitro fertilization, can offer a solution, but unfortunately implantation success rates remain well below 50% even for women under age 35. While there are many possible causes of infertility, it's estimated that over half of all embryos stop developing before they implant in the uterus (before a woman would even know she's pregnant). Despite the growing prevalence of infertility and the critical importance of this pre-implantation stage of development, we still don't fully understand how the embryo prepares for successful implantation.*
 
-<Figure src={img20260512SnehaScience} alt={'Advanced microscopy image of embryos developing in real time'} square>
+<Video
+  mp4={vid20260512SnehaScienceMp4}
+  webm={vid20260512SnehaScienceWebm}
+  poster={img20260512SnehaSciencePoster}
+  alt={'Timelapse microscopy of mouse embryos developing, cells dividing over several hours'}
+  square
+>
   Using advanced microscopes, I can watch embryos develop in real time!
-</Figure>
+</Video>
 
 > *My thesis work in the [Weiner Lab](https://weinerlab.com/) focuses on the first major event of embryo development, when cells must decide between two essential identities: the outer cells that will help the embryo implant in the uterus and form the placenta, or the inner cells that will develop into the fetus. To study this differentiation process, I've built tools to track key signaling proteins in live cells, and I use advanced microscopes that let me watch embryos develop in real time (see above). By visualizing the activity of these proteins as cells make their fate decisions, I'm working to disentangle the complex signaling logic that guides this early stage of embryo development. Ultimately, I hope my work will help inform much-needed advancements to reproductive therapies in the future.*
 
