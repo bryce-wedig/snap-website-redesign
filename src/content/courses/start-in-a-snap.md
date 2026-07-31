@@ -1,6 +1,5 @@
 ---
 title: "Starting Your Own Science Policy Group"
-slug: start-in-a-snap
 ---
 
 ## Start in a SNAP

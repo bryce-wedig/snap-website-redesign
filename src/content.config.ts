@@ -7,7 +7,6 @@ const blog = defineCollection({
     title: z.string(),
     date: z.coerce.date(),
     author: z.string().optional(),
-    editors: z.string().optional(),
     excerpt: z.string().optional(),
   }),
 });
@@ -27,7 +26,6 @@ const initiatives = defineCollection({
     date: z.coerce.date(),
     category: z.enum(['current', 'past', 'upcoming']),
     excerpt: z.string().optional(),
-    permalink: z.string().optional(),
     /** Sub-pages of an initiative: routed, but kept off the /initiatives/ index. */
     unlisted: z.boolean().optional().default(false),
   }),
@@ -37,7 +35,6 @@ const courses = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/courses' }),
   schema: z.object({
     title: z.string(),
-    slug: z.string().optional(),
     comingSoon: z.boolean().optional().default(false),
     /** Supporting pages linked from a course: routed, but kept off the /courses/ index. */
     unlisted: z.boolean().optional().default(false),
