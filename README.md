@@ -28,25 +28,29 @@ astro-site/
 │   ├── files/                   # Downloadable PDFs
 │   └── scripts/                 # Standalone client scripts
 │
-├── scripts/                     # Build-time maintenance tools (run by hand)
+├── scripts/                     # Maintenance tools, not part of the build
 │   ├── build-icon-subset.mjs    # Regenerates the Font Awesome subset
-│   └── reencode-sources.mjs     # Caps the resolution of source images
+│   ├── reencode-sources.mjs     # Caps the resolution of source images
+│   └── page-weight.mjs          # Reports per-page weight; also run by CI
 │
 ├── src/
-│   ├── assets/                  # Images and fonts processed by Astro
+│   ├── assets/                  # Images, video, and fonts processed by Astro
 │   │   ├── fonts/               # Font Awesome subset (generated)
-│   │   └── images/
-│   │       ├── home/            # Home page hero photos
-│   │       ├── about/           # Member organization logos
-│   │       ├── team/            # Team member headshots
-│   │       ├── initiatives/     # Initiative page images
-│   │       ├── blog/            # Blog post figures
-│   │       └── newsletters/     # Newsletter images
+│   │   ├── images/
+│   │   │   ├── home/            # Home page hero photos
+│   │   │   ├── about/           # Member organization logos
+│   │   │   ├── team/            # Team member headshots
+│   │   │   ├── initiatives/     # Initiative page images
+│   │   │   ├── blog/            # Blog post figures
+│   │   │   └── newsletters/     # Newsletter images
+│   │   └── videos/
+│   │       └── blog/            # Looping post clips (MP4 + WebM)
 │   │
 │   ├── components/              # Reusable Astro components
 │   │   ├── Header.astro         # Site navigation bar
 │   │   ├── Footer.astro         # Site footer
 │   │   ├── Figure.astro         # Post image + caption (optimized)
+│   │   ├── Video.astro          # Looping post clip + caption (GIF replacement)
 │   │   ├── HomeHero.astro       # Home page hero (interactive Leaflet.js map)
 │   │   └── stance/              # Stance on Science state explorer
 │   │
@@ -96,6 +100,7 @@ astro-site/
 │   └── content.config.ts        # Content collection schemas (type validation)
 │
 ├── astro.config.mjs             # Astro configuration
+├── MEDIA.md                     # Adding images and video without bloating a page
 ├── tsconfig.json                # TypeScript configuration
 ├── package.json                 # Dependencies and scripts
 └── README.md                    # This file
@@ -137,8 +142,9 @@ npm run preview
 
 ### Maintenance Scripts
 
-Two scripts in `scripts/` are run by hand, not during the build — the deploy
-workflow is Node-only, and these need extra tooling. Their output is committed.
+Two of the scripts in `scripts/` are run by hand, not during the build — the
+deploy workflow is Node-only, and these need extra tooling. Their output is
+committed.
 
 ```bash
 # Cap the resolution of source images. Run after adding large photos.
@@ -155,6 +161,17 @@ node scripts/reencode-sources.mjs
 pip install fonttools brotli                # once
 node scripts/build-icon-subset.mjs
 ```
+
+A third script reports what each built page weighs. It needs no extra tooling
+and commits nothing; CI runs it too, whenever a media file changes.
+
+```bash
+npm run build
+node scripts/page-weight.mjs                # the 10 heaviest pages
+node scripts/page-weight.mjs --max 10       # exit 1 if any page is over the CI limit
+```
+
+See [MEDIA.md](MEDIA.md) for the budgets and what to do when a page is over.
 
 ## How Content is Organized
 
@@ -295,6 +312,9 @@ import seedBank from '../../assets/images/blog/your_figure.webp';
 Add `square` (`<Figure src={…} alt="…" square>`) for square corners instead of
 the default rounded ones. Omit the children entirely for an uncaptioned image.
 
+Adding anything large, or anything that moves? See [MEDIA.md](MEDIA.md) for size
+budgets and the conversion steps.
+
 A few MDX gotchas, since `.mdx` is stricter than `.md`:
 
 - Bare URLs in angle brackets (`<https://example.org>`) are not valid — write
@@ -304,9 +324,35 @@ A few MDX gotchas, since `.mdx` is stricter than `.md`:
 
 Posts with no images can stay as plain `.md`.
 
-Animated GIFs are the one exception to the pipeline: sharp would flatten them to
-a single frame, so `<Figure>` detects them and ships the original untouched.
-Keep them small.
+### Adding a Video to a Post
+
+Animated GIFs cannot go through the image pipeline — sharp would flatten them to
+a single frame — so `<Figure>` ships them untouched at full size. That is fine
+for a short clip and ruinous for a long one: a 246-frame microscopy timelapse
+arrived as a 18.9 MB GIF and made its post 20.5 MB, against under 1.7 MB for
+every other page on the site. As MP4 + WebM the same footage is 854 KB / 555 KB.
+
+**Convert any GIF over ~1 MB.** [MEDIA.md](MEDIA.md) has the ffmpeg recipe, the
+reason a naive conversion produces a file *larger* than the GIF, and how to
+check the result before shipping it.
+
+Once encoded, use `<Video>`, which takes the same caption slot and `square`
+option as `<Figure>`:
+
+```mdx
+import Video from '../../components/Video.astro';
+import clipMp4 from '../../assets/videos/blog/2026-05-12_your_clip.mp4';
+import clipWebm from '../../assets/videos/blog/2026-05-12_your_clip.webm';
+import clipPoster from '../../assets/images/blog/2026-05-12_your_clip_poster.webp';
+
+<Video mp4={clipMp4} webm={clipWebm} poster={clipPoster}
+       alt="What the footage shows, for screen readers">
+  Optional caption. Markdown works here, same as <Figure>.
+</Video>
+```
+
+The clip autoplays muted, loops, and plays inline on mobile Safari. Visitors who
+ask for reduced motion get the poster frame and playback controls instead.
 
 ### Adding a New Initiative
 
@@ -397,6 +443,16 @@ When ready to serve from the custom domain instead of the github.io URL:
 5. In **Settings → Pages**, set the custom domain to `snapcoalition.org` and enable **Enforce HTTPS**.
 
 ### GitHub Actions Workflow
+
+Three workflows live in `.github/workflows/`:
+
+| Workflow               | File          | When it runs                                              |
+| ---------------------- | ------------- | --------------------------------------------------------- |
+| Deploy to GitHub Pages | `deploy.yml`  | Every push to `main`                                       |
+| Media Budget           | `media.yml`   | Only when a media file changes — see [MEDIA.md](MEDIA.md)  |
+| Links                  | `links.yml`   | Weekly, and on demand                                      |
+
+The deploy workflow:
 
 ```yaml
 name: Deploy to GitHub Pages
