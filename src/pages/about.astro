@@ -3,8 +3,18 @@ import PageLayout from '../layouts/PageLayout.astro';
 import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 import { join } from 'path';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { resolveImage } from '../lib/images';
 
 const base = import.meta.env.BASE_URL;
+
+// Org logos are named in member_orgs.yaml, so they can't be imported statically.
+const ORG_DIR = '/src/assets/images/about';
+const orgLogos = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/images/about/*.{jpg,JPG,jpeg,JPEG,png,PNG}',
+  { eager: true }
+);
 
 const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml'), 'utf-8')) as Array<{
   name: string;
@@ -62,11 +72,13 @@ const orgs = parse(readFileSync(join(process.cwd(), 'src/data/member_orgs.yaml')
     {orgs.map(org => (
       <div class="org-card">
         <div class="org-logo-wrapper">
-          <img
-            src={`${import.meta.env.BASE_URL}images/about/${org.photo}`}
+          <Image
+            src={resolveImage(orgLogos, ORG_DIR, org.photo)}
             alt={`${org.name} logo`}
+            width={144}
             class="org-logo"
             loading="lazy"
+            decoding="async"
           />
         </div>
         <div class="org-info">

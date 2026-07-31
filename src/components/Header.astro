@@ -2,6 +2,8 @@
 import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 import { join } from 'path';
+import { Image } from 'astro:assets';
+import snapLogo from '../assets/images/snap-logo.png';
 
 const siteData = parse(readFileSync(join(process.cwd(), 'src/data/site.yaml'), 'utf-8'));
 const base = import.meta.env.BASE_URL;
@@ -17,7 +19,7 @@ const navItems: NavItem[] = siteData.nav;
 <nav class="nav">
   <div class="nav-inner">
     <a class="brand" href={base} aria-label="SNAP — home">
-      <img src={`${base}images/snap-logo.png`} alt="SNAP — Scientist Network for Advancing Policy" />
+      <Image src={snapLogo} alt="SNAP — Scientist Network for Advancing Policy" width={320} loading="eager" />
     </a>
 
     <button class="nav-toggle" type="button" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false" aria-controls="nav-links">

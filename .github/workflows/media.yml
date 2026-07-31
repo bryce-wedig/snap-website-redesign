@@ -1,0 +1,169 @@
+# Fails a PR that adds oversized media, or that pushes a page over its weight
+# budget. Deliberately narrow: the `paths` filters mean this only runs when a
+# media file actually changes, so ordinary content and code PRs never wait on
+# it. See MEDIA.md for the budgets and how to get back under them.
+#
+# The two path lists below are duplicated on purpose — GitHub Actions does not
+# support YAML anchors, so they have to be kept in step by hand.
+name: Media Budget
+
+on:
+  pull_request:
+    paths:
+      - '**.gif'
+      - '**.png'
+      - '**.jpg'
+      - '**.jpeg'
+      - '**.webp'
+      - '**.avif'
+      - '**.svg'
+      - '**.mp4'
+      - '**.webm'
+      - '**.mov'
+      - '**.m4v'
+      - '**.ogv'
+      - '**.pdf'
+      # Changes to the check itself should also be checked.
+      - 'scripts/page-weight.mjs'
+      - '.github/workflows/media.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**.gif'
+      - '**.png'
+      - '**.jpg'
+      - '**.jpeg'
+      - '**.webp'
+      - '**.avif'
+      - '**.svg'
+      - '**.mp4'
+      - '**.webm'
+      - '**.mov'
+      - '**.m4v'
+      - '**.ogv'
+      - '**.pdf'
+      - 'scripts/page-weight.mjs'
+      - '.github/workflows/media.yml'
+  workflow_dispatch:
+    inputs:
+      max_asset_mb:
+        description: 'Max size for one media file, MB (blank = workflow default)'
+        type: string
+      max_gif_mb:
+        description: 'Max size for a GIF, MB (blank = workflow default)'
+        type: string
+      max_page_mb:
+        description: 'Max delivered page weight, MB (blank = workflow default)'
+        type: string
+
+# Budgets live here and nowhere else. A manual run can override them without
+# editing the file; every other trigger uses these numbers.
+#
+# These are deliberately generous. They exist to catch an accident — a raw
+# camera dump, a screen recording, a GIF nobody converted — not to police every
+# kilobyte. MEDIA.md recommends much tighter targets; this is the backstop, and
+# anything tripping it is genuinely large rather than merely untidy. For scale,
+# the largest file in the repo today is a 4.6 MB PDF, and the heaviest page is
+# 1.5 MB.
+env:
+  MAX_ASSET_MB: ${{ inputs.max_asset_mb || '10' }}
+  MAX_GIF_MB: ${{ inputs.max_gif_mb || '5' }}
+  MAX_PAGE_MB: ${{ inputs.max_page_mb || '10' }}
+
+permissions:
+  contents: read
+
+jobs:
+  # Cheap check, no build: is any individual media file too big?
+  assets:
+    name: Asset sizes
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Collect media files to check
+        run: |
+          set -euo pipefail
+          globs=(
+            '*.gif' '*.png' '*.jpg' '*.jpeg' '*.webp' '*.avif' '*.svg'
+            '*.mp4' '*.webm' '*.mov' '*.m4v' '*.ogv' '*.pdf'
+          )
+          # core.quotePath=false is load-bearing: by default git renders a path
+          # like team/Saúl.png as "team/Sa\303\272l.png", quotes and all, which
+          # then matches no file on disk and gets skipped without a word. This
+          # repo has such a name today, so an oversized one would slip through.
+          #
+          # On a PR, only look at what the PR touches. Anywhere else, sweep
+          # everything committed — it is one stat per file, and it catches
+          # anything that reached main by another route.
+          if [ "${{ github.event_name }}" = 'pull_request' ]; then
+            git -c core.quotePath=false diff --name-only --diff-filter=AM \
+              '${{ github.event.pull_request.base.sha }}' HEAD -- "${globs[@]}" > files.txt
+          else
+            git -c core.quotePath=false ls-files -- "${globs[@]}" > files.txt
+          fi
+          echo "Checking $(grep -c . files.txt || true) file(s)."
+
+      - name: Check against budgets
+        run: |
+          set -euo pipefail
+          to_bytes() { awk "BEGIN{printf \"%d\", $1 * 1048576}"; }
+          asset_limit=$(to_bytes "$MAX_ASSET_MB")
+          gif_limit=$(to_bytes "$MAX_GIF_MB")
+          fail=0
+
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            # Never skip in silence — an unreadable path is how an oversized
+            # file would go unnoticed, which is the whole thing this guards.
+            if [ ! -f "$f" ]; then
+              echo "::warning::listed but not found on disk, so not checked: $f"
+              continue
+            fi
+            size=$(wc -c < "$f")
+            case "$(printf '%s' "$f" | tr '[:upper:]' '[:lower:]')" in
+              *.gif)
+                limit=$gif_limit; budget=$MAX_GIF_MB
+                hint='Convert it to MP4 + WebM and use <Video>.' ;;
+              *.mp4|*.webm|*.mov|*.m4v|*.ogv)
+                limit=$asset_limit; budget=$MAX_ASSET_MB
+                hint='Raise -crf when encoding to shrink it.' ;;
+              *)
+                limit=$asset_limit; budget=$MAX_ASSET_MB
+                hint='Resize or re-encode it — try scripts/reencode-sources.mjs.' ;;
+            esac
+            mb=$(awk "BEGIN{printf \"%.2f\", $size / 1048576}")
+            if [ "$size" -gt "$limit" ]; then
+              echo "::error file=$f::${mb} MB, over the ${budget} MB budget. ${hint} See MEDIA.md."
+              echo "- \`$f\` — **${mb} MB**, budget ${budget} MB" >> "$GITHUB_STEP_SUMMARY"
+              fail=1
+            else
+              printf '  ok  %6s MB  %s\n' "$mb" "$f"
+            fi
+          done < files.txt
+
+          if [ "$fail" -ne 0 ]; then
+            printf '\nSee MEDIA.md for how to convert these.\n' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          exit $fail
+
+  # Aggregate check: a page can blow its budget on many medium-sized files,
+  # none of which trips the per-asset limit above.
+  page-weight:
+    name: Page weight
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run build
+
+      - run: node scripts/page-weight.mjs --max "$MAX_PAGE_MB"

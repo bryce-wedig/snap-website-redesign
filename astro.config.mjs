@@ -1,15 +1,20 @@
 import { defineConfig } from 'astro/config';
 
+import mdx from '@astrojs/mdx';
+
 const base = '/snap-website-redesign/';
 
 /**
- * Remark plugin that rewrites absolute-root-relative paths in markdown content
- * (image src, link href, and raw inline HTML) to include the deployment base path.
- * This handles paths like /images/... and /initiatives/... in both markdown syntax
- * and inline <img>/<a> HTML blocks.
+ * Remark plugin that rewrites absolute-root-relative *link* paths in content
+ * (e.g. /initiatives/...) to include the deployment base path.
+ *
+ * Images are deliberately not handled here. They are referenced with paths
+ * relative to the file (../../assets/images/...), which Astro's asset pipeline
+ * resolves, optimizes, and fingerprints itself — rebasing them would break that.
+ * A content image must therefore live under src/assets/images/, not public/.
  *
  * To switch to the custom domain, remove the `base` option from defineConfig and
- * delete this plugin — markdown paths starting with "/" will work as-is.
+ * delete this plugin — link paths starting with "/" will work as-is.
  */
 function remarkRebasePaths() {
   function rebase(path) {
@@ -20,19 +25,15 @@ function remarkRebasePaths() {
   }
 
   function walk(node) {
-    // Markdown image: ![alt](/images/...)
-    if (node.type === 'image') {
-      node.url = rebase(node.url);
-    }
     // Markdown link: [text](/initiatives/...)
     if (node.type === 'link') {
       node.url = rebase(node.url);
     }
-    // Raw inline HTML: <img src="/images/..." /> or <a href="/...">
+    // Raw inline HTML: <a href="/...">
     if (node.type === 'html') {
       node.value = node.value.replace(
-        /(src|href)="(\/[^/"][^"]*)"/g,
-        (_, attr, path) => `${attr}="${rebase(path)}"`
+        /href="(\/[^/"][^"]*)"/g,
+        (_, path) => `href="${rebase(path)}"`
       );
     }
     if (node.children) node.children.forEach(walk);
@@ -46,12 +47,14 @@ export default defineConfig({
   base,
   trailingSlash: 'always',
   output: 'static',
+
   markdown: {
     remarkPlugins: [remarkRebasePaths],
     shikiConfig: {
       theme: 'github-light',
     },
   },
+
   vite: {
     css: {
       postcss: {
@@ -59,4 +62,6 @@ export default defineConfig({
       },
     },
   },
+
+  integrations: [mdx()]
 });

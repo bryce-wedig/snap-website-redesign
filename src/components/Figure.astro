@@ -1,0 +1,90 @@
+---
+// Figure for post content (blog, newsletters, initiatives).
+//
+// Replaces the hand-written <figure>/<img>/<figcaption> HTML that used to live
+// in the markdown. That HTML was raw, so Astro's asset pipeline never saw the
+// images — every post shipped the full-size original. Going through <Image>
+// gives WebP, a responsive srcset, and intrinsic width/height (no layout shift).
+//
+// Usage in .mdx, after importing the image:
+//
+//   import seeds from '../../assets/images/blog/2026-07-15_1.webp';
+//
+//   <Figure src={seeds} alt="A volunteer cleans seeds for storage">
+//     Seeds are cleaned before storage. Source: [Chicago Botanic Garden](https://…).
+//   </Figure>
+//
+// The caption is a slot, so it takes normal markdown — links in captions render
+// as links, which they did not when the figcaption was raw HTML.
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  /** Square corners, matching the posts that opted out of the rounded default. */
+  square?: boolean;
+}
+
+const { src, alt, square = false } = Astro.props;
+
+// The article column is 720px, so 1440 covers a 2x display. Widths above the
+// source resolution are dropped rather than upscaled.
+const MAX = 1440;
+const cap = Math.min(src.width, MAX);
+const widths = [...new Set([480, 720, 1440].filter((w) => w < cap).concat(cap))];
+
+// Animated GIFs are passed through untouched — the sharp service would resize
+// them down to a single frame.
+const isAnimated = src.format === 'gif';
+---
+
+<figure class="post-figure">
+  {isAnimated ? (
+    <img
+      src={src.src}
+      width={src.width}
+      height={src.height}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      class:list={['post-figure__img', { 'is-square': square }]}
+    />
+  ) : (
+    <Image
+      src={src}
+      alt={alt}
+      widths={widths}
+      sizes={`(max-width: 760px) 100vw, ${Math.min(cap, 720)}px`}
+      loading="lazy"
+      decoding="async"
+      class:list={['post-figure__img', { 'is-square': square }]}
+    />
+  )}
+  {Astro.slots.has('default') && (
+    <figcaption class="post-figure__cap"><slot /></figcaption>
+  )}
+</figure>
+
+<style>
+  .post-figure { margin: 2rem 0; text-align: center; }
+  .post-figure__img {
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    display: block;
+    border-radius: var(--r-lg);
+    border: 1px solid var(--hairline);
+  }
+  .post-figure__img.is-square { border-radius: 0; }
+  .post-figure__cap {
+    margin-top: 0.5em;
+    font-size: 0.875em;
+    color: #6b6b6b;
+    text-align: center;
+    line-height: 1.4;
+  }
+  /* Captions are markdown, so they can contain paragraphs and links. */
+  .post-figure__cap :global(p) { margin: 0; }
+  .post-figure__cap :global(a) { color: inherit; text-decoration: underline; }
+</style>

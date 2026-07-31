@@ -9,33 +9,52 @@ This is the redesigned SNAP website, built with [Astro](https://astro.build/) �
 | [Astro](https://astro.build/) | Static site generator (zero JS by default, fast builds) |
 | [TypeScript](https://www.typescriptlang.org/) | Type-safe content schemas and components |
 | CSS Custom Properties | Styling system based on the SNAP Style Guide |
-| [Leaflet.js](https://leafletjs.com/) | Interactive member/organization map |
-| [Font Awesome](https://fontawesome.com/) | Icons |
-| [Open Sans](https://fonts.google.com/specimen/Open+Sans) / [Montserrat](https://fonts.google.com/specimen/Montserrat) | Typography (per Style Guide) |
-| YAML + Markdown | Content management (data files and content collections) |
+| [Leaflet.js](https://leafletjs.com/) | Interactive member/organization map (bundled locally, not from a CDN) |
+| [Font Awesome](https://fontawesome.com/) | Icons — self-hosted, subset to only the icons in use |
+| [Open Sans](https://fonts.google.com/specimen/Open+Sans) / [Montserrat](https://fonts.google.com/specimen/Montserrat) | Typography (per Style Guide), latin subsets only |
+| YAML + Markdown/MDX | Content management (data files and content collections) |
+
+Everything the site loads is served from its own origin, apart from Google
+Analytics and the map's basemap tiles. Third-party stylesheets block rendering,
+so new dependencies should be added via npm rather than a CDN `<link>`.
 
 ## Project Structure
 
 ```
 astro-site/
-├── public/                      # Static assets (copied as-is to build output)
+├── public/                      # Static assets (copied as-is, never optimized)
 │   ├── favicon.ico
-│   └── images/
-│       ├── home/                # Home page images (logo)
-│       ├── about/               # Member organization logos
-│       ├── team/                # Team member headshots
-│       ├── initiatives/         # Initiative page images
-│       ├── blog/                # Blog post figures
-│       └── newsletters/         # Newsletter images
+│   ├── data/                    # GeoJSON etc.
+│   ├── files/                   # Downloadable PDFs
+│   └── scripts/                 # Standalone client scripts
+│
+├── scripts/                     # Maintenance tools, not part of the build
+│   ├── build-icon-subset.mjs    # Regenerates the Font Awesome subset
+│   ├── reencode-sources.mjs     # Caps the resolution of source images
+│   └── page-weight.mjs          # Reports per-page weight; also run by CI
 │
 ├── src/
+│   ├── assets/                  # Images, video, and fonts processed by Astro
+│   │   ├── fonts/               # Font Awesome subset (generated)
+│   │   ├── images/
+│   │   │   ├── home/            # Home page hero photos
+│   │   │   ├── about/           # Member organization logos
+│   │   │   ├── team/            # Team member headshots
+│   │   │   ├── initiatives/     # Initiative page images
+│   │   │   ├── blog/            # Blog post figures
+│   │   │   └── newsletters/     # Newsletter images
+│   │   └── videos/
+│   │       └── blog/            # Looping post clips (MP4 + WebM)
+│   │
 │   ├── components/              # Reusable Astro components
 │   │   ├── Header.astro         # Site navigation bar
 │   │   ├── Footer.astro         # Site footer
+│   │   ├── Figure.astro         # Post image + caption (optimized)
+│   │   ├── Video.astro          # Looping post clip + caption (GIF replacement)
 │   │   ├── HomeHero.astro       # Home page hero (interactive Leaflet.js map)
 │   │   └── stance/              # Stance on Science state explorer
 │   │
-│   ├── content/                 # Content collections (Markdown files)
+│   ├── content/                 # Content collections (Markdown / MDX files)
 │   │   ├── blog/                # Blog posts
 │   │   ├── newsletters/         # Monthly newsletters
 │   │   ├── initiatives/         # Initiative pages
@@ -81,6 +100,7 @@ astro-site/
 │   └── content.config.ts        # Content collection schemas (type validation)
 │
 ├── astro.config.mjs             # Astro configuration
+├── MEDIA.md                     # Adding images and video without bloating a page
 ├── tsconfig.json                # TypeScript configuration
 ├── package.json                 # Dependencies and scripts
 └── README.md                    # This file
@@ -120,6 +140,39 @@ npm run build
 npm run preview
 ```
 
+### Maintenance Scripts
+
+Two of the scripts in `scripts/` are run by hand, not during the build — the
+deploy workflow is Node-only, and these need extra tooling. Their output is
+committed.
+
+```bash
+# Cap the resolution of source images. Run after adding large photos.
+# Astro resizes images for delivery, but it also emits the original of every
+# image it imports, so oversized sources bloat the deploy artifact.
+node scripts/reencode-sources.mjs --dry   # report first
+node scripts/reencode-sources.mjs
+```
+
+```bash
+# Regenerate the Font Awesome subset. Run after using an icon not already
+# included — an icon that isn't in the subset renders as a blank box.
+# Add its name to the ICONS list in the script first.
+pip install fonttools brotli                # once
+node scripts/build-icon-subset.mjs
+```
+
+A third script reports what each built page weighs. It needs no extra tooling
+and commits nothing; CI runs it too, whenever a media file changes.
+
+```bash
+npm run build
+node scripts/page-weight.mjs                # the 10 heaviest pages
+node scripts/page-weight.mjs --max 10       # exit 1 if any page is over the CI limit
+```
+
+See [MEDIA.md](MEDIA.md) for the budgets and what to do when a page is over.
+
 ## How Content is Organized
 
 ### Data Files (YAML)
@@ -136,7 +189,7 @@ Content collections live in `src/content/` and are Markdown files with YAML fron
 
 ### Adding a Team Member
 
-1. Add the member's headshot photo to `public/images/team/`
+1. Add the member's headshot photo to `src/assets/images/team/`
 2. Add a new entry to `src/data/members.yaml`:
 
 ```yaml
@@ -157,7 +210,7 @@ Content collections live in `src/content/` and are Markdown files with YAML fron
 
 ### Adding a Member Organization
 
-1. Add the organization's logo to `public/images/about/`
+1. Add the organization's logo to `src/assets/images/about/`
 2. Add a new entry to `src/data/member_orgs.yaml`:
 
 ```yaml
@@ -211,11 +264,7 @@ date: 2026-03-15
 Your newsletter content here in Markdown...
 ```
 
-3. To add images to a newsletter, place the image file in `public/images/newsletters/` and reference it:
-
-```markdown
-![Alt text](/images/newsletters/your_image.jpg)
-```
+3. To add images, see [Adding Images to Posts](#adding-images-to-posts) below.
 
 ### Adding a Blog Post
 
@@ -233,11 +282,77 @@ excerpt: "A brief description for the listing page."
 Your post content here in Markdown...
 ```
 
-3. For images, place them in `public/images/blog/` and reference them in the post:
+3. For images, see [Adding Images to Posts](#adding-images-to-posts) below.
 
-```markdown
-![Figure description](/images/blog/your_figure.webp)
+### Adding Images to Posts
+
+Post images go through Astro's asset pipeline, which converts them to WebP,
+generates a responsive `srcset`, and sets `width`/`height` so the page doesn't
+shift as they load. That only works for images under `src/assets/`, referenced by
+a path relative to the post — **not** `public/`, and **not** a `/images/...` path.
+
+1. Put the image in `src/assets/images/blog/` (or `newsletters/`, `initiatives/`).
+2. Give the post a `.mdx` extension rather than `.md`, import the image, and use
+   the `<Figure>` component:
+
+```mdx
+---
+title: "Your Blog Post Title"
+date: 2026-03-15
+---
+
+import Figure from '../../components/Figure.astro';
+import seedBank from '../../assets/images/blog/your_figure.webp';
+
+<Figure src={seedBank} alt="What the image shows, for screen readers">
+  Optional caption. Markdown works here, including [links](https://example.org).
+</Figure>
 ```
+
+Add `square` (`<Figure src={…} alt="…" square>`) for square corners instead of
+the default rounded ones. Omit the children entirely for an uncaptioned image.
+
+Adding anything large, or anything that moves? See [MEDIA.md](MEDIA.md) for size
+budgets and the conversion steps.
+
+A few MDX gotchas, since `.mdx` is stricter than `.md`:
+
+- Bare URLs in angle brackets (`<https://example.org>`) are not valid — write
+  them as `[https://example.org](https://example.org)`.
+- Stray `{` or `}` in body text must be escaped as `\{` / `\}`.
+- Raw HTML must be well-formed and self-closing (`<br />`, not `<br>`).
+
+Posts with no images can stay as plain `.md`.
+
+### Adding a Video to a Post
+
+Animated GIFs cannot go through the image pipeline — sharp would flatten them to
+a single frame — so `<Figure>` ships them untouched at full size. That is fine
+for a short clip and ruinous for a long one: a 246-frame microscopy timelapse
+arrived as a 18.9 MB GIF and made its post 20.5 MB, against under 1.7 MB for
+every other page on the site. As MP4 + WebM the same footage is 854 KB / 555 KB.
+
+**Convert any GIF over ~1 MB.** [MEDIA.md](MEDIA.md) has the ffmpeg recipe, the
+reason a naive conversion produces a file *larger* than the GIF, and how to
+check the result before shipping it.
+
+Once encoded, use `<Video>`, which takes the same caption slot and `square`
+option as `<Figure>`:
+
+```mdx
+import Video from '../../components/Video.astro';
+import clipMp4 from '../../assets/videos/blog/2026-05-12_your_clip.mp4';
+import clipWebm from '../../assets/videos/blog/2026-05-12_your_clip.webm';
+import clipPoster from '../../assets/images/blog/2026-05-12_your_clip_poster.webp';
+
+<Video mp4={clipMp4} webm={clipWebm} poster={clipPoster}
+       alt="What the footage shows, for screen readers">
+  Optional caption. Markdown works here, same as <Figure>.
+</Video>
+```
+
+The clip autoplays muted, loops, and plays inline on mobile Safari. Visitors who
+ask for reduced motion get the poster frame and playback controls instead.
 
 ### Adding a New Initiative
 
@@ -319,12 +434,25 @@ When ready to serve from the custom domain instead of the github.io URL:
    ```
    snapcoalition.org
    ```
-3. **Markdown image/link paths** — convert them back to absolute (add leading `/`):
-   - In `src/content/initiatives/`, `src/content/blog/`, and `src/content/newsletters/`, change paths like `images/blog/fig.webp` → `/images/blog/fig.webp`
+3. **`remarkRebasePaths`** in `astro.config.mjs` — delete the plugin and its
+   `remarkPlugins` entry. It exists only to prefix root-relative *link* paths
+   (`/initiatives/...`) with the base path; without a `base`, they work as-is.
+   Content images need no change — they are referenced by paths relative to the
+   post and resolved by Astro's asset pipeline, which is independent of `base`.
 4. **DNS** — point your domain to GitHub Pages. For an apex domain, add four `A` records pointing to GitHub's IPs (`185.199.108.153`, `185.199.109.153`, `185.199.110.153`, `185.199.111.153`). For `www`, add a `CNAME` record pointing to `bryce-wedig.github.io`.
 5. In **Settings → Pages**, set the custom domain to `snapcoalition.org` and enable **Enforce HTTPS**.
 
 ### GitHub Actions Workflow
+
+Three workflows live in `.github/workflows/`:
+
+| Workflow               | File          | When it runs                                              |
+| ---------------------- | ------------- | --------------------------------------------------------- |
+| Deploy to GitHub Pages | `deploy.yml`  | Every push to `main`                                       |
+| Media Budget           | `media.yml`   | Only when a media file changes — see [MEDIA.md](MEDIA.md)  |
+| Links                  | `links.yml`   | Weekly, and on demand                                      |
+
+The deploy workflow:
 
 ```yaml
 name: Deploy to GitHub Pages

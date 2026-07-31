@@ -5,6 +5,8 @@ import { join } from 'path';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import { Image } from 'astro:assets';
+import mcclintockPortrait from '../../assets/images/initiatives/McClintock1947.png';
 
 const base = import.meta.env.BASE_URL;
 
@@ -186,7 +188,7 @@ const pinPositions = [
         </p>
       </div>
       <figure class="namesake-portrait">
-        <img src={`${base}images/initiatives/McClintock1947.png`} alt="Barbara McClintock in her lab, 1947" />
+        <Image src={mcclintockPortrait} alt="Barbara McClintock in her lab, 1947" widths={[480, 917]} sizes="(max-width: 900px) 100vw, 480px" loading="lazy" />
         <figcaption>Barbara McClintock at Cold Spring Harbor, 1947. Image courtesy of the <a href="https://siarchives.si.edu/collections/siris_arc_306310" target="_blank" rel="noopener">Smithsonian Archives</a>.</figcaption>
       </figure>
     </div>

@@ -3,8 +3,18 @@ import PageLayout from '../layouts/PageLayout.astro';
 import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 import { join } from 'path';
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { resolveImage } from '../lib/images';
 
 const base = import.meta.env.BASE_URL;
+
+// Headshots are named in members.yaml, so they can't be imported statically.
+const TEAM_DIR = '/src/assets/images/team';
+const headshots = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/images/team/*.{jpg,JPG,jpeg,JPEG,png,PNG}',
+  { eager: true }
+);
 
 const members = parse(readFileSync(join(process.cwd(), 'src/data/members.yaml'), 'utf-8')) as Array<{
   name: string;
@@ -36,11 +46,14 @@ const members = parse(readFileSync(join(process.cwd(), 'src/data/members.yaml'),
   <div class="team-grid">
     {members.map(member => (
       <div class="team-card">
-        <img
-          src={`${import.meta.env.BASE_URL}images/team/${member.photo}`}
+        <Image
+          src={resolveImage(headshots, TEAM_DIR, member.photo)}
           alt={`Photo of ${member.name}`}
+          width={240}
+          height={240}
           class="member-photo"
           loading="lazy"
+          decoding="async"
         />
         <div class="member-info">
           <h4>{member.name}</h4>

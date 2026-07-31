@@ -33,16 +33,24 @@
       outside the palette on purpose — they carry meaning readers rely on.
    --------------------------------------------------------------------------- */
 
-@import '@fontsource/open-sans/400.css';
-@import '@fontsource/open-sans/400-italic.css';
-@import '@fontsource/open-sans/500.css';
-@import '@fontsource/open-sans/600.css';
-@import '@fontsource/open-sans/700.css';
-@import '@fontsource/open-sans/700-italic.css';
-@import '@fontsource/montserrat/500.css';
-@import '@fontsource/montserrat/500-italic.css';
-@import '@fontsource/montserrat/600.css';
-@import '@fontsource/montserrat/700.css';
+/* Latin-only subsets. The bare-weight imports (@fontsource/open-sans/400.css)
+   declare every subset Fontsource ships — cyrillic, cyrillic-ext, greek,
+   vietnamese, latin-ext — and while unicode-range means the browser only
+   *downloads* latin, all those @font-face blocks still ship in the render-
+   blocking stylesheet that gates the font downloads. The site is English-only. */
+@import '@fontsource/open-sans/latin-400.css';
+@import '@fontsource/open-sans/latin-400-italic.css';
+@import '@fontsource/open-sans/latin-500.css';
+@import '@fontsource/open-sans/latin-600.css';
+@import '@fontsource/open-sans/latin-700.css';
+@import '@fontsource/open-sans/latin-700-italic.css';
+@import '@fontsource/montserrat/latin-500.css';
+@import '@fontsource/montserrat/latin-500-italic.css';
+@import '@fontsource/montserrat/latin-600.css';
+@import '@fontsource/montserrat/latin-700.css';
+
+/* Font Awesome subset — see scripts/build-icon-subset.mjs */
+@import './icons.css';
 
 /* =====================================================
    DESIGN TOKENS
@@ -482,7 +490,10 @@ footer.site {
   transition: all .15s ease;
 }
 .foot-brand .foot-socials a:hover { background: var(--orange); color: white; }
-.foot-col h6 {
+/* Footer column headings are <h2> so the document's heading order never skips a
+   level (they follow an <h3> on most pages; a decrease is always valid). The
+   size is set here, not inherited from the h2 default. */
+.foot-col h2 {
   font-family: var(--accent); font-weight: 700; font-size: 11px;
   letter-spacing: 0.16em; text-transform: uppercase;
   color: white; margin-bottom: 16px;
