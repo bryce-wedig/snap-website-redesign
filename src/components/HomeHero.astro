@@ -805,7 +805,17 @@ const clientConfig = {
     z-index: 20; display: flex; flex-direction: column;
     align-items: flex-end; gap: 12px;
   }
-  .rail-tabs { display: flex; flex-direction: column; gap: 8px; }
+  /* The labels float over live map tiles, so they get their own translucent
+     card — the same language as the panel and the play/pause pill — rather than
+     relying on the basemap staying pale under them. */
+  .rail-tabs {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 12px 14px; border-radius: 12px;
+    background: rgba(251,250,246,0.93);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--hairline);
+    box-shadow: 0 8px 26px rgba(20,33,58,0.14);
+  }
 
   /* play/pause pill: borrows the floating panel's translucent card language so it
      reads as chrome over the map rather than as another highlight */
@@ -830,7 +840,7 @@ const clientConfig = {
     display: flex; align-items: stretch; gap: 12px;
     background: none; border: 0; padding: 0; cursor: pointer;
     font: inherit; color: inherit; text-align: right;
-    opacity: 0.55; transition: opacity .3s ease;
+    opacity: 0.72; transition: opacity .3s ease; /* dim, but still readable */
   }
   .rail-item--stance { --fill: var(--plum); }
   .rail-item--mcclintock { --fill: var(--olive-deep); }
@@ -960,7 +970,13 @@ const clientConfig = {
     .home-hero-title { font-size: 30px; }
     /* drop the rail toward the bottom so it clears the full-width panel */
     .hero-rail { top: auto; bottom: 16px; transform: none; right: 14px; gap: 8px; }
-    .rail-tabs { gap: 5px; }
+    /* the phone rail lands on the stacked panel's own card, not on map tiles,
+       so it needs no backing of its own — and a second card here would sit on
+       top of the panel's buttons */
+    .rail-tabs {
+      gap: 5px; padding: 0; background: none; border-color: transparent;
+      backdrop-filter: none; -webkit-backdrop-filter: none; box-shadow: none;
+    }
     /* icon-only on phones — the pill's text would crowd the shortened labels */
     .rail-toggle { width: 32px; height: 32px; padding: 0; justify-content: center; }
     .rail-toggle-label { display: none; }
