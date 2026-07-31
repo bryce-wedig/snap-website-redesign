@@ -3,8 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import { loadPublications, cleanBlurb } from '../lib/publications';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
-const base = import.meta.env.BASE_URL;
 const email = 'snapscipolorg@gmail.com';
 
 const { papers, cloud, authorCount } = loadPublications();
@@ -19,10 +19,7 @@ const { papers, cloud, authorCount } = loadPublications();
   <!-- ============ PAGE HEADER ============ -->
   <header class="page-header">
     <div class="container">
-      <div class="crumbs">
-        <a href={base}>SNAP</a><span class="sep">/</span>
-        <span>Publications</span>
-      </div>
+      <Breadcrumbs />
       <div class="page-head-inner">
         <div>
           <div class="eyebrow">Peer-reviewed work from across SNAP</div>

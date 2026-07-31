@@ -14,6 +14,7 @@ import BaseLayout from '../../../../layouts/BaseLayout.astro';
 import Header from '../../../../components/Header.astro';
 import Footer from '../../../../components/Footer.astro';
 import '../../../../styles/stance.css';
+import Breadcrumbs from '../../../../components/Breadcrumbs.astro';
 
 const base = import.meta.env.BASE_URL;
 const stateName = 'Georgia';
@@ -38,12 +39,7 @@ function pressDate(d: string): string {
   <!-- HEADER -->
   <header class="page-header plum">
     <div class="container">
-      <div class="crumbs">
-        <a href={base}>SNAP</a><span class="sep">/</span>
-        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
-        <a href={`${base}initiatives/stance-on-science/`}>Stance on Science</a><span class="sep">/</span>
-        <span>{stateName}</span>
-      </div>
+      <Breadcrumbs current={stateName} />
       <h1 class="display">{stateName}</h1>
       <p class="lede lg" style="color: rgba(255,255,255,0.86); margin-top: 20px;">
         Created by the {teamName} team,
