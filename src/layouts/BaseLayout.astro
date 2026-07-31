@@ -23,11 +23,9 @@ const fullTitle = title === 'Home' ? siteTitle : `${title} | ${siteTitle}`;
   <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href={`${import.meta.env.BASE_URL}favicon.ico`} />
 
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.2.0/css/all.min.css" integrity="sha384-EXatlQyrOJgDaM9/a74ArMzy7/2bTMSrZj8ID1IPeVmc3GncfCugefCFWSLj8JL/" crossorigin="anonymous" />
-
-  <!-- Academicons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" />
+  <!-- Per-page <head> additions (e.g. preconnects for third-party origins that
+       only some pages talk to — an unused preconnect is itself a small waste). -->
+  <slot name="head" />
 
   <!-- Google Analytics -->
   <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-KXSXHFN9B7"></script>
