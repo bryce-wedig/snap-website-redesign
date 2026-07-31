@@ -5,7 +5,15 @@ category: current
 excerpt: "Learn more about our Stance on Science initiative!"
 ---
 
-![Stance on Science Logo](/images/initiatives/STANCE_Logo.png)
+<!--
+  /initiatives/stance-on-science/ is rendered by
+  src/pages/initiatives/stance-on-science.astro, not from this file. Only the
+  frontmatter above is used — it supplies the card on the /initiatives/ index.
+  The body below is the original migrated copy, kept for reference; edits to it
+  will NOT change the live page.
+-->
+
+![Stance on Science Logo](../../assets/images/initiatives/STANCE_Logo.png)
 
 ## About Stance on Science
 

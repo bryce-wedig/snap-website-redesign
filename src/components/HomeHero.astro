@@ -13,9 +13,15 @@ import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 import { join } from 'path';
 import { loadStates } from '../lib/stance';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { resolveImage } from '../lib/images';
+// Leaflet is bundled from the local dependency rather than a CDN: it sits
+// directly in front of the LCP (a basemap tile), so a third-party connection
+// here costs a DNS + TLS round trip before the map can even start loading.
+import 'leaflet/dist/leaflet.css';
 
 const base = import.meta.env.BASE_URL;
-const imageBase = `${base}images/`;
 
 const hero = parse(
   readFileSync(join(process.cwd(), 'src/data/home_hero.yaml'), 'utf-8')
@@ -108,6 +114,31 @@ const withBase = (href: string) => `${base}${href.replace(/^\//, '')}`;
 
 // Render the first set server-side for fast first paint and no-JS fallback;
 // the client script reuses these cards and rebuilds them when cycling sets.
+// Hero photos go through the asset pipeline up front rather than in the
+// template, because the client script rebuilds these cards from scratch when it
+// cycles photo sets and needs the optimized URLs in its config blob.
+// Cards render at 194x124 CSS px, so 400w covers a 2x display.
+const heroPhotoFiles = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/images/home/*.{jpg,JPG,jpeg,JPEG,png,PNG}',
+  { eager: true }
+);
+const heroImages = new Map<string, { src: string; width: number; height: number }>();
+for (const set of hero.photo_sets) {
+  for (const p of set.photos) {
+    if (heroImages.has(p.src)) continue;
+    const optimized = await getImage({
+      src: resolveImage(heroPhotoFiles, '/src/assets/images', p.src),
+      width: 400,
+      format: 'webp',
+    });
+    heroImages.set(p.src, {
+      src: optimized.src,
+      width: Number(optimized.attributes.width),
+      height: Number(optimized.attributes.height),
+    });
+  }
+}
+
 const firstSet = hero.photo_sets[0]?.photos ?? [];
 const cardStyle = (card: { left?: number; right?: number; top?: number; bottom?: number }) =>
   (['left', 'right', 'top', 'bottom'] as const)
@@ -117,7 +148,6 @@ const cardStyle = (card: { left?: number; right?: number; top?: number; bottom?:
 
 // Config handed to the client script (drives markers, connectors, and cycling).
 const clientConfig = {
-  imageBase,
   map: {
     center: hero.map.center,
     zoom: hero.map.zoom,
@@ -141,7 +171,9 @@ const clientConfig = {
     name: set.name,
     photos: set.photos.map((p) => ({
       id: p.id,
-      src: p.src,
+      url: heroImages.get(p.src)!.src,
+      width: heroImages.get(p.src)!.width,
+      height: heroImages.get(p.src)!.height,
       place: p.place,
       lat: p.lat,
       lng: p.lng,
@@ -201,10 +233,13 @@ const clientConfig = {
       {firstSet.map((p) => (
         <figure class="hero-photo" data-id={p.id} style={cardStyle(p.card)}>
           <img
-            src={`${imageBase}${p.src}`}
+            src={heroImages.get(p.src)!.src}
+            width={heroImages.get(p.src)!.width}
+            height={heroImages.get(p.src)!.height}
             alt={`SNAP members in ${p.place}`}
             style={`object-position:${p.object_position ?? 'center'}`}
             loading="lazy"
+            decoding="async"
           />
           <figcaption class="cap">
             <i class="fa-solid fa-location-dot"></i>
@@ -253,14 +288,11 @@ const clientConfig = {
   <script type="application/json" id="home-hero-config" set:html={JSON.stringify(clientConfig)} />
 </section>
 
-<!-- Leaflet (loaded only on pages that use this component) -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-<script is:inline src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+import L from 'leaflet';
 
-<script is:inline>
 (function () {
   function init() {
-    if (!window.L) { setTimeout(init, 50); return; }
     var cfg = JSON.parse(document.getElementById('home-hero-config').textContent);
 
     // Brand colors are read from the design tokens so SVG/Leaflet styling can't
@@ -305,19 +337,34 @@ const clientConfig = {
 
     // Markers carry a wrapper className so slides can dim/brighten whole layers
     // via CSS (.mk-member / .mk-letter on the stage's [data-slide]).
-    var pin = function (cls, wrap, size) {
-      var s = size || 14;
-      return L.divIcon({ html: '<div class="sh-pin ' + cls + '"></div>', className: 'mk ' + wrap, iconSize: [s, s], iconAnchor: [s / 2, s / 2] });
+    //
+    // The icon box is a fixed 24x24 -- the WCAG 2.2 minimum target size -- while
+    // the dot inside keeps its own smaller size from .sh-pin, centred by .mk's
+    // flex rules. Leaflet gives every marker role="button" and tabindex="0", so
+    // each also needs an accessible name; `title` supplies one and reuses the
+    // text already going into the popup.
+    var HIT = 24;
+    var pin = function (cls, wrap) {
+      return L.divIcon({
+        html: '<div class="sh-pin ' + cls + '"></div>',
+        className: 'mk ' + wrap,
+        iconSize: [HIT, HIT],
+        iconAnchor: [HIT / 2, HIT / 2],
+      });
     };
     (cfg.cities || []).forEach(function (c) {
-      L.marker([c.lat, c.lng], { icon: pin('', 'mk-member'), autoPan: false }).addTo(map).bindPopup(c.name);
+      L.marker([c.lat, c.lng], { icon: pin('', 'mk-member'), autoPan: false, title: c.name, alt: c.name })
+        .addTo(map).bindPopup(c.name);
     });
     (cfg.orgs || []).forEach(function (o) {
+      var label = o.name + (o.location ? ' — ' + o.location : '');
       var html = '<b>' + o.name + '</b>' + (o.location ? '<br>' + o.location : '');
-      L.marker([o.lat, o.lng], { icon: pin('org', 'mk-member'), autoPan: false }).addTo(map).bindPopup(html);
+      L.marker([o.lat, o.lng], { icon: pin('org', 'mk-member'), autoPan: false, title: label, alt: label })
+        .addTo(map).bindPopup(html);
     });
     (cfg.letters || []).forEach(function (l) {
-      L.marker([l.lat, l.lng], { icon: pin('letter', 'mk-letter', 10), autoPan: false }).addTo(map).bindPopup(l.name);
+      L.marker([l.lat, l.lng], { icon: pin('letter', 'mk-letter'), autoPan: false, title: l.name, alt: l.name })
+        .addTo(map).bindPopup(l.name);
     });
 
     // The slideshow assigns these so the stance states can hold their slide
@@ -489,9 +536,12 @@ const clientConfig = {
         if (p.card.top != null) fig.style.top = p.card.top + 'px';
         if (p.card.bottom != null) fig.style.bottom = p.card.bottom + 'px';
         var img = document.createElement('img');
-        img.src = cfg.imageBase + p.src;
+        img.src = p.url;
+        if (p.width) img.width = p.width;
+        if (p.height) img.height = p.height;
         img.alt = 'SNAP members in ' + p.place;
         img.loading = 'lazy';
+        img.decoding = 'async';
         if (p.objectPosition) img.style.objectPosition = p.objectPosition;
         var cap = document.createElement('figcaption');
         cap.className = 'cap';
@@ -772,8 +822,15 @@ const clientConfig = {
     background: var(--olive); width: 10px; height: 10px; border-width: 2px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.28);
   }
-  /* whole marker layers fade in/out as slides change */
-  .home-hero-stage :global(.mk) { transition: opacity .6s ease; }
+  /* whole marker layers fade in/out as slides change. The 24x24 box is the
+     keyboard/touch target; the visible dot is centred inside it. */
+  .home-hero-stage :global(.mk) {
+    transition: opacity .6s ease;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .home-hero-stage :global(.mk:focus-visible) {
+    outline: 3px solid var(--orange); outline-offset: 1px; border-radius: 50%;
+  }
   /* stance state fills animate in; each one links to its state page */
   .home-hero-stage :global(.stance-state) { transition: fill-opacity .5s ease, opacity .5s ease; }
   .home-hero-stage :global(.stance-state:focus-visible) {

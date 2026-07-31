@@ -5,7 +5,7 @@ category: past
 excerpt: "Learn more about our congressional district visits!"
 ---
 
-![2025 SNAP Congressional District Visits Logo](/images/initiatives/2025_Congressional_District_Visits.png)
+![2025 SNAP Congressional District Visits Logo](../../assets/images/initiatives/2025_Congressional_District_Visits.png)
 
 ## Congressional District Visits
 

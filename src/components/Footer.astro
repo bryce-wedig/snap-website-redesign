@@ -2,6 +2,8 @@
 import { readFileSync } from 'fs';
 import { parse } from 'yaml';
 import { join } from 'path';
+import { Image } from 'astro:assets';
+import snapLogo from '../assets/images/snap-logo.png';
 
 const siteData = parse(readFileSync(join(process.cwd(), 'src/data/site.yaml'), 'utf-8'));
 const base = import.meta.env.BASE_URL;
@@ -11,7 +13,7 @@ const year = new Date().getFullYear();
 <footer class="site">
   <div class="foot-inner">
     <div class="foot-brand">
-      <img src={`${base}images/snap-logo.png`} alt="SNAP" />
+      <Image src={snapLogo} alt="SNAP" width={320} loading="lazy" />
       <p>Early-career researchers bridging science and community.</p>
       <div class="foot-socials">
         <a href={`mailto:${siteData.email}`} aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
@@ -22,7 +24,7 @@ const year = new Date().getFullYear();
       </div>
     </div>
     <div class="foot-col">
-      <h6>Initiatives</h6>
+      <h2>Initiatives</h2>
       <ul>
         <li><a href={`${base}initiatives/mcclintock-letters/`}>McClintock Letters</a></li>
         <li><a href={`${base}initiatives/congressional-visits/`}>Hill Day</a></li>
@@ -32,7 +34,7 @@ const year = new Date().getFullYear();
       </ul>
     </div>
     <div class="foot-col">
-      <h6>Coalition</h6>
+      <h2>Coalition</h2>
       <ul>
         <li><a href={`${base}about/`}>About</a></li>
         <li><a href={`${base}team/`}>Team</a></li>
@@ -40,7 +42,7 @@ const year = new Date().getFullYear();
       </ul>
     </div>
     <div class="foot-col">
-      <h6>Updates</h6>
+      <h2>Updates</h2>
       <ul>
         <li><a href={`${base}newsletters/`}>Newsletters</a></li>
         <li><a href={`${base}blog/`}>Blog</a></li>

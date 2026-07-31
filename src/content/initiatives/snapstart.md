@@ -5,7 +5,7 @@ category: current
 excerpt: "A mini-grant program helping new student science policy organizations build momentum and get off to a quick start."
 ---
 
-![SNAPStart](/images/initiatives/SNAPStart.png)
+![SNAPStart](../../assets/images/initiatives/SNAPStart.png)
 
 <p style="text-align: center; margin: 1.5em 0;"><a class="btn btn-primary btn-lg" href="https://docs.google.com/forms/d/e/1FAIpQLScYbpKdnijGTR8lUmYuma078NWxOhZvV5s-KrHyzsM7ZqZDNQ/viewform?usp=header" target="_blank" rel="noopener">Apply Now!</a></p>
 
