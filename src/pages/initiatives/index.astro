@@ -3,7 +3,9 @@ import PageLayout from '../../layouts/PageLayout.astro';
 import { getCollection } from 'astro:content';
 
 const base = import.meta.env.BASE_URL;
-const allInitiatives = await getCollection('initiatives');
+// Sub-pages (one-pager examples, ...) are linked from the initiative that owns
+// them, not listed here as initiatives in their own right.
+const allInitiatives = (await getCollection('initiatives')).filter(i => !i.data.unlisted);
 
 const categories = [
   { key: 'current', title: 'Active initiatives', tag: 'Live' },

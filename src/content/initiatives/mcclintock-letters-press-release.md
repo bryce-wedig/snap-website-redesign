@@ -3,7 +3,6 @@ title: "McClintock Letters Press Release"
 date: 2025-04-15
 category: past
 excerpt: "Press release for the McClintock Letters initiative."
-permalink: /initiatives/mcclintock-letters/press-release/
 ---
 
 ## McClintock Letters Press Release

@@ -3,11 +3,24 @@ import PostLayout from '../../layouts/PostLayout.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
+  // A few initiatives have a bespoke page in this directory (mcclintock-letters.astro,
+  // stance-on-science.astro). Those win over this catch-all route, so emitting the
+  // same path here only produces a build warning. Their collection entry stays —
+  // the /initiatives/ index reads its title, excerpt, date and category — but the
+  // body is rendered by the bespoke page, not from markdown.
+  const dedicated = new Set(
+    Object.keys(import.meta.glob('./*.astro')).map(
+      (path) => path.replace(/^\.\//, '').replace(/\.astro$/, '')
+    )
+  );
+
   const initiatives = await getCollection('initiatives');
-  return initiatives.map(entry => ({
-    params: { slug: entry.id },
-    props: { entry },
-  }));
+  return initiatives
+    .filter(entry => !dedicated.has(entry.id))
+    .map(entry => ({
+      params: { slug: entry.id },
+      props: { entry },
+    }));
 }
 
 const { entry } = Astro.props;

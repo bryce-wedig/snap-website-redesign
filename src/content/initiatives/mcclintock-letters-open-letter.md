@@ -3,7 +3,6 @@ title: "Open Letter: A Call to Preserve the Future of American Science"
 date: 2025-04-15
 category: past
 excerpt: "Open letter signed by 1200+ early-career scientists."
-permalink: /initiatives/mcclintock-letters/open-letter/
 ---
 
 ## Open Letter: A Call to Preserve the Future of American Science

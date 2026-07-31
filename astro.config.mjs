@@ -6,9 +6,11 @@ const base = '/snap-website-redesign/';
 
 /**
  * Remark plugin that rewrites absolute-root-relative *link* paths in content
- * (e.g. /initiatives/...) to include the deployment base path.
+ * (e.g. /initiatives/...) to include the deployment base path. That covers
+ * markdown links and the href/src/data attributes of raw HTML embeds, which is
+ * how content reaches files served from public/ (e.g. /files/TX-36.pdf).
  *
- * Images are deliberately not handled here. They are referenced with paths
+ * Markdown images are deliberately not handled here. They are referenced with paths
  * relative to the file (../../assets/images/...), which Astro's asset pipeline
  * resolves, optimizes, and fingerprints itself — rebasing them would break that.
  * A content image must therefore live under src/assets/images/, not public/.
@@ -29,11 +31,12 @@ function remarkRebasePaths() {
     if (node.type === 'link') {
       node.url = rebase(node.url);
     }
-    // Raw inline HTML: <a href="/...">
+    // Raw inline HTML: <a href="/...">, <object data="/...">, <iframe src="/...">.
+    // Only root-relative values are touched, so external URLs pass through.
     if (node.type === 'html') {
       node.value = node.value.replace(
-        /href="(\/[^/"][^"]*)"/g,
-        (_, path) => `href="${rebase(path)}"`
+        /(\s)(href|src|data)="(\/[^/"][^"]*)"/g,
+        (_, space, attr, path) => `${space}${attr}="${rebase(path)}"`
       );
     }
     if (node.children) node.children.forEach(walk);

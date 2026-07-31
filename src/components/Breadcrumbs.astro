@@ -1,0 +1,26 @@
+---
+import { buildCrumbs } from '../lib/breadcrumbs';
+
+interface Props {
+  /**
+   * Label for the final crumb. Only needed when the URL slug isn't presentable
+   * (e.g. /initiatives/stance-on-science/states/ga/ -> "Georgia"); otherwise the
+   * label comes from the page's content title or its title-cased slug.
+   */
+  current?: string;
+}
+
+const { current } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const crumbs = await buildCrumbs(Astro.url.pathname, base, current);
+---
+
+<div class="crumbs">
+  <a href={base}>SNAP</a>
+  {crumbs.map((crumb) => (
+    <Fragment>
+      <span class="sep">/</span>
+      {crumb.href ? <a href={crumb.href}>{crumb.label}</a> : <span>{crumb.label}</span>}
+    </Fragment>
+  ))}
+</div>

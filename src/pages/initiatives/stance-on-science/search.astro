@@ -4,6 +4,7 @@ import Header from '../../../components/Header.astro';
 import Footer from '../../../components/Footer.astro';
 import '../../../styles/stance.css';
 import { loadStates, loadFilters } from '../../../lib/stance';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 
 const base = import.meta.env.BASE_URL;
 const states = loadStates();
@@ -15,12 +16,7 @@ const filters = loadFilters();
 
   <header class="page-header plum">
     <div class="container">
-      <div class="crumbs">
-        <a href={base}>SNAP</a><span class="sep">/</span>
-        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
-        <a href={`${base}initiatives/stance-on-science/`}>Stance on Science</a><span class="sep">/</span>
-        <span>Search</span>
-      </div>
+      <Breadcrumbs />
       <h1 class="display">Search all<br /><span class="italic-accent" style="color: var(--orange-soft);">candidate responses.</span></h1>
       <p class="lede lg" style="color: rgba(255,255,255,0.86); margin-top: 20px;">
         Filter responses across every state. To browse one state at a time, click the state on the <a href={`${base}initiatives/stance-on-science/#stance-map`} style="color: var(--orange-soft);">map</a> to see that state's page.

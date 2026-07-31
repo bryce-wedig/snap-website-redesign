@@ -30,6 +30,7 @@ import {
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { resolveImage } from '../../lib/images';
+import Breadcrumbs from '../Breadcrumbs.astro';
 
 // Team photos live under a per-state directory named in the data files.
 const teamPhotos = import.meta.glob<{ default: ImageMetadata }>(
@@ -214,12 +215,7 @@ const hasIgEmbeds = team.some((m) => m.instagram);
   <!-- HEADER -->
   <header class="page-header plum">
     <div class="container">
-      <div class="crumbs">
-        <a href={base}>SNAP</a><span class="sep">/</span>
-        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
-        <a href={`${base}initiatives/stance-on-science/`}>Stance on Science</a><span class="sep">/</span>
-        <span>{stateName}</span>
-      </div>
+      <Breadcrumbs current={stateName} />
       <h1 class="display">{stateName}</h1>
       <p class="lede lg" style="color: rgba(255,255,255,0.86); margin-top: 20px;">
         Created by the {teamName} team. Please contact <a href={`mailto:${cfg.team_email}`} style="color: var(--orange-soft);">{cfg.team_email}</a> with any questions.<span set:html={socialsHtml} />

@@ -3,6 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/Header.astro';
 import Footer from '../../../components/Footer.astro';
 import '../../../styles/stance.css';
+import Breadcrumbs from '../../../components/Breadcrumbs.astro';
 
 const base = import.meta.env.BASE_URL;
 
@@ -75,12 +76,7 @@ const faqs = [
 
   <header class="page-header plum">
     <div class="container">
-      <div class="crumbs">
-        <a href={base}>SNAP</a><span class="sep">/</span>
-        <a href={`${base}initiatives/`}>Initiatives</a><span class="sep">/</span>
-        <a href={`${base}initiatives/stance-on-science/`}>Stance on Science</a><span class="sep">/</span>
-        <span>FAQ</span>
-      </div>
+      <Breadcrumbs />
       <h1 class="display">Frequently asked<br /><span class="italic-accent" style="color: var(--orange-soft);">questions.</span></h1>
       <p class="lede lg" style="color: rgba(255,255,255,0.86); margin-top: 20px;">About the Stance on Science initiative and its candidate town hall events.</p>
     </div>

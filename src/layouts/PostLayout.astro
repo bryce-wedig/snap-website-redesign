@@ -2,22 +2,20 @@
 import BaseLayout from './BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
 
 interface Props {
   title: string;
   date?: Date;
   author?: string;
   description?: string;
-  /** Optional crumb segment shown between SNAP and the title (e.g. "Blog", "Initiatives"). */
+  /** Section pill shown above the title (e.g. "Blog"). The crumb trail is derived from the URL. */
   section?: string;
-  /** Optional path that the section crumb links to. */
-  sectionHref?: string;
   /** Optional italic deck / subtitle shown beneath the H1. */
   deck?: string;
 }
 
-const { title, date, author, description, section, sectionHref, deck } = Astro.props;
-const base = import.meta.env.BASE_URL;
+const { title, date, author, description, section, deck } = Astro.props;
 
 function formatDate(d: Date | undefined): string {
   if (!d) return '';
@@ -37,17 +35,7 @@ function initials(name: string | undefined): string {
 
   <header class="article-head">
     <div class="container">
-      <div class="crumbs">
-        <a href={base}>SNAP</a>
-        {section && (
-          <>
-            <span class="sep">/</span>
-            {sectionHref ? <a href={sectionHref}>{section}</a> : <span>{section}</span>}
-          </>
-        )}
-        <span class="sep">/</span>
-        <span>{title}</span>
-      </div>
+      <Breadcrumbs current={title} />
 
       {(date || author) && (
         <div class="post-meta-row">
