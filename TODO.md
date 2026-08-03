@@ -3,6 +3,14 @@
 Known gaps and follow-ups. Each item says what the situation is, why it was left,
 and what "done" looks like.
 
+[] home page: on very narrow screens, scroll controls on right are stacked awkwardly under the left text box. have the scroll controls disappear below a certain width
+[] home page: update the initiatives. want to highlight ML, but that means changing the section header from "What we're doing now". also need to highlight Stance
+[] home page: add states that were part of Congressional District Visits as a map
+[] ML page: needs significant updates. just bring it in line with the current webpage and comment out the bits that make it sound like you can still get involved
+[] home page: update text for Press section
+[] home page: add a counter for press mentions
+[] home page: update the text in the Ready to Get Involved section
+
 ---
 
 ## 1. McClintock Letters sub-pages are listed as if they were initiatives
