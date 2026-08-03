@@ -15,10 +15,12 @@ const letters = parse(
 ) as Array<{ headline?: string; source?: string; date?: string; author?: string; website?: string; location?: string }>;
 
 const placed = letters
-  .filter((l) => l.headline && l.source && l.website)
+  .filter((l) => l.headline)
   .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime());
 
-const recentLetters = placed.slice(0, 5);
+const linked = placed.filter((l) => l.source && l.website);
+
+const recentLetters = linked.slice(0, 5);
 const states = Array.from(new Set(placed.map((l) => l.location).filter(Boolean)));
 
 function formatDate(d: string | undefined): string {

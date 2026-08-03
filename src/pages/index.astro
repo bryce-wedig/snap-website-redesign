@@ -21,7 +21,7 @@ const recentPress = pressData
 const letters = parse(
   readFileSync(join(process.cwd(), 'src/data/mcclintock_letters.yaml'), 'utf-8')
 ) as Array<{ headline?: string; website?: string; location?: string }>;
-const placedLetters = letters.filter((l) => l.headline && l.website);
+const placedLetters = letters.filter((l) => l.headline);
 const letterStates = Array.from(new Set(placedLetters.map((l) => l.location).filter(Boolean)));
 
 function formatDate(d: string): string {
@@ -77,7 +77,6 @@ function formatDate(d: string): string {
             </div>
 
             <div class="spotlight-cta">
-              <a class="btn btn-primary" href={`${base}initiatives/mcclintock-letters/`}>Submit a letter</a>
               <a class="btn btn-ghost-dark" href={`${base}initiatives/mcclintock-letters/`}>Read all letters →</a>
             </div>
           </div>
@@ -85,7 +84,7 @@ function formatDate(d: string): string {
             <Image class="portrait-img" src={mcclintockPortrait} alt="Barbara McClintock in her lab at Cold Spring Harbor, 1947" widths={[470, 917]} sizes="(max-width: 900px) 100vw, 470px" loading="lazy" />
             <div class="portrait-caption">
               <div class="who">Barbara McClintock, 1902–1992</div>
-              <div class="desc">Nobel laureate, cytogeneticist — and a model of scientists writing for the public good.</div>
+              <div class="desc">The first American woman to win an unshared Nobel Prize in science. A champion of basic research and an advocate for the founding of the NSF, her legacy and the values she embodied are under threat today, making her a powerful symbol for this effort.</div>
             </div>
           </div>
         </article>
@@ -95,13 +94,12 @@ function formatDate(d: string): string {
       <div class="init-grid">
         <a class="init-card c-hillday" href={`${base}initiatives/congressional-visits/`}>
           <h4>Congressional District Visits</h4>
-          <p>Early-career scientists meet with their Members of Congress at hometown district offices during the August recess, lowering barriers to participation and building local connections.</p>
+          <p>Early-career scientists meet with their Members of Congress at hometown district offices during the August 2025 recess, lowering barriers to participation and building local connections.</p>
           <div class="stats-row">
             <div><div class="num">54</div><div class="lbl">Visits</div></div>
             <div><div class="num">29</div><div class="lbl">States</div></div>
           </div>
           <div class="foot">
-            <div class="next"><span class="next-lbl">Status</span>Follow-up surveys underway</div>
             <span class="arrow">Read more</span>
           </div>
         </a>
@@ -114,7 +112,6 @@ function formatDate(d: string): string {
             <div><div class="num">Summer</div><div class="lbl">Coming</div></div>
           </div>
           <div class="foot">
-            <div class="next"><span class="next-lbl">Status</span>Planning underway</div>
             <span class="arrow">Learn more</span>
           </div>
         </a>
@@ -127,7 +124,6 @@ function formatDate(d: string): string {
             <div><div class="num">State-led</div><div class="lbl">Teams</div></div>
           </div>
           <div class="foot">
-            <div class="next"><span class="next-lbl">New this season</span>Candidate outreach launching</div>
             <span class="arrow">Open tracker</span>
           </div>
         </a>
@@ -140,7 +136,6 @@ function formatDate(d: string): string {
             <div><div class="num">free</div><div class="lbl">For all</div></div>
           </div>
           <div class="foot">
-            <div class="next"><span class="next-lbl">Coming soon</span>New modules in development</div>
             <span class="arrow">Start a course</span>
           </div>
         </a>
@@ -218,7 +213,7 @@ function formatDate(d: string): string {
 
       <div class="join-grid">
         <a class="join-card" href={`${base}initiatives/`}>
-          <div class="tag">For Researchers</div>
+          <div class="tag">For Early-Career Researchers</div>
           <h3>Join an initiative</h3>
           <p>Plug into McClintock Letters, congressional visits, or our Stance on Science campaign. Most initiatives run on multi-month cycles.</p>
           <span class="arrow">Open initiatives</span>
